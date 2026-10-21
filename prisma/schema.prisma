@@ -13,10 +13,88 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  name String
+enum Role {
+  OWNER
+  STAFF
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum InventoryStatus {
+  ACTIVE
+  CLOSED
+}
+
+model Profile {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  fullName  String   @map("full_name")
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  transactions Transaction[]
+  closings     MonthlyClosing[]
+
+  @@map("profiles")
+}
+
+model Product {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String   @unique
+  defaultCost  Decimal  @map("default_cost") @db.Decimal(12, 2)
+  defaultPrice Decimal  @map("default_price") @db.Decimal(12, 2)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  inventories  MonthlyInventory[]
+  transactions Transaction[]
+
+  @@map("products")
+}
+
+model MonthlyInventory {
+  id           String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId    String          @map("product_id") @db.Uuid
+  period       String          // Format: "YYYY-MM"
+  initialStock Int             @map("initial_stock")
+  addedStock   Int             @default(0) @map("added_stock")
+  currentStock Int             @map("current_stock")
+  status       InventoryStatus @default(ACTIVE)
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, period])
+  @@map("monthly_inventories")
+}
+
+model Transaction {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId    String   @map("product_id") @db.Uuid
+  createdById  String   @map("created_by_id") @db.Uuid
+  period       String   // Format: "YYYY-MM"
+  quantity     Int
+  costPrice    Decimal  @map("cost_price") @db.Decimal(12, 2)
+  sellingPrice Decimal  @map("selling_price") @db.Decimal(12, 2)
+  totalProfit  Decimal  @map("total_profit") @db.Decimal(12, 2)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  product   Product @relation(fields: [productId], references: [id])
+  createdBy Profile @relation(fields: [createdById], references: [id])
+
+  @@map("transactions")
+}
+
+model MonthlyClosing {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  period       String   @unique // Format: "YYYY-MM"
+  totalRevenue Decimal  @map("total_revenue") @db.Decimal(12, 2)
+  totalCapital Decimal  @map("total_capital") @db.Decimal(12, 2)
+  netProfit    Decimal  @map("net_profit") @db.Decimal(12, 2)
+  closedById   String   @map("closed_by_id") @db.Uuid
+  closedAt     DateTime @default(now()) @map("closed_at")
+
+  closedBy Profile @relation(fields: [closedById], references: [id])
+
+  @@map("monthly_closings")
 }

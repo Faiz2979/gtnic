@@ -3,9 +3,8 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
 }
 
@@ -23,6 +22,12 @@ enum InventoryStatus {
   CLOSED
 }
 
+enum NotificationType {
+  CLOSING_SUMMARY
+  LOW_STOCK_ALERT
+  SYSTEM_INFO
+}
+
 model Profile {
   id        String   @id @db.Uuid
   email     String   @unique
@@ -31,8 +36,9 @@ model Profile {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  transactions Transaction[]
-  closings     MonthlyClosing[]
+  transactions  Transaction[]
+  closings      MonthlyClosing[]
+  notifications Notification[]
 
   @@map("profiles")
 }
@@ -97,4 +103,18 @@ model MonthlyClosing {
   closedBy Profile @relation(fields: [closedById], references: [id])
 
   @@map("monthly_closings")
+}
+
+model Notification {
+  id        String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  title     String
+  message   String
+  type      NotificationType @default(SYSTEM_INFO)
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
 }

@@ -5,7 +5,7 @@ Aplikasi manajemen inventaris dan pencatatan keuangan harian berbasis web yang d
 ---
 
 ## 📂 Struktur Proyek
-
+```
 my-umkm-app/
 ├── prisma/
 │   └── schema.prisma
@@ -50,7 +50,7 @@ my-umkm-app/
 │   │   └── prisma.ts                    # Inisialisasi instance Prisma Client global
 │   ├── types/                           # Kumpulan tipe data global / TypeScript interfaces
 │   └── utils/                           # Fungsi helper atau utility umum yang bersifat global
-
+```
 ---
 
 ## 📌 Deskripsi Database (Prisma Schema)

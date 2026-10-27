@@ -1,58 +1,56 @@
-import { hasEnvVars } from "@/app/lib/utils";
-import { AuthButton } from "@/components/auth-button";
-import { DeployButton } from "@/components/deploy-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import { Hero } from "@/components/hero";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { ConnectSupabaseSteps } from "@/components/tutorial/connect-supabase-steps";
-import { SignUpUserSteps } from "@/components/tutorial/sign-up-user-steps";
-import Link from "next/link";
-import { Suspense } from "react";
+// src/app/page.tsx
+"use client";
 
-export default function Home() {
-  return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
-              <div className="flex items-center gap-2">
-                <DeployButton />
-              </div>
-            </div>
-            {!hasEnvVars ? (
-              <EnvVarWarning />
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function HomePage() {
+    const router = useRouter();
+    const [loading, useLoading] = useState(Boolean);
+    // useLoading(false);
+
+    useEffect(() => {
+        // Cek apakah URL dari email invite membawa hash access_token
+        if (window.location.hash.includes("access_token")) {
+            // Pindahkan user ke halaman update password beserta hash-nya
+            useLoading(true);
+            router.replace(`/auth/update-password${window.location.hash}`);
+        }
+        // useLoading(true);
+    }, [router]);
+
+    return (
+        <div className="flex min-h-screen items-center justify-center">
+            {loading ? (
+                <div className="flex flex-col items-center">
+                    <svg
+                        className="animate-spin h-8 w-8 text-blue-500 mb-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                        ></circle>
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                    </svg>
+                    <p className="text-gray-700">Loading...</p>
+                </div>
             ) : (
-              <Suspense>
-                <AuthButton />
-              </Suspense>
-            )}
-          </div>
-        </nav>
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
-          <Hero />
-          <main className="flex-1 flex flex-col gap-6 px-4">
-            <h2 className="font-medium text-xl mb-4">Next steps</h2>
-            {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-          </main>
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold mb-4">Welcome to the Home Page</h1>
+                    <p className="text-lg text-gray-600">This is the main content of the home page.</p>
+                </div>
+            )}  
         </div>
-
-        <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
-          <p>
-            Powered by{" "}
-            <a
-              href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-              target="_blank"
-              className="font-bold hover:underline"
-              rel="noreferrer"
-            >
-              Supabase
-            </a>
-          </p>
-          <ThemeSwitcher />
-        </footer>
-      </div>
-    </main>
-  );
+    );
 }

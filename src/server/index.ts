@@ -1,4 +1,5 @@
 import { helloWorldRouter } from './routers/hello-world/hello-world.router';
+import { userRouter } from './routers/user/user.router';
 import { router } from './trpc';
 // import { procedureName } from './procedureFile'; // import procedure yang sudah didefinisikan di file lain
 
@@ -9,6 +10,8 @@ export const appRouter = router({
     // api path nya akan menjadi /api/trpc/routerName.procedureName
     // contoh:  api/trpc/helloWorld.hello
     helloWorld: helloWorldRouter, 
+
+    user: userRouter, 
 });
   
 // optional untuk standalone server

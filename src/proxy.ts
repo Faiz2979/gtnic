@@ -1,4 +1,4 @@
-// src/middleware.ts (Versi Ringan & Aman dari RLS)
+// src/middleware.ts
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -25,14 +25,32 @@ export async function proxy(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     const pathname = request.nextUrl.pathname;
 
-    // Jika sudah login tapi buka /auth, lempar ke dashboard
-    if (user && pathname.startsWith("/auth")) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
+    // 1. Definisikan daftar path yang boleh diakses secara publik (Tanpa Login)
+    // Route group seperti (public) tidak terbawa ke URL asli Next.js, jadi tulis path aslinya.
+    const publicPaths = [
+        "/",
+        "/auth/login",
+        "/auth/sign-up",
+        "/auth/sign-up-success",
+        "/auth/error",
+        "/auth/callback",
+        "/auth/confirm",
+    ];
+
+    // Cek apakah pathname saat ini termasuk public path
+    const isPublicPath = publicPaths.some((path) => pathname === path || pathname.startsWith(path + "/"));
+
+    // 2. Special Handling: Jika user BELUM LOGIN dan mencoba akses halaman NON-PUBLIC
+    if (!user && !isPublicPath) {
+        const redirectUrl = new URL("/auth/login", request.url);
+        // Opsional: Simpan URL asal agar bisa di-redirect kembali setelah login
+        redirectUrl.searchParams.set("next", pathname);
+        return NextResponse.redirect(redirectUrl);
     }
 
-    // Jika belum login dan buka halaman yang diproteksi, lempar ke login
-    if (!user && !pathname.startsWith("/auth") && pathname !== "/") {
-        return NextResponse.redirect(new URL("/auth/login", request.url));
+    // 3. Special Handling: Jika user SUDAH LOGIN tapi mencoba akses halaman auth (seperti /auth/login)
+    if (user && (pathname === "/auth/login" || pathname === "/auth/sign-up")) {
+        return NextResponse.redirect(new URL("/dashboard", request.url)); // Ganti /dashboard dengan halaman tujuan setelah login
     }
 
     return supabaseResponse;

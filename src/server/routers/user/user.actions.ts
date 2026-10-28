@@ -6,8 +6,6 @@ import { userRepository } from "./user.repository";
 
 export const userActions = {
     async createProfile(input: ICreateProfile): Promise<void> {
-        const existingUser = await supabaseAdmin.auth.admin.getUserById(input.id);
-
         try {
             // Langgil repository untuk membuat profile baru
             await userRepository.createProfile(input);
@@ -41,5 +39,27 @@ export const userActions = {
                 cause: error,
             });
         }
-    }
+    },
+    
+    async getCurrentProfile(userId: string) {
+        try {
+            const profile = await userRepository.getProfileById(userId);
+            if (!profile) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: `Profil dengan ID ${userId} tidak ditemukan.`,
+                });
+            }
+            return profile;
+        } catch (error) {
+            if (error instanceof TRPCError) {
+                throw error; // lempar error jika sudah berupa TRPCError
+            }
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Gagal mengambil profil dari database.",
+                cause: error,
+            });
+        }
+    },
 };

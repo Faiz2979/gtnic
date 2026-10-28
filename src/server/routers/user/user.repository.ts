@@ -14,7 +14,6 @@ export const userRepository = {
             },
         });
     },
-    
     async findByEmail(email: string) {
         return await prisma.profile.findUnique({
             where: { email },
@@ -23,5 +22,11 @@ export const userRepository = {
 
     async listProfiles() {
         return await prisma.profile.findMany();
+    },
+
+    async getProfileById(id: string) {
+        return await prisma.profile.findUnique({
+            where: { id },
+        });
     }
 };

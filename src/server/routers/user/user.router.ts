@@ -1,7 +1,7 @@
 
 import { z } from 'zod';
 import { Role } from '../../../../lib/generated/prisma/edge';
-import { publicProcedure, router } from '../../trpc';
+import { protectedProcedure, publicProcedure, router } from '../../trpc';
 import { userActions } from './user.actions';
 // berfungsi untuk grouping procedure yang sudah didefinisikan di file lain
 // sifatnya tergantung, jika router ini hanya memiliki satu procedure 
@@ -33,5 +33,10 @@ export const userRouter = router({
 
     listProfiles: publicProcedure.query(async () => {
         return await userActions.listProfiles();
+    }),
+
+    getCurrentProfile: protectedProcedure.query(async ({ ctx }) => {
+        // ctx.user.id didapat dari middleware/context tRPC yang memvalidasi token Supabase
+        return await userActions.getCurrentProfile(ctx.user.id);
     }),
 });

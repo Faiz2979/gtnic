@@ -67,9 +67,9 @@ my-umkm-app/
 **Beri x disela `[ ]` untuk mencentang progressnya**
 ### 🔐 1. Autentikasi & Hak Akses (Auth & RBAC)
 - **Backend (BE)**:
-  - [ ] **Supabase Auth & Database Sync**: Buat Postgres Trigger/Function untuk menyinkronkan user baru dari Supabase Auth (`auth.users`) ke tabel `profiles`.
-  - [ ] **tRPC Auth Middleware**: Buat `protectedProcedure` dan `adminProcedure` di `server/api/trpc.ts` untuk memverifikasi JWT session dan mengecek `role` (`OWNER` vs `STAFF`).
-  - [ ] **Supabase Server Client Setup**: Konfigurasi `@supabase/ssr` di `lib/supabase/server.ts` & `middleware.ts` untuk handling session secara server-side.
+  - [x] **Supabase Auth & Database Sync**: Buat Postgres Trigger/Function untuk menyinkronkan user baru dari Supabase Auth (`auth.users`) ke tabel `profiles`.
+  - [x] **tRPC Auth Middleware**: Buat `protectedProcedure` dan `adminProcedure` di `server/api/trpc.ts` untuk memverifikasi JWT session dan mengecek `role` (`OWNER` vs `STAFF`).
+  - [x] **Supabase Server Client Setup**: Konfigurasi `@supabase/ssr` di `lib/supabase/server.ts` & `middleware.ts` untuk handling session secara server-side.
 - **Frontend (FE)**:
   - [ ] **Halaman Login UI**: Buat halaman login (`src/app/(auth)/login/page.tsx`) dengan form validasi (Zod + React Hook Form).
   - [ ] **Middleware Route Guard**: Konfigurasi middleware Next.js untuk meredirect user unauthenticated ke `/login`.

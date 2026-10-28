@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Geist } from "next/font/google";
+import { AuthGuard } from "./_components/AuthGuard";
 import { QueryProviders } from "./_components/QueryClientProviders";
 import "./globals.css";
 
@@ -35,7 +36,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <AuthGuard>
+              {children}
+            </AuthGuard>
           </ThemeProvider>
         </QueryProviders>
       </body>

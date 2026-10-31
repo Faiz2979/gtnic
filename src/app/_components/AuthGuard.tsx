@@ -31,12 +31,12 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         }
 
         if (isOnboarded && pathname === "/onboarding") {
-            const redirectUrl = profile?.role === ROLE.OWNER ? "/owner-dashboard" : "/dashboard";
+            const redirectUrl = profile?.role === ROLE.OWNER ? "/owner/dashboard" : "/dashboard";
             router.push(redirectUrl);
             return;
         }
 
-        if (pathname.startsWith("/owner-dashboard") && profile?.role !== ROLE.OWNER) {
+        if (pathname.startsWith("/owner/dashboard") && profile?.role !== ROLE.OWNER) {
             router.push("/dashboard");
             return;
         }

@@ -36,7 +36,6 @@ export const userRouter = router({
     }),
 
     getCurrentProfile: protectedProcedure.query(async ({ ctx }) => {
-        // ctx.user.id didapat dari middleware/context tRPC yang memvalidasi token Supabase
         return await userActions.getCurrentProfile(ctx.user.id);
     }),
 });

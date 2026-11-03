@@ -25,7 +25,8 @@ export const productRouter = router({
         return await productActions.updateProduct(input);
     }),
 
-    deleteProduct: protectedProcedure.input(z.uuid()).mutation(async ({ input }) => {
-        return await productActions.deleteProduct(input);
+    deleteProduct: protectedProcedure.input(z.object({ id: z.uuid("Format ID tidak valid") })).mutation(async ({ input }) => {
+        return await productActions.deleteProduct(input.id);
     }),
+
 })

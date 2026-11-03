@@ -31,6 +31,8 @@ export const productActions = {
 
         return await productRepository.create({
             name: input.name,
+            imageLink: input.imageLink ?? "",
+            initialStock: input.initialStock,
             defaultCost: input.defaultCost,
             defaultPrice: input.defaultPrice,
         });

@@ -1,4 +1,3 @@
-// src/lib/cloudinary.ts
 
 export const uploadToCloudinary = async (file: File): Promise<string> => {
   if (!file.type.startsWith("image/")) {
@@ -6,15 +5,12 @@ export const uploadToCloudinary = async (file: File): Promise<string> => {
   }
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-  
   if (file.size > MAX_FILE_SIZE) {
     throw new Error("Ukuran file maksimal adalah 5MB.")
   }
 
   const formData = new FormData()
   formData.append("file", file)
-  
-  // Masukkan Upload Preset unsigned Anda di sini
   formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "nama_upload_preset_anda")
 
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "nama_cloud_anda"
@@ -30,5 +26,10 @@ export const uploadToCloudinary = async (file: File): Promise<string> => {
     throw new Error(data.error?.message || "Gagal mengunggah gambar ke Cloudinary.")
   }
 
-  return data.secure_url
+  let secureUrl: string = data.secure_url
+  if (secureUrl.includes("/upload/")) {
+    secureUrl = secureUrl.replace("/upload/", "/upload/f_webp/")
+  }
+
+  return secureUrl
 }

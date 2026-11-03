@@ -72,14 +72,14 @@ my-umkm-app/
   - [x] **Supabase Server Client Setup**: Konfigurasi `@supabase/ssr` di `lib/supabase/server.ts` & `middleware.ts` untuk handling session secara server-side.
 - **Frontend (FE)**:
   - [ ] **Halaman Login UI**: Buat halaman login (`src/app/(auth)/login/page.tsx`) dengan form validasi (Zod + React Hook Form).
-  - [ ] **Middleware Route Guard**: Konfigurasi middleware Next.js untuk meredirect user unauthenticated ke `/login`.
+  - [x] **Middleware Route Guard**: Konfigurasi middleware Next.js untuk meredirect user unauthenticated ke `/login`.
   - [ ] **Role-Based UI Rendering**: Buat custom hook `useUser` / `useRole` untuk menyembunyikan/menampilkan elemen UI sensitif berdasarkan peran (`OWNER` / `STAFF`).
 
 ---
 
 ### 📦 2. Manajemen Barang & Stok (Inventory Management)
 - **Backend (BE)**:
-  - [ ] **Product Service & Router**: Implementasi tRPC router (`product.ts`) dan service (`product.service.ts`) untuk CRUD master produk (Zod schema validation).
+  - [x] **Product Service & Router**: Implementasi tRPC router (`product.ts`) dan service (`product.service.ts`) untuk CRUD master produk (Zod schema validation).
   - [ ] **Inventory Service & Restock Logic**: Buat endpoint `addStock` untuk menambah `added_stock` tanpa merubah `initial_stock`.
   - [ ] **Auto Init Inventory Trigger**: Buat fungsi backend saat produk baru dibuat agar otomatis meng-insert baris baru di `monthly_inventories` untuk periode berjalan (`YYYY-MM`).
   - [ ] **Read-Only Inventory Validation**: Tambahkan validasi di service layer agar stok pada periode `CLOSED` tidak dapat diubah/di-edit.

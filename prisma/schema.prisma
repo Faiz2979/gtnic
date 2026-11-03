@@ -45,6 +45,7 @@ model Profile {
 
 model Product {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  imageLink    String   @map("image_link") @default("")
   name         String   @unique
   defaultCost  Decimal  @map("default_cost") @db.Decimal(12, 2)
   defaultPrice Decimal  @map("default_price") @db.Decimal(12, 2)

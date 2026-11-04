@@ -16,8 +16,8 @@ export const inventoryRepository = {
     return prisma.monthlyInventory.update({
       where: { id: inventoryId },
       data: {
-        added_stock: { increment: addedQuantity },
-        current_stock: { increment: addedQuantity },
+        addedStock: { increment: addedQuantity },
+        currentStock: { increment: addedQuantity },
       },
     });
   },

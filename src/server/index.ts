@@ -1,5 +1,7 @@
 import { helloWorldRouter } from './routers/hello-world/hello-world.router';
+import { inventoryRouter } from './routers/inventory/inventory.router';
 import { productRouter } from './routers/product/product.router';
+import { transactionRouter } from './routers/transaction/transaction.router';
 import { userRouter } from './routers/user/user.router';
 import { router } from './trpc';
 // import { procedureName } from './procedureFile'; // import procedure yang sudah didefinisikan di file lain
@@ -14,6 +16,8 @@ export const appRouter = router({
 
     user: userRouter, 
     product: productRouter,
+    inventory: inventoryRouter,
+    transaction: transactionRouter,
 });
   
 // optional untuk standalone server

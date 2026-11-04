@@ -80,9 +80,9 @@ my-umkm-app/
 ### 📦 2. Manajemen Barang & Stok (Inventory Management)
 - **Backend (BE)**:
   - [x] **Product Service & Router**: Implementasi tRPC router (`product.ts`) dan service (`product.service.ts`) untuk CRUD master produk (Zod schema validation).
-  - [ ] **Inventory Service & Restock Logic**: Buat endpoint `addStock` untuk menambah `added_stock` tanpa merubah `initial_stock`.
-  - [ ] **Auto Init Inventory Trigger**: Buat fungsi backend saat produk baru dibuat agar otomatis meng-insert baris baru di `monthly_inventories` untuk periode berjalan (`YYYY-MM`).
-  - [ ] **Read-Only Inventory Validation**: Tambahkan validasi di service layer agar stok pada periode `CLOSED` tidak dapat diubah/di-edit.
+  - [x] **Inventory Service & Restock Logic**: Buat endpoint `addStock` untuk menambah `added_stock` tanpa merubah `initial_stock`.
+  - [x] **Auto Init Inventory Trigger**: Buat fungsi backend saat produk baru dibuat agar otomatis meng-insert baris baru di `monthly_inventories` untuk periode berjalan (`YYYY-MM`).
+  - [x] **Read-Only Inventory Validation**: Tambahkan validasi di service layer agar stok pada periode `CLOSED` tidak dapat diubah/di-edit.
 - **Frontend (FE)**:
   - [ ] **Katalog Produk UI**: Buat tabel daftar produk beserta modal Form Tambah/Edit/Hapus Produk.
   - [ ] **Modal Restock**: Buat UI modal input penambahan stok barang berjalan.

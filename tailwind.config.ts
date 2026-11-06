@@ -41,6 +41,24 @@ export default {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+
+        // Extra Colors 
+        surface: "hsl(var(--surface))",
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          tint: "hsl(var(--success-tint))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          tint: "hsl(var(--warning-tint))",
+        },
+        danger: {
+          DEFAULT: "hsl(var(--destructive))",
+          tint: "hsl(var(--danger-tint))",
+        },
+        info: {
+          tint: "hsl(var(--info-tint))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

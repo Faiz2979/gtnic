@@ -1,4 +1,3 @@
-import { Sidebar } from "@/components/sidebar";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
 import { Geist } from "next/font/google";
@@ -38,9 +37,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <AuthGuard>
-              <Sidebar>
               {children}
-              </Sidebar>
             </AuthGuard>
           </ThemeProvider>
         </QueryProviders>

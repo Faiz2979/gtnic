@@ -92,9 +92,9 @@ my-umkm-app/
 
 ### 📝 3. Digitalisasi Buku Besar (Interactive Ledger Sheet)
 - **Backend (BE)**:
-  - [ ] **Transaction Router**: Buat tRPC procedure `transaction.create` dan `transaction.getAll` untuk mencatat dan mengambil data transaksi harian.
-  - [ ] **Stock Deduction & Atomic Transaction**: Gunakan Prisma Transaction (`prisma.$transaction`) untuk memastikan saat transaksi berhasil disimpan, `current_stock` di `monthly_inventories` berkurang secara atomic.
-  - [ ] **Out-of-Stock Validation**: Validasi backend untuk menolak transaksi jika `quantity` > `current_stock`.
+  - [x] **Transaction Router**: Buat tRPC procedure `transaction.create` dan `transaction.getAll` untuk mencatat dan mengambil data transaksi harian.
+  - [x] **Stock Deduction & Atomic Transaction**: Gunakan Prisma Transaction (`prisma.$transaction`) untuk memastikan saat transaksi berhasil disimpan, `current_stock` di `monthly_inventories` berkurang secara atomic.
+  - [x] **Out-of-Stock Validation**: Validasi backend untuk menolak transaksi jika `quantity` > `current_stock`.
 - **Frontend (FE)**:
   - [ ] **UI Ledger Table (Buku Besar)**: Buat komponen tabel interaktif bergaya catatan kertas manual.
   - [ ] **Fast Row Entry Component**: Buat baris input dinamis dengan autocomplete/select produk.

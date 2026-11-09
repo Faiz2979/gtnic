@@ -92,9 +92,9 @@ my-umkm-app/
 
 ### 📝 3. Digitalisasi Buku Besar (Interactive Ledger Sheet)
 - **Backend (BE)**:
-  - [ ] **Transaction Router**: Buat tRPC procedure `transaction.create` dan `transaction.getAll` untuk mencatat dan mengambil data transaksi harian.
-  - [ ] **Stock Deduction & Atomic Transaction**: Gunakan Prisma Transaction (`prisma.$transaction`) untuk memastikan saat transaksi berhasil disimpan, `current_stock` di `monthly_inventories` berkurang secara atomic.
-  - [ ] **Out-of-Stock Validation**: Validasi backend untuk menolak transaksi jika `quantity` > `current_stock`.
+  - [x] **Transaction Router**: Buat tRPC procedure `transaction.create` dan `transaction.getAll` untuk mencatat dan mengambil data transaksi harian.
+  - [x] **Stock Deduction & Atomic Transaction**: Gunakan Prisma Transaction (`prisma.$transaction`) untuk memastikan saat transaksi berhasil disimpan, `current_stock` di `monthly_inventories` berkurang secara atomic.
+  - [x] **Out-of-Stock Validation**: Validasi backend untuk menolak transaksi jika `quantity` > `current_stock`.
 - **Frontend (FE)**:
   - [ ] **UI Ledger Table (Buku Besar)**: Buat komponen tabel interaktif bergaya catatan kertas manual.
   - [ ] **Fast Row Entry Component**: Buat baris input dinamis dengan autocomplete/select produk.
@@ -105,12 +105,13 @@ my-umkm-app/
 
 ### 🔄 4. Otomatisasi Closing & Carry-Over (Auto-Closing System)
 - **Backend (BE)**:
-  - [ ] **Closing Service & Atomic Carry-Over**: Buat service `closing.service.ts` yang dalam 1 transaksi Prisma:
+  - [x] **Closing Service & Atomic Carry-Over**: Buat service `closing.service.ts` yang dalam 1 transaksi Prisma:
     1. Mengubah status `monthly_inventories` aktif menjadi `CLOSED`.
     2. Menghitung total revenue, total capital, dan net profit, lalu menyimpan ke `monthly_closings`.
     3. Mengambil sisa `current_stock` dan meng-insert baris baru di `monthly_inventories` periode `YYYY-MM` berikutnya.
-  - [ ] **Supabase Edge Function (`monthly-closing`)**: Tulis fungsi Deno/TypeScript untuk mengeksekusi logika closing dan memicu pengiriman email.
-  - [ ] **Supabase pg_cron Setup**: Buat SQL script cron job di Supabase untuk memanggil Edge Function otomatis setiap tanggal terakhir bulan pukul 23:59 WIB.
+  - ~~[ ] **Supabase Edge Function (`monthly-closing`)**: Tulis fungsi Deno/TypeScript untuk mengeksekusi logika closing dan memicu pengiriman email.~~
+  - [ ] **Cron Scheduler** membuat server cron scheduler untuk secara otomatis generate report closing untuk di verifikasi secara rill oleh `STAFF` dan kemudian direview oleh `OWNER`
+  - [x] **Supabase pg_cron Setup**: Buat SQL script cron job di Supabase untuk memanggil Edge Function otomatis setiap tanggal terakhir bulan pukul 23:59 WIB.
 - **Frontend (FE)**:
   - [ ] **Halaman Rekap Closing**: Tampilkan riwayat *closing* bulanan terdahulu.
   - [ ] **Modal Konfirmasi Closing**: Buat modal khusus `OWNER` yang menampilkan preview angka kalkulasi (omzet, modal, laba) sebelum tombol "Eksekusi Closing" ditekan.

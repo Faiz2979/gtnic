@@ -28,6 +28,12 @@ enum NotificationType {
   SYSTEM_INFO
 }
 
+enum ClosingStatus {
+  DRAFT
+  REVIEWED
+  CLOSED
+}
+
 model Profile {
   id        String   @id @db.Uuid
   email     String   @unique
@@ -98,10 +104,12 @@ model MonthlyClosing {
   totalRevenue Decimal  @map("total_revenue") @db.Decimal(12, 2)
   totalCapital Decimal  @map("total_capital") @db.Decimal(12, 2)
   netProfit    Decimal  @map("net_profit") @db.Decimal(12, 2)
-  closedById   String   @map("closed_by_id") @db.Uuid
+  status       ClosingStatus @default(DRAFT)
+  itemsSnapshot  Json   @default("[]") @map("items_snapshot")
+  closedById   String?  @map("closed_by_id") @db.Uuid
   closedAt     DateTime @default(now()) @map("closed_at")
 
-  closedBy Profile @relation(fields: [closedById], references: [id])
+  closedBy Profile? @relation(fields: [closedById], references: [id])
 
   @@map("monthly_closings")
 }

@@ -10,8 +10,12 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
 
-    const isAuthPage = pathname.startsWith("/auth") || pathname === "/";
+    if (pathname.startsWith("/api") || pathname.startsWith("/trpc")) {
+        return <>{children}</>;
+    }
     
+    const isAuthPage = pathname.startsWith("/auth") || pathname === "/";
+
     const { data: profile, isLoading, isFetched, error } = trpc.user.getCurrentProfile.useQuery(undefined, {
         enabled: !isAuthPage,
         retry: false,

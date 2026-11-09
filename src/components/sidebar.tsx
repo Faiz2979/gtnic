@@ -1,3 +1,4 @@
+"use client";
 
 import {
     ArrowLeftRight,
@@ -28,86 +29,88 @@ export function Sidebar({
     activePage = "Dashboard",
 }: SidebarProps) {
     return (
-        <div className="flex min-h-screen ">
+        <div className="flex min-h-screen bg-[#F8FAFC]">
 
-            {/* Sidebar */}
+            {/* Sidebar Sticky agar tidak ikut terscroll & tidak kepotong */}
             <aside className="
+                sticky top-0
                 flex h-screen w-[250px] shrink-0
-                flex-col 
-                bg-primary
+                flex-col justify-between
+                bg-[#172554]
                 px-5 py-6
-                text-primary-foreground
+                text-white
+                overflow-y-auto
+                z-30
             ">
+                <div>
+                    {/* Header Logo */}
+                    <div className="mb-7 flex items-center gap-3">
+                        <BookOpenCheck
+                            size={27}
+                            strokeWidth={1.8}
+                            className="text-white shrink-0"
+                        />
 
-                {/* Header */}
-                <div className="mb-7 flex items-center gap-3">
-                    <BookOpenCheck
-                        size={27}
-                        strokeWidth={1.8}
-                    />
+                        <h1 className="text-xl font-semibold tracking-tight text-white">
+                            smart ledger
+                        </h1>
+                    </div>
 
-                    <h1 className="text-xl font-semibold tracking-tight">
-                        smart ledger
-                    </h1>
+                    {/* Workspace Pill */}
+                    <div className="
+                        mb-7 rounded-xl
+                        bg-white/10
+                        px-3.5 py-3
+                    ">
+                        <p className="mb-1 text-xs text-white/70">
+                            Ruang kerja
+                        </p>
+
+                        <p className="text-sm font-medium text-white truncate">
+                            PT Nusantara Digital
+                        </p>
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className="flex flex-col gap-2">
+                        {navigation.map((item) => {
+                            const Icon = item.icon;
+                            const isActive = activePage === item.name;
+
+                            return (
+                                <a
+                                    key={item.name}
+                                    href={item.href}
+                                    className={`
+                                        flex items-center gap-3
+                                        rounded-xl px-3.5 py-3
+                                        text-sm font-medium transition-colors
+                                        ${isActive
+                                            ? "bg-[#2563EB] text-white shadow-sm"
+                                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                                        }
+                                    `}
+                                >
+                                    <Icon size={19} strokeWidth={1.9} />
+                                    <span>{item.name}</span>
+                                </a>
+                            );
+                        })}
+                    </nav>
                 </div>
-
-                {/* Workspace */}
-                <div className="
-                    mb-7 rounded-lg
-                    bg-primary-foreground/10
-                    px-3 py-3
-                ">
-                    <p className="mb-1 text-xs text-primary-foreground/70">
-                        Ruang kerja
-                    </p>
-
-                    <p className="text-sm font-medium">
-                        PT Nusantara Digital
-                    </p>
-                </div>
-
-                {/* Navigation */}
-                <nav className="flex flex-col gap-2">
-                    {navigation.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = activePage === item.name;
-
-                        return (
-                            <a
-                                key={item.name}
-                                href={item.href}
-                                className={`
-                                    flex items-center gap-3
-                                    rounded-lg px-3 py-3
-                                    text-sm transition-colors
-                                    ${
-                                        isActive
-                                            ? "bg-accent text-accent-foreground"
-                                            : "text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
-                                    }
-                                `}
-                            >
-                                <Icon size={19} strokeWidth={1.9} />
-                                <span>{item.name}</span>
-                            </a>
-                        );
-                    })}
-                </nav>
 
                 {/* Bottom Section */}
-                <div className="mt-auto">
-
+                <div className="pt-6">
                     {/* Settings */}
                     <a
                         href="/pengaturan"
                         className={`
                             flex items-center gap-3
-                            rounded-lg px-3 py-3
-                            text-sm transition-colors
-                            ${
-                                activePage === "Pengaturan"
-                                    ? "bg-accent text-accent-foreground"
-                                    : "text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                            rounded-xl px-3.5 py-3
+                            text-sm font-medium transition-colors
+                            ${activePage === "Pengaturan"
+                                ? "bg-[#2563EB] text-white shadow-sm"
+                                : "text-white/70 hover:bg-white/10 hover:text-white"
                             }
                         `}
                     >
@@ -115,24 +118,23 @@ export function Sidebar({
                         <span>Pengaturan</span>
                     </a>
 
-                    {/* Footer */}
+                    {/* Footer Annotations */}
                     <div className="
-                        mt-7 border-t
-                        border-primary-foreground/15
-                        pt-4 text-[11px] leading-6
-                        text-primary-foreground/70
+                        mt-6 border-t
+                        border-white/15
+                        pt-4 text-[11px] leading-5
+                        text-white/40
                     ">
                         <p>SIDEBAR · 250px</p>
                         <p>Light Mode · shell navy</p>
                     </div>
-
                 </div>
             </aside>
 
-            {/* Main Content */}
-            <main className="min-w-0 flex-1">
+            {/* Main Content Area */}
+            <div className="min-w-0 flex-1 bg-[#F8FAFC]">
                 {children}
-            </main>
+            </div>
 
         </div>
     );

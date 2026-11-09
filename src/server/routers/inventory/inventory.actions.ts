@@ -8,12 +8,15 @@ export const inventoryActions = {
   async addStock(input: z.infer<typeof addStockSchema>) {
     const { productId, period, quantity } = input;
 
-    const inventory = await inventoryRepository.findInventory(productId, period);
+    let inventory = await inventoryRepository.findInventory(productId, period);
 
     if (!inventory) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: `Inventoris untuk produk tersebut pada periode ${period} tidak ditemukan.`,
+      inventory = await inventoryRepository.createInventory({
+        productId,
+        period,
+        initialStock: 0,
+        addedStock: 0,
+        currentStock: 0,
       });
     }
 

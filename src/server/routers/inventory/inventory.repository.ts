@@ -12,6 +12,21 @@ export const inventoryRepository = {
     });
   },
 
+  async createInventory(data: {
+    productId: string;
+    period: string;
+    initialStock: number;
+    addedStock: number;
+    currentStock: number;
+  }) {
+    return prisma.monthlyInventory.create({
+      data: {
+        ...data,
+        status: "ACTIVE",
+      },
+    });
+  },
+
   async updateAddedStock(inventoryId: string, addedQuantity: number) {
     return prisma.monthlyInventory.update({
       where: { id: inventoryId },

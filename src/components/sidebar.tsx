@@ -1,10 +1,13 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
     ArrowLeftRight,
     BookOpenCheck,
     ChartNoAxesCombined,
     LayoutDashboard,
+    Package,
     ReceiptText,
     Settings2,
     Wallet,
@@ -18,6 +21,7 @@ interface SidebarProps {
 
 const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Produk & Stok", href: "/product", icon: Package },
     { name: "Transaksi", href: "/transaksi", icon: ArrowLeftRight },
     { name: "Rekening", href: "/rekening", icon: Wallet },
     { name: "Tagihan", href: "/tagihan", icon: ReceiptText },
@@ -26,12 +30,14 @@ const navigation = [
 
 export function Sidebar({
     children,
-    activePage = "Dashboard",
+    activePage,
 }: SidebarProps) {
+    const pathname = usePathname();
+
     return (
         <div className="flex min-h-screen bg-[#F8FAFC]">
 
-            {/* Sidebar Sticky agar tidak ikut terscroll & tidak kepotong */}
+            {/* Sidebar Sticky */}
             <aside className="
                 sticky top-0
                 flex h-screen w-[250px] shrink-0
@@ -75,25 +81,30 @@ export function Sidebar({
                     <nav className="flex flex-col gap-2">
                         {navigation.map((item) => {
                             const Icon = item.icon;
-                            const isActive = activePage === item.name;
+                            // Cek aktif otomatis berdasarkan pathname URL saat ini
+                            const isActive = activePage
+                                ? activePage === item.name
+                                : pathname === item.href ||
+                                  (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
                             return (
-                                <a
+                                <Link
                                     key={item.name}
                                     href={item.href}
                                     className={`
                                         flex items-center gap-3
                                         rounded-xl px-3.5 py-3
                                         text-sm font-medium transition-colors
-                                        ${isActive
-                                            ? "bg-[#2563EB] text-white shadow-sm"
-                                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                                        ${
+                                            isActive
+                                                ? "bg-[#2563EB] text-white shadow-sm"
+                                                : "text-white/70 hover:bg-white/10 hover:text-white"
                                         }
                                     `}
                                 >
                                     <Icon size={19} strokeWidth={1.9} />
                                     <span>{item.name}</span>
-                                </a>
+                                </Link>
                             );
                         })}
                     </nav>
@@ -102,21 +113,30 @@ export function Sidebar({
                 {/* Bottom Section */}
                 <div className="pt-6">
                     {/* Settings */}
-                    <a
-                        href="/pengaturan"
-                        className={`
-                            flex items-center gap-3
-                            rounded-xl px-3.5 py-3
-                            text-sm font-medium transition-colors
-                            ${activePage === "Pengaturan"
-                                ? "bg-[#2563EB] text-white shadow-sm"
-                                : "text-white/70 hover:bg-white/10 hover:text-white"
-                            }
-                        `}
-                    >
-                        <Settings2 size={19} strokeWidth={1.9} />
-                        <span>Pengaturan</span>
-                    </a>
+                    {(() => {
+                        const isSettingsActive = activePage
+                            ? activePage === "Pengaturan"
+                            : pathname.startsWith("/pengaturan");
+
+                        return (
+                            <Link
+                                href="/pengaturan"
+                                className={`
+                                    flex items-center gap-3
+                                    rounded-xl px-3.5 py-3
+                                    text-sm font-medium transition-colors
+                                    ${
+                                        isSettingsActive
+                                            ? "bg-[#2563EB] text-white shadow-sm"
+                                            : "text-white/70 hover:bg-white/10 hover:text-white"
+                                    }
+                                `}
+                            >
+                                <Settings2 size={19} strokeWidth={1.9} />
+                                <span>Pengaturan</span>
+                            </Link>
+                        );
+                    })()}
 
                     {/* Footer Annotations */}
                     <div className="

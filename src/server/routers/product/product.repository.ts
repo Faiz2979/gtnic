@@ -25,6 +25,8 @@ export const productRepository = {
           return {
             ...product,
             initialStock: inventory?.initialStock ?? 0,
+            addedStock: inventory?.addedStock ?? 0,
+            currentStock: inventory?.currentStock ?? 0,
           };
         })
       );
@@ -75,30 +77,49 @@ export const productRepository = {
     return result;
   },
 
-  async update(id: string, data: z.infer<typeof updateProductSchema>) {
+  async update(id: string, data: Partial<z.infer<typeof createProductSchema>>) {
     try {
+      const { initialStock, ...productData } = data;
+
       return await prisma.$transaction(async (tx) => {
         const updatedProduct = await tx.product.update({
           where: { id },
           data: {
-            ...data,
+            ...productData,
             updatedAt: new Date(),
           },
         });
 
         // Jika stok awal diubah, update juga stok di monthlyInventory untuk periode saat ini
-        if (data.initialStock !== undefined) {
+        if (initialStock !== undefined) {
           const currentPeriod = dayjs().format('YYYY-MM');
-          await tx.monthlyInventory.updateMany({
+          const inv = await tx.monthlyInventory.findFirst({
             where: {
               productId: id,
               period: currentPeriod,
             },
-            data: {
-              initialStock: data.initialStock,
-              currentStock: data.initialStock, // Reset current stock to new initial stock
-            },
           });
+
+          if (inv) {
+            await tx.monthlyInventory.update({
+              where: { id: inv.id },
+              data: {
+                initialStock: initialStock,
+                currentStock: initialStock + (inv.addedStock || 0),
+              },
+            });
+          } else {
+            await tx.monthlyInventory.create({
+              data: {
+                productId: id,
+                period: currentPeriod,
+                initialStock: initialStock,
+                addedStock: 0,
+                currentStock: initialStock,
+                status: 'ACTIVE',
+              },
+            });
+          }
         }
 
         return updatedProduct;
@@ -107,7 +128,6 @@ export const productRepository = {
       console.error("Error updating product:", error);
       throw error;
     }
-
   },
 
   async delete(id: string) {

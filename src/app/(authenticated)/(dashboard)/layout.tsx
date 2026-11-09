@@ -7,7 +7,7 @@ export default function layout({
     children: React.ReactNode;
 }>) {
     return (
-        <Sidebar activePage="Dashboard">
+        <Sidebar>
             <div className="flex min-h-screen flex-col">
 
                 <Topbar/>

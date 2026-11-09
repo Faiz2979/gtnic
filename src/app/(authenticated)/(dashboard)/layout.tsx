@@ -14,7 +14,7 @@ export default function layout({
 
                 <main className="
                     flex-1
-                    bg-background
+                    bg-[#F8FAFC]
                     p-7
                 ">
                     {children}

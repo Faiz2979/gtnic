@@ -1,6 +1,9 @@
 import type { Config } from "tailwindcss";
 
-export default {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare function require(id: string): any;
+
+const config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,6 +13,10 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Poppins", "var(--font-geist-sans)", "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -79,3 +86,5 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+
+export default config;

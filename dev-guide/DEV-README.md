@@ -105,12 +105,13 @@ my-umkm-app/
 
 ### 🔄 4. Otomatisasi Closing & Carry-Over (Auto-Closing System)
 - **Backend (BE)**:
-  - [ ] **Closing Service & Atomic Carry-Over**: Buat service `closing.service.ts` yang dalam 1 transaksi Prisma:
+  - [x] **Closing Service & Atomic Carry-Over**: Buat service `closing.service.ts` yang dalam 1 transaksi Prisma:
     1. Mengubah status `monthly_inventories` aktif menjadi `CLOSED`.
     2. Menghitung total revenue, total capital, dan net profit, lalu menyimpan ke `monthly_closings`.
     3. Mengambil sisa `current_stock` dan meng-insert baris baru di `monthly_inventories` periode `YYYY-MM` berikutnya.
-  - [ ] **Supabase Edge Function (`monthly-closing`)**: Tulis fungsi Deno/TypeScript untuk mengeksekusi logika closing dan memicu pengiriman email.
-  - [ ] **Supabase pg_cron Setup**: Buat SQL script cron job di Supabase untuk memanggil Edge Function otomatis setiap tanggal terakhir bulan pukul 23:59 WIB.
+  - ~~[ ] **Supabase Edge Function (`monthly-closing`)**: Tulis fungsi Deno/TypeScript untuk mengeksekusi logika closing dan memicu pengiriman email.~~
+  - [ ] **Cron Scheduler** membuat server cron scheduler untuk secara otomatis generate report closing untuk di verifikasi secara rill oleh `STAFF` dan kemudian direview oleh `OWNER`
+  - [x] **Supabase pg_cron Setup**: Buat SQL script cron job di Supabase untuk memanggil Edge Function otomatis setiap tanggal terakhir bulan pukul 23:59 WIB.
 - **Frontend (FE)**:
   - [ ] **Halaman Rekap Closing**: Tampilkan riwayat *closing* bulanan terdahulu.
   - [ ] **Modal Konfirmasi Closing**: Buat modal khusus `OWNER` yang menampilkan preview angka kalkulasi (omzet, modal, laba) sebelum tombol "Eksekusi Closing" ditekan.

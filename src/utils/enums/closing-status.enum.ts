@@ -1,0 +1,5 @@
+export enum CLOSING_STATUS {
+  DRAFT = "DRAFT",
+  REVIEWED = "REVIEWED",
+  CLOSED = "CLOSED"
+}

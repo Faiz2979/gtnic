@@ -1,5 +1,5 @@
 
 export enum INVENTORY_STATUS {
-  OPEN = "OPEN",
+  ACTIVE = "ACTIVE",
   CLOSED = "CLOSED",
 }

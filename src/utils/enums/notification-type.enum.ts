@@ -1,0 +1,5 @@
+export enum NotificationType {
+  CLOSING_SUMMARY = "CLOSING_SUMMARY",
+  LOW_STOCK_ALERT = "LOW_STOCK_ALERT",
+  SYSTEM_INFO = "SYSTEM_INFO"
+}

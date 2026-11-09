@@ -54,7 +54,11 @@ export const transactionAction = {
     });
   },
 
-  async getAllTransactions(period: string) {
+  async getAllTransactions(period?: string) {
     return await transactionRepository.findAllByPeriod(period);
+  },
+
+  async getPeriods() {
+    return await transactionRepository.getDistinctPeriods();
   },
 };

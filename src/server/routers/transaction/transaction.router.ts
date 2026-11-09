@@ -14,11 +14,17 @@ export const transactionRouter = router({
 
   getAll: protectedProcedure
     .input(
-      z.object({
-        period: z.string().regex(/^\d{4}-\d{2}$/, "Format periode harus YYYY-MM"),
-      })
+      z
+        .object({
+          period: z.string().optional(),
+        })
+        .optional()
     )
     .query(async ({ input }) => {
-      return await transactionAction.getAllTransactions(input.period);
+      return await transactionAction.getAllTransactions(input?.period);
     }),
+
+  getPeriods: protectedProcedure.query(async () => {
+    return await transactionAction.getPeriods();
+  }),
 });

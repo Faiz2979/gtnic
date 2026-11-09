@@ -43,14 +43,23 @@ export const transactionRepository = {
         });
     },
 
-    async findAllByPeriod(period: string) {
+    async findAllByPeriod(period?: string) {
         return await prisma.transaction.findMany({
-            where: { period },
+            where: period && period !== "ALL" ? { period } : undefined,
             include: {
                 product: true,
                 createdBy: true,
             },
             orderBy: { createdAt: "desc" },
         });
+    },
+
+    async getDistinctPeriods() {
+        const records = await prisma.transaction.findMany({
+            select: { period: true },
+            distinct: ["period"],
+            orderBy: { period: "desc" },
+        });
+        return records.map((r) => r.period);
     },
 };

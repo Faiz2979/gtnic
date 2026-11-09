@@ -1,3 +1,4 @@
+import { dashboardRouter } from './routers/dashboard/dashboard.router';
 import { helloWorldRouter } from './routers/hello-world/hello-world.router';
 import { inventoryRouter } from './routers/inventory/inventory.router';
 import { productRouter } from './routers/product/product.router';
@@ -18,6 +19,7 @@ export const appRouter = router({
     product: productRouter,
     inventory: inventoryRouter,
     transaction: transactionRouter,
+    dashboard: dashboardRouter,
 });
   
 // optional untuk standalone server

@@ -15,7 +15,7 @@ export const transactionAction = {
     const profitPerUnit = dSellingPrice.minus(dCostPrice);
     const totalProfit = profitPerUnit.times(quantity);
 
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async () => {
       const inventory = await transactionRepository.findInventory(productId, period);
 
       if (!inventory) {

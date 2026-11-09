@@ -31,8 +31,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         }
 
         if (isOnboarded && pathname === "/onboarding") {
-            const redirectUrl = profile?.role === ROLE.OWNER ? "/owner/dashboard" : "/dashboard";
-            router.push(redirectUrl);
+            router.push("/dashboard");
             return;
         }
 

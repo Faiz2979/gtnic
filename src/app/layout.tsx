@@ -32,8 +32,8 @@ export default function RootLayout({
         <QueryProviders>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
-            enableSystem
+            defaultTheme="light"
+            enableSystem={false}
             disableTransitionOnChange
           >
             <AuthGuard>

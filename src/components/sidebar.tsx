@@ -10,6 +10,7 @@ import {
     Package,
     ReceiptText,
     Settings2,
+    Users,
     Wallet,
 } from "lucide-react";
 import React from "react";
@@ -23,6 +24,7 @@ const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Produk & Stok", href: "/product", icon: Package },
     { name: "Transaksi", href: "/transaksi", icon: ArrowLeftRight },
+    { name: "Manajemen Staf", href: "/staff", icon: Users },
     { name: "Rekening", href: "/rekening", icon: Wallet },
     { name: "Tagihan", href: "/tagihan", icon: ReceiptText },
     { name: "Laporan", href: "/laporan", icon: ChartNoAxesCombined },

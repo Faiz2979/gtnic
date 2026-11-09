@@ -19,13 +19,29 @@ export const userActions = {
     },
 
     async inviteEmployee(email: string) {
-        console.log(process.env.NEXT_PUBLIC_URL);
-        const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/auth/update-password`,
-        });
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+        try {
+            const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+                redirectTo: `${siteUrl}/auth/callback?next=/auth/update-password`,
+            });
 
-        if (error) throw error;
-        return data;
+            if (error) throw error;
+            return { user: data.user, inviteLink: null };
+        } catch (err: unknown) {
+            console.warn("inviteUserByEmail fallback to generateLink:", err);
+            const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+                type: "invite",
+                email,
+                options: {
+                    redirectTo: `${siteUrl}/auth/callback?next=/auth/update-password`,
+                },
+            });
+            if (linkError) throw linkError;
+            return {
+                user: linkData.user,
+                inviteLink: linkData.properties?.action_link || null,
+            };
+        }
     },
 
     async listProfiles() {

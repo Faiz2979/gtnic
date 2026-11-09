@@ -21,7 +21,16 @@ export const userRepository = {
     },
 
     async listProfiles() {
-        return await prisma.profile.findMany();
+        return await prisma.profile.findMany({
+            orderBy: { createdAt: "desc" },
+            include: {
+                _count: {
+                    select: {
+                        transactions: true,
+                    },
+                },
+            },
+        });
     },
 
     async getProfileById(id: string) {

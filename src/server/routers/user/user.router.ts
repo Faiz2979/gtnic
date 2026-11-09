@@ -23,12 +23,16 @@ export const userRouter = router({
 
     inviteEmployee: publicProcedure.input(
         z.object({
-            email: z.email("Email tidak valid"),
+            email: z.string().email("Email tidak valid"),
         })
     ).mutation(async ({ input }) => {
         const { email } = input;
-        await userActions.inviteEmployee(email);
-        return { success: true, message: "Undangan berhasil dikirim!" };
+        const result = await userActions.inviteEmployee(email);
+        return {
+            success: true,
+            message: "Undangan berhasil dikirim!",
+            inviteLink: result?.inviteLink || null,
+        };
     }),
 
     listProfiles: publicProcedure.query(async () => {

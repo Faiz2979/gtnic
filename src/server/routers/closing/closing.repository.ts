@@ -1,5 +1,7 @@
 // src/server/routers/closing/closing.repository.ts
 import { prisma } from "@/lib/prisma";
+import { CLOSING_STATUS } from "@/utils/enums/closing-status.enum";
+import { ClosingItemSnapshot } from "@/utils/types/item-closing.types";
 import { InventoryStatus } from "../../../../lib/generated/prisma";
 
 export const ClosingRepository = {
@@ -52,9 +54,9 @@ export const ClosingRepository = {
       for (const inv of inventoryUpdates) {
         await tx.monthlyInventory.update({
           where: { id: inv.id },
-          data: { 
-            status: InventoryStatus.CLOSED, 
-            currentStock: inv.currentStock 
+          data: {
+            status: InventoryStatus.CLOSED,
+            currentStock: inv.currentStock
           },
         });
       }
@@ -77,6 +79,50 @@ export const ClosingRepository = {
       });
 
       return closingRecord;
+    });
+  },
+
+  upsertDraftClosingWithSnapshot: async (data: {
+    period: string;
+    totalRevenue: number;
+    totalCapital: number;
+    netProfit: number;
+    items: ClosingItemSnapshot[];
+  }) => {
+    return await prisma.monthlyClosing.upsert({
+      where: { period: data.period },
+      update: {
+        totalRevenue: data.totalRevenue,
+        totalCapital: data.totalCapital,
+        netProfit: data.netProfit,
+        status: CLOSING_STATUS.DRAFT,
+        itemsSnapshot: data.items as any, // Prisma menerima objek JSON ke kolom Json
+      },
+      create: {
+        period: data.period,
+        totalRevenue: data.totalRevenue,
+        totalCapital: data.totalCapital,
+        netProfit: data.netProfit,
+        status: CLOSING_STATUS.DRAFT,
+        itemsSnapshot: data.items as any,
+      },
+    });
+  },
+
+  // Mengambil data draf closing berdasarkan periode
+  getByPeriod: async (period: string) => {
+    return await prisma.monthlyClosing.findUnique({
+      where: { period },
+    });
+  },
+
+  // Memperbarui snapshot item (misal saat staf mengubah stok fisik / mencatat selisih)
+  updateItemsSnapshot: async (period: string, newItems: ClosingItemSnapshot[]) => {
+    return await prisma.monthlyClosing.update({
+      where: { period },
+      data: {
+        itemsSnapshot: newItems as any,
+      },
     });
   },
 };

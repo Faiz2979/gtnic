@@ -4,7 +4,7 @@ import { autoClosing } from "./auto-closing.cron";
 console.log("⏰ [CRON SYSTEM] Modul automated closing cron berhasil didaftarkan.");
 
 cron.schedule("* * * * *", async () => {
-    console.log("🔄 [TEST CRON] Menjalankan simulasi per menit...");
+    console.log("[TEST CRON] Menjalankan simulasi per menit...");
 });
 
 cron.schedule("* * * * *", async () => await autoClosing());

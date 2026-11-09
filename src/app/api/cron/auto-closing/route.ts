@@ -14,17 +14,12 @@ export async function POST(request: Request) {
 
         const currentPeriod = dayjs().format("YYYY-MM");
 
-        const systemOwnerId = process.env.SYSTEM_OWNER_ID;
-
-        if (!systemOwnerId) {
-            throw new Error("SYSTEM_OWNER_ID belum diset di environment variables.");
-        }
-
-        const result = await ClosingActions.executeClosing(currentPeriod, systemOwnerId);
+        // MEMANGGIL GENERATE DRAFT (Menyimpan rekapitulasi awal & JSON snapshot ke database)
+        const result = await ClosingActions.generateDraft(currentPeriod);
 
         return NextResponse.json({
             success: true,
-            message: "Automated closing berhasil dieksekusi.",
+            message: `Draft rekapitulasi periode ${currentPeriod} berhasil digenerate otomatis dan disimpan ke database. Menunggu validasi Staff & review Owner.`,
             data: result,
         }, { status: 200 });
 

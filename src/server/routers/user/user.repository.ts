@@ -1,16 +1,15 @@
-// src/server/routers/user/user.repository.ts
 import { prisma } from "@/lib/prisma";
-import { Role } from "../../../../lib/generated/prisma";
-import { IRegisterUser } from "./IUser";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import { registerUser } from "./user.dto";
 
 export const userRepository = {
-    async createProfile(input: IRegisterUser): Promise<void> {
+    async createProfile(id: string, input: registerUser): Promise<void> {
         await prisma.profile.create({
             data: {
-                id: input.id,
+                id,
                 email: input.email,
                 fullName: input.fullName,
-                role: input.role ?? Role.STAFF,
+                role: ROLE.STAFF,
             },
         });
     },

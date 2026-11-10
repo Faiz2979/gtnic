@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import dayjs from 'dayjs';
 import z from "zod";
-import { createProductSchema, updateProductSchema } from "./product.dto";
+import { createProductSchema } from "./product.dto";
 
 export const productRepository = {
   async findAll() {

@@ -1,11 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import Image from "next/image";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
 import { trpc } from "@/client/trpc";
-import { ROLE } from "@/utils/enums/user-role.enum";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -18,13 +13,20 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 import {
-  ArrowLeftRight,
   ArrowDownLeft,
+  ArrowLeftRight,
+  Clock,
+  Eye,
+  FileSpreadsheet,
+  Loader2,
+  Package,
   Plus,
   Search,
   ShieldCheck,
-  UserCheck,
   TrendingUp,
   Package,
   Clock,
@@ -34,11 +36,13 @@ import {
   Wallet,
   CreditCard,
   CheckCircle2,
+  UserCheck,
 } from "lucide-react";
+import Image from "next/image";
+import { useMemo, useState } from "react";
 
 dayjs.locale("id");
 
-// Format Rupiah helper
 const formatRupiah = (val: number | string | undefined | null) => {
   const num = typeof val === "string" ? parseFloat(val) : Number(val) || 0;
   return new Intl.NumberFormat("id-ID", {
@@ -48,7 +52,6 @@ const formatRupiah = (val: number | string | undefined | null) => {
   }).format(num);
 };
 
-// Salam waktu (Pagi/Siang/Sore/Malam)
 const getGreeting = () => {
   const hour = new Date().getHours();
   if (hour < 11) return "Selamat pagi";
@@ -60,19 +63,16 @@ const getGreeting = () => {
 export default function TransaksiPage() {
   const utils = trpc.useUtils();
 
-  // 1. Data Profil Pengguna Aktif
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
   const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
-  // 2. State Filter & Periode
   const currentPeriod = dayjs().format("YYYY-MM");
   const [selectedPeriod, setSelectedPeriod] = useState<string>(currentPeriod);
   const [selectedStaffFilter, setSelectedStaffFilter] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 3. Query Periode yang Tersedia
   const { data: availablePeriods = [] } = trpc.transaction.getPeriods.useQuery();
 
   const periodOptions = useMemo(() => {
@@ -80,7 +80,6 @@ export default function TransaksiPage() {
     return list.sort((a, b) => b.localeCompare(a));
   }, [availablePeriods, currentPeriod]);
 
-  // 4. Query Transaksi Buku Besar
   const {
     data: transactions = [],
     isLoading: isTxLoading,
@@ -89,15 +88,12 @@ export default function TransaksiPage() {
     selectedPeriod === "ALL" ? undefined : { period: selectedPeriod }
   );
 
-  // 5. Query Daftar Produk (untuk Modal Tambah Transaksi)
   const { data: products = [] } = trpc.product.getAllProducts.useQuery();
   const { data: accounts = [] } = trpc.account.getAllAccounts.useQuery();
 
-  // State Modal Detail Audit
   const [selectedTxDetail, setSelectedTxDetail] = useState<(typeof transactions)[0] | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
-  // State Modal Tambah Transaksi
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [selectedAccountId, setSelectedAccountId] = useState<string>("");
@@ -185,7 +181,6 @@ export default function TransaksiPage() {
     });
   };
 
-  // Daftar Staf Unik untuk Filter
   const staffList = useMemo(() => {
     const map = new Map<string, string>();
     transactions.forEach((tx) => {
@@ -196,7 +191,6 @@ export default function TransaksiPage() {
     return Array.from(map.entries()).map(([id, name]) => ({ id, name }));
   }, [transactions]);
 
-  // Transaksi Terfilter (Search + Staf)
   const filteredTransactions = useMemo(() => {
     return transactions.filter((tx) => {
       if (selectedStaffFilter !== "ALL" && tx.createdById !== selectedStaffFilter) {
@@ -212,7 +206,6 @@ export default function TransaksiPage() {
     });
   }, [transactions, selectedStaffFilter, searchQuery]);
 
-  // Metrik Ringkasan
   const totalTxCount = filteredTransactions.length;
   const totalQuantitySold = filteredTransactions.reduce(
     (acc, curr) => acc + (curr.quantity || 0),
@@ -232,7 +225,6 @@ export default function TransaksiPage() {
   const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
   const selectedProdObj = products.find((p) => p.id === selectedProductId);
 
-  // Ekspor CSV
   const handleExportCSV = () => {
     if (filteredTransactions.length === 0) return;
     const headers = isOwner
@@ -291,7 +283,6 @@ export default function TransaksiPage() {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* ──────────────── TOP HEADER (IDENTIK DENGAN DASHBOARD & PRODUK) ──────────────── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2.5">
@@ -323,7 +314,6 @@ export default function TransaksiPage() {
           </p>
         </div>
 
-        {/* Action Buttons: Ekspor CSV & Tambah Transaksi */}
         <div className="flex items-center gap-2.5">
           <Button
             variant="outline"
@@ -348,9 +338,7 @@ export default function TransaksiPage() {
         </div>
       </div>
 
-      {/* ──────────────── 3 METRIC SUMMARY CARDS (PERSIS DENGAN KARTU DASHBOARD & PRODUK) ──────────────── */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        {/* Card 1: Total Transaksi Masuk */}
         <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
@@ -372,7 +360,6 @@ export default function TransaksiPage() {
           </CardContent>
         </Card>
 
-        {/* Card 2: Pemasukan / Omzet */}
         <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
@@ -394,7 +381,6 @@ export default function TransaksiPage() {
           </CardContent>
         </Card>
 
-        {/* Card 3: Keuntungan Bersih (Owner) atau Staf Operator (Staff) */}
         <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
@@ -423,10 +409,8 @@ export default function TransaksiPage() {
         </Card>
       </div>
 
-      {/* ──────────────── MAIN LEDGER TABLE CARD ──────────────── */}
       <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
         <CardContent className="p-0">
-          {/* Header Baris Dalam Kartu */}
           <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between border-b border-[#F1F5F9]">
             <div>
               <h3 className="text-sm font-semibold text-[#0F172A]">
@@ -437,9 +421,7 @@ export default function TransaksiPage() {
               </p>
             </div>
 
-            {/* Filter & Search Bar */}
             <div className="flex flex-wrap items-center gap-2">
-              {/* Dropdown Periode */}
               <select
                 value={selectedPeriod}
                 onChange={(e) => setSelectedPeriod(e.target.value)}
@@ -453,7 +435,6 @@ export default function TransaksiPage() {
                 ))}
               </select>
 
-              {/* Dropdown Filter Staf */}
               {staffList.length > 1 && (
                 <select
                   value={selectedStaffFilter}
@@ -469,7 +450,6 @@ export default function TransaksiPage() {
                 </select>
               )}
 
-              {/* Input Pencarian Minimalis */}
               <div className="relative w-full sm:w-60">
                 <Search
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]"
@@ -487,7 +467,6 @@ export default function TransaksiPage() {
             </div>
           </div>
 
-          {/* Konten Tabel Buku Besar */}
           {isTxLoading ? (
             <div className="flex min-h-[220px] flex-col items-center justify-center gap-2">
               <Loader2 className="h-6 w-6 animate-spin text-[#2563EB]" />
@@ -551,7 +530,6 @@ export default function TransaksiPage() {
                         key={tx.id}
                         className="transition-colors hover:bg-[#F8FAFC]"
                       >
-                        {/* Waktu & Tanggal */}
                         <td className="py-3.5 px-3 whitespace-nowrap">
                           <div className="flex flex-col">
                             <span className="font-medium text-[#0F172A]">
@@ -564,7 +542,6 @@ export default function TransaksiPage() {
                           </div>
                         </td>
 
-                        {/* Staf Pencatat (Audit) */}
                         <td className="py-3.5 px-3 whitespace-nowrap">
                           <div className="flex items-center gap-2.5">
                             <div
@@ -598,7 +575,6 @@ export default function TransaksiPage() {
                           </div>
                         </td>
 
-                        {/* Produk Terjual */}
                         <td className="py-3.5 px-3 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-[#E2E8F0] bg-[#F8FAFC]">
@@ -627,19 +603,16 @@ export default function TransaksiPage() {
                           </div>
                         </td>
 
-                        {/* Kuantitas */}
                         <td className="py-3.5 px-3 text-center whitespace-nowrap">
                           <span className="inline-flex items-center rounded-full bg-[#F1F5F9] px-2.5 py-0.5 text-xs font-semibold text-[#0F172A]">
                             {tx.quantity} unit
                           </span>
                         </td>
 
-                        {/* Harga Jual Satuan */}
                         <td className="py-3.5 px-3 text-right whitespace-nowrap text-[#64748B]">
                           {formatRupiah(Number(tx.sellingPrice))}
                         </td>
 
-                        {/* Total Nilai Transaksi & Rekening */}
                         <td className="py-3.5 px-3 text-right whitespace-nowrap">
                           <div className="flex flex-col items-end">
                             <span className="font-semibold text-[#0F172A]">
@@ -658,7 +631,6 @@ export default function TransaksiPage() {
                           </div>
                         </td>
 
-                        {/* Margin Laba (Khusus Owner) */}
                         {isOwner && (
                           <td className="py-3.5 px-3 text-right whitespace-nowrap">
                             <div className="flex flex-col items-end">
@@ -672,7 +644,6 @@ export default function TransaksiPage() {
                           </td>
                         )}
 
-                        {/* Aksi Audit Detail */}
                         <td className="py-3.5 px-3 text-right whitespace-nowrap">
                           <Button
                             variant="ghost"
@@ -697,7 +668,6 @@ export default function TransaksiPage() {
         </CardContent>
       </Card>
 
-      {/* ──────────────── MODAL RINCIAN AUDIT TRANSAKSI ──────────────── */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <DialogContent className="sm:max-w-[460px] rounded-2xl bg-white border border-[#E2E8F0] p-6 shadow-xl">
           <DialogHeader>
@@ -711,7 +681,6 @@ export default function TransaksiPage() {
 
           {selectedTxDetail && (
             <div className="space-y-4 py-2">
-              {/* Box Info Identitas Staf */}
               <div className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-3.5">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-[#94A3B8]">
                   Staf pencatat transaksi
@@ -734,7 +703,6 @@ export default function TransaksiPage() {
                 </div>
               </div>
 
-              {/* Rincian Produk & Waktu */}
               <div className="rounded-xl border border-[#E2E8F0] bg-white p-3.5 space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#64748B]">Waktu dicatat:</span>
@@ -822,7 +790,6 @@ export default function TransaksiPage() {
         </DialogContent>
       </Dialog>
 
-      {/* ──────────────── MODAL TAMBAH TRANSAKSI (IDENTIK DENGAN DASHBOARD) ──────────────── */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
         <DialogContent className="sm:max-w-[440px] rounded-2xl bg-white border border-[#E2E8F0] p-6 shadow-xl">
           <form onSubmit={handleCreateTxSubmit}>
@@ -863,7 +830,6 @@ export default function TransaksiPage() {
                 </select>
               </div>
 
-              {/* Kuantitas & Harga Jual Satuan */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="tx-qty" className="text-xs font-semibold text-[#0F172A]">

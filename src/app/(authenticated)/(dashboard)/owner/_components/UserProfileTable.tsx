@@ -1,4 +1,3 @@
-// src/app/(dashboard)/users/_components/UserProfileTable.tsx
 "use client";
 
 import { trpc } from "@/client/trpc";
@@ -20,8 +19,7 @@ import {
 import { Eye, MoreHorizontal, Trash2 } from "lucide-react";
 
 export function UserProfileTable() {
-    // 1. Ambil data menggunakan tRPC query
-    const { data: profiles, isLoading, error, refetch } = trpc.user.listProfiles.useQuery();
+    const { data: profiles, isLoading, error } = trpc.user.listProfiles.useQuery();
 
     if (isLoading) {
         return <div className="p-4 text-center text-sm text-gray-500">Memuat data profil...</div>;
@@ -73,7 +71,6 @@ export function UserProfileTable() {
                                             <DropdownMenuItem 
                                                 className="text-red-600" 
                                                 onClick={() => {
-                                                    // Tambahkan logic hapus atau edit di sini
                                                     alert(`Hapus user: ${profile.email}`);
                                                 }}
                                             >

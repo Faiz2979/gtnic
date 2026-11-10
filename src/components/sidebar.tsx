@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
     ArrowLeftRight,
     BookOpenCheck,
@@ -14,6 +12,8 @@ import {
     Users,
     Wallet,
 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React from "react";
 
 interface SidebarProps {
@@ -81,11 +81,9 @@ export function Sidebar({
                         </p>
                     </div>
 
-                    {/* Navigation */}
                     <nav className="flex flex-col gap-2">
                         {navigation.map((item) => {
                             const Icon = item.icon;
-                            // Cek aktif otomatis berdasarkan pathname URL saat ini
                             const isActive = activePage
                                 ? activePage === item.name
                                 : pathname === item.href ||

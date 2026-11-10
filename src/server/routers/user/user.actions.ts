@@ -1,14 +1,12 @@
-// src/server/routers/user/user.actions.ts
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { TRPCError } from "@trpc/server";
-import { IRegisterUser as ICreateProfile } from "./IUser";
+import { registerUser } from "./user.dto";
 import { userRepository } from "./user.repository";
 
 export const userActions = {
-    async createProfile(input: ICreateProfile): Promise<void> {
+    async createProfile(id: string, input: registerUser): Promise<void> {
         try {
-            // Langgil repository untuk membuat profile baru
-            await userRepository.createProfile(input);
+            await userRepository.createProfile(id, input);
         } catch (error) {
             throw new TRPCError({
                 code: "INTERNAL_SERVER_ERROR",
@@ -19,7 +17,8 @@ export const userActions = {
     },
 
     async inviteEmployee(email: string) {
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+        const siteUrl = process.env.NEXT_PUBLIC_URL;
+
         try {
             const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
                 redirectTo: `${siteUrl}/auth/callback?next=/auth/update-password`,

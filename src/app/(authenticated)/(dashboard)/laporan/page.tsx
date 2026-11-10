@@ -128,14 +128,14 @@ export default function LaporanPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5 print:hidden">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
               Laporan Keuangan
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
               <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
             </span>
           </div>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+          <p className="mt-1 text-xs text-slate-500">
             Rekapitulasi laba rugi, arus kas liquid, dan analisis peringkat penjualan produk.
           </p>
         </div>
@@ -210,80 +210,80 @@ export default function LaporanPage() {
       {/* 4 Finara Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Omzet */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
               Total Omzet Penjualan
             </span>
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-sm">
-              <TrendingUp className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shadow-2xs">
+              <TrendingUp className="h-4 w-4" />
             </div>
           </div>
-          <div className="mt-4">
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
+          <div className="mt-2.5">
+            <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
               {isReportLoading ? "Memuat..." : formatRupiah(summary?.totalRevenue ?? 0)}
             </div>
-            <p className="mt-1.5 text-xs text-[#64748B]">
+            <p className="mt-1 text-xs text-slate-500">
               Dari {summary?.totalTransactions ?? 0} transaksi tercatat
             </p>
           </div>
         </Card>
 
         {/* Beban Pokok Penjualan (HPP) */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
               Beban Pokok Penjualan (HPP)
             </span>
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 shadow-sm">
-              <Package className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-100 text-slate-700 shadow-2xs">
+              <Package className="h-4 w-4" />
             </div>
           </div>
-          <div className="mt-4">
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
+          <div className="mt-2.5">
+            <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
               {isReportLoading ? "Memuat..." : formatRupiah(summary?.totalCost ?? 0)}
             </div>
-            <p className="mt-1.5 text-xs text-[#64748B]">
+            <p className="mt-1 text-xs text-slate-500">
               Total modal dasar barang terjual
             </p>
           </div>
         </Card>
 
         {/* Laba Bersih Usaha */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
               Laba Bersih Usaha
             </span>
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm">
-              <Wallet className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shadow-2xs">
+              <Wallet className="h-4 w-4" />
             </div>
           </div>
-          <div className="mt-4">
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-emerald-600">
+          <div className="mt-2.5">
+            <div className="text-lg sm:text-xl font-bold tracking-tight text-emerald-600">
               {isReportLoading ? "Memuat..." : formatRupiah(summary?.netProfit ?? 0)}
             </div>
-            <p className="mt-1.5 text-xs text-[#64748B]">
+            <p className="mt-1 text-xs text-slate-500">
               Setelah modal &amp; beban operasional
             </p>
           </div>
         </Card>
 
         {/* Profit Margin */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
               Margin Keuntungan
             </span>
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-sm">
-              <Percent className="h-5 w-5" />
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-2xs">
+              <Percent className="h-4 w-4" />
             </div>
           </div>
-          <div className="mt-4">
-            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-indigo-600">
+          <div className="mt-2.5">
+            <div className="text-lg sm:text-xl font-bold tracking-tight text-indigo-600">
               {isReportLoading ? "Memuat..." : `${summary?.profitMargin ?? 0}%`}
             </div>
-            <p className="mt-1.5 text-xs text-[#64748B]">
+            <p className="mt-1 text-xs text-slate-500">
               Rasio efisiensi perputaran laba
             </p>
           </div>

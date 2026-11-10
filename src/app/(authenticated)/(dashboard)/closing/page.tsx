@@ -188,14 +188,14 @@ export default function ClosingPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
               Closing Bulanan
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
               <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
             </span>
           </div>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+          <p className="mt-1 text-xs text-slate-500">
             Kunci pembukuan periode berjalan, carry-over stok fisik ke bulan baru, dan kirimkan rekapan via SMTP.
           </p>
         </div>
@@ -214,7 +214,7 @@ export default function ClosingPage() {
                 }
               }}
               disabled={reopenMutation.isPending}
-              className="h-9 gap-1.5 rounded-xl border border-red-200 bg-white px-3 text-xs font-medium text-red-600 hover:bg-red-50 transition-all"
+              className="h-8.5 gap-1.5 rounded-xl border border-red-200 bg-white px-3 text-xs font-medium text-red-600 hover:bg-red-50 transition-all"
             >
               <Unlock className="h-3.5 w-3.5" />
               {reopenMutation.isPending ? "Membuka..." : "Buka Periode"}
@@ -224,7 +224,7 @@ export default function ClosingPage() {
           <Button
             onClick={handleOpenExecuteModal}
             disabled={isCurrentPeriodClosed}
-            className={`h-9 gap-2 rounded-xl px-4 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98] ${
+            className={`h-8.5 gap-2 rounded-xl px-3.5 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98] ${
               isCurrentPeriodClosed
                 ? "bg-slate-300 cursor-not-allowed"
                 : "bg-slate-900 hover:bg-slate-800"
@@ -246,31 +246,31 @@ export default function ClosingPage() {
       </div>
 
       {/* ──────────────── 3 METRIC SUMMARY CARDS ──────────────── */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {/* Card 1: Status Periode Berjalan */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Status Buku Periode {currentPeriod}
               </span>
               <div
-                className={`flex h-11 w-11 items-center justify-center rounded-2xl shadow-sm ${
+                className={`flex h-8 w-8 items-center justify-center rounded-xl shadow-2xs ${
                   isCurrentPeriodClosed
                     ? "bg-emerald-50 text-emerald-600"
                     : "bg-blue-50 text-blue-600"
                 }`}
               >
-                <Lock className="h-5 w-5" />
+                <Lock className="h-4 w-4" />
               </div>
             </div>
-            <div className="mt-4">
-              <div className="flex items-center gap-2.5">
-                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
+            <div className="mt-2.5">
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                   {isCurrentPeriodClosed ? "TERKUNCI" : "TERBUKA"}
                 </h2>
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                  className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${
                     isCurrentPeriodClosed
                       ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
                       : "bg-blue-50 text-blue-700 border border-blue-200/60"
@@ -279,7 +279,7 @@ export default function ClosingPage() {
                   {isCurrentPeriodClosed ? "Closed" : "Active"}
                 </span>
               </div>
-              <p className="mt-1.5 text-xs text-[#64748B]">
+              <p className="mt-1 text-xs text-slate-500">
                 {isCurrentPeriodClosed
                   ? "Transaksi periode ini telah dikunci permanen"
                   : "Menerima pencatatan transaksi harian kasir"}
@@ -289,21 +289,21 @@ export default function ClosingPage() {
         </Card>
 
         {/* Card 2: Estimasi Laba Bersih Periode Ini */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Estimasi Laba Bersih Periode Ini
               </span>
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm">
-                <TrendingUp className="h-5 w-5" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shadow-2xs">
+                <TrendingUp className="h-4 w-4" />
               </div>
             </div>
-            <div className="mt-4">
-              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-emerald-600">
+            <div className="mt-2.5">
+              <div className="text-lg sm:text-xl font-bold tracking-tight text-emerald-600">
                 {formatRupiah(previewData?.netProfit ?? 0)}
               </div>
-              <p className="mt-1.5 text-xs text-[#64748B]">
+              <p className="mt-1 text-xs text-slate-500">
                 Omzet: {formatRupiah(previewData?.totalRevenue ?? 0)}
               </p>
             </div>
@@ -311,21 +311,21 @@ export default function ClosingPage() {
         </Card>
 
         {/* Card 3: Total Arsip Penutupan Buku */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Total Arsip Closing Tersimpan
               </span>
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-sm">
-                <Archive className="h-5 w-5" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-2xs">
+                <Archive className="h-4 w-4" />
               </div>
             </div>
-            <div className="mt-4">
-              <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
+            <div className="mt-2.5">
+              <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {closings.length} Laporan
               </div>
-              <p className="mt-1.5 text-xs text-[#64748B]">
+              <p className="mt-1 text-xs text-slate-500">
                 Arsip penutupan buku terdahulu
               </p>
             </div>

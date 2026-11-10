@@ -143,14 +143,14 @@ export default function StaffManagementPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
               Manajemen Staf
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
               <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
             </span>
           </div>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+          <p className="mt-1 text-xs text-slate-500">
             Daftar karyawan aktif, rekap kontribusi transaksi kasir, dan undangan staf baru.
           </p>
         </div>
@@ -160,26 +160,26 @@ export default function StaffManagementPage() {
             resetInviteModal();
             setIsInviteOpen(true);
           }}
-          className="h-9 gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98] self-start sm:self-auto"
+          className="h-8.5 gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 px-3.5 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98] self-start sm:self-auto"
         >
-          <UserPlus className="h-4 w-4" />
+          <UserPlus className="h-3.5 w-3.5" />
           Undang Staf Baru
         </Button>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Total Staf Kasir
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                <Users className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shadow-2xs">
+                <Users className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <div className="mt-2.5">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {totalStaffCount} Karyawan
               </h2>
               <p className="mt-1 text-xs text-slate-400">
@@ -189,18 +189,18 @@ export default function StaffManagementPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Pengelola Utama
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                <ShieldCheck className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-2xs">
+                <ShieldCheck className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <div className="mt-2.5">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {totalOwnerCount} Pengelola
               </h2>
               <p className="mt-1 text-xs text-slate-400">
@@ -210,18 +210,18 @@ export default function StaffManagementPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Total Kontribusi
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                <UserCheck className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shadow-2xs">
+                <UserCheck className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <div className="mt-2.5">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {totalTransactionsRecorded} Transaksi
               </h2>
               <p className="mt-1 text-xs text-slate-400">

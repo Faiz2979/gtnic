@@ -3,7 +3,7 @@
 import { trpc } from "@/client/trpc";
 import { AccessDeniedCard } from "@/components/access-denied";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { ROLE } from "@/utils/enums/user-role.enum";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -21,9 +21,7 @@ import {
   Printer,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
   TrendingUp,
-  UserCheck,
   Users,
   Wallet,
 } from "lucide-react";
@@ -39,15 +37,6 @@ const formatRupiah = (val: number | string | undefined | null) => {
     currency: "IDR",
     maximumFractionDigits: 0,
   }).format(num);
-};
-
-// Salam waktu
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
 };
 
 export default function LaporanPage() {

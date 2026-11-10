@@ -34,23 +34,12 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-dayjs.locale("id");
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
-};
-
 export default function StaffManagementPage() {
   const utils = trpc.useUtils();
 
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
-  const userName = profile?.fullName?.split(" ")[0] || "Owner";
 
   const {
     data: profiles = [],
@@ -133,8 +122,6 @@ export default function StaffManagementPage() {
     (acc, curr) => acc + (curr._count?.transactions || 0),
     0
   );
-
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
 
   if (isProfileLoading) {
     return (

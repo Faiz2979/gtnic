@@ -30,7 +30,6 @@ import {
   RefreshCw,
   Search,
   ShieldCheck,
-  Sparkles,
   Trash2,
   TrendingUp,
   Upload,
@@ -193,8 +192,6 @@ export default function ProductManagementPage() {
   const lowStockProductsCount = products.filter(
     (p) => (Number(p.currentStock) || 0) < 10
   ).length;
-
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
 
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

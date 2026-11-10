@@ -24,7 +24,6 @@ import {
     CheckCircle2,
     AlertTriangle,
     Clock,
-    Sparkles,
 } from "lucide-react";
 import { DynamicBreadcrumb } from "./dynamic-breadcrumb";
 import { useSidebar } from "./sidebar-context";

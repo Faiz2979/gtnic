@@ -47,15 +47,6 @@ const formatRupiah = (val: number | string | undefined | null) => {
   }).format(num);
 };
 
-// Salam waktu
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
-};
-
 interface ClosingRecordItem {
   id?: string;
   period?: string;
@@ -86,7 +77,6 @@ export default function ClosingPage() {
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
-  const userName = profile?.fullName?.split(" ")[0] || "Owner";
 
   // 2. Periode Saat Ini
   const currentPeriod = dayjs().format("YYYY-MM");
@@ -169,8 +159,6 @@ export default function ClosingPage() {
 
     executeMutation.mutate({ period: selectedClosingPeriod });
   };
-
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
 
   // Loading Sesi Profil
   if (isProfileLoading) {

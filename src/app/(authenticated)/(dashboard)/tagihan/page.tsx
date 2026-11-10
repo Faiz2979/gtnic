@@ -33,9 +33,7 @@ import {
   Search,
   Send,
   ShieldCheck,
-  Sparkles,
   Trash2,
-  UserCheck,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -51,23 +49,12 @@ const formatRupiah = (val: number | string | undefined | null) => {
   }).format(num);
 };
 
-// Salam waktu
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
-};
-
 export default function TagihanPage() {
   const utils = trpc.useUtils();
 
-  // 1. Data Profil Pengguna Aktif
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
-  const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
   // 2. Data Rekening Bank & Kas (untuk tujuan pelunasan)
   const { data: accounts = [] } = trpc.account.getAllAccounts.useQuery(undefined, {
@@ -372,11 +359,10 @@ export default function TagihanPage() {
             <button
               type="button"
               onClick={() => setActiveTab("ALL")}
-              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "ALL"
-                  ? "border-[#172554] text-[#172554]"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${activeTab === "ALL"
+                ? "border-[#172554] text-[#172554]"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
             >
               <ReceiptText className="h-4 w-4" />
               Semua ({bills.length})
@@ -384,11 +370,10 @@ export default function TagihanPage() {
             <button
               type="button"
               onClick={() => setActiveTab("RECEIVABLE")}
-              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "RECEIVABLE"
-                  ? "border-[#2563EB] text-[#2563EB]"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${activeTab === "RECEIVABLE"
+                ? "border-[#2563EB] text-[#2563EB]"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
             >
               <ArrowDownLeft className="h-4 w-4 text-blue-600" />
               Piutang Pelanggan ({bills.filter((b) => b.type === "RECEIVABLE").length})
@@ -396,11 +381,10 @@ export default function TagihanPage() {
             <button
               type="button"
               onClick={() => setActiveTab("PAYABLE")}
-              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "PAYABLE"
-                  ? "border-red-600 text-red-600"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${activeTab === "PAYABLE"
+                ? "border-red-600 text-red-600"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
             >
               <ArrowUpRight className="h-4 w-4 text-red-600" />
               Utang Supplier & Beban ({bills.filter((b) => b.type === "PAYABLE").length})
@@ -475,11 +459,10 @@ export default function TagihanPage() {
                           {bill.invoiceNumber}
                         </div>
                         <span
-                          className={`mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                            isReceivable
-                              ? "bg-blue-50 text-blue-700 border border-blue-200"
-                              : "bg-purple-50 text-purple-700 border border-purple-200"
-                          }`}
+                          className={`mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${isReceivable
+                            ? "bg-blue-50 text-blue-700 border border-blue-200"
+                            : "bg-purple-50 text-purple-700 border border-purple-200"
+                            }`}
                         >
                           {isReceivable ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
                           {isReceivable ? "Piutang Pelanggan" : "Utang Supplier"}
@@ -533,23 +516,22 @@ export default function TagihanPage() {
                       {/* Status */}
                       <td className="px-6 py-4 text-center">
                         <span
-                          className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                            bill.status === "PAID"
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                              : bill.status === "PARTIAL"
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${bill.status === "PAID"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : bill.status === "PARTIAL"
                               ? "bg-blue-50 text-blue-700 border border-blue-200"
                               : isOverdue
-                              ? "bg-red-50 text-red-700 border border-red-200"
-                              : "bg-amber-50 text-amber-700 border border-amber-200"
-                          }`}
+                                ? "bg-red-50 text-red-700 border border-red-200"
+                                : "bg-amber-50 text-amber-700 border border-amber-200"
+                            }`}
                         >
                           {bill.status === "PAID"
                             ? "Lunas"
                             : bill.status === "PARTIAL"
-                            ? "Sebagian"
-                            : isOverdue
-                            ? "Jatuh Tempo"
-                            : "Belum Bayar"}
+                              ? "Sebagian"
+                              : isOverdue
+                                ? "Jatuh Tempo"
+                                : "Belum Bayar"}
                         </span>
                       </td>
 
@@ -647,11 +629,10 @@ export default function TagihanPage() {
               <button
                 type="button"
                 onClick={() => setCreateForm({ ...createForm, type: "RECEIVABLE" })}
-                className={`rounded-xl border p-3 text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-                  createForm.type === "RECEIVABLE"
-                    ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-500/20"
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                }`}
+                className={`rounded-xl border p-3 text-xs font-semibold flex items-center justify-center gap-2 transition-all ${createForm.type === "RECEIVABLE"
+                  ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-500/20"
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
               >
                 <ArrowDownLeft className="h-4 w-4 text-blue-600" />
                 Piutang Pelanggan
@@ -660,11 +641,10 @@ export default function TagihanPage() {
               <button
                 type="button"
                 onClick={() => setCreateForm({ ...createForm, type: "PAYABLE" })}
-                className={`rounded-xl border p-3 text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-                  createForm.type === "PAYABLE"
-                    ? "border-purple-500 bg-purple-50 text-purple-700 ring-2 ring-purple-500/20"
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                }`}
+                className={`rounded-xl border p-3 text-xs font-semibold flex items-center justify-center gap-2 transition-all ${createForm.type === "PAYABLE"
+                  ? "border-purple-500 bg-purple-50 text-purple-700 ring-2 ring-purple-500/20"
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
               >
                 <ArrowUpRight className="h-4 w-4 text-purple-600" />
                 Utang Supplier & Beban
@@ -989,11 +969,10 @@ export default function TagihanPage() {
                 </div>
                 <div className="text-right">
                   <span
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      previewBill.status === "PAID"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold ${previewBill.status === "PAID"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-amber-100 text-amber-800"
+                      }`}
                   >
                     {previewBill.status === "PAID" ? "LUNAS (PAID)" : "BELUM LUNAS"}
                   </span>

@@ -29,7 +29,6 @@ import {
   ShieldCheck,
   UserCheck,
   Wallet,
-  Sparkles,
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
@@ -44,14 +43,6 @@ const formatRupiah = (val: number | string | undefined | null) => {
     currency: "IDR",
     maximumFractionDigits: 0,
   }).format(num);
-};
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
 };
 
 export default function DashboardPage() {
@@ -154,7 +145,6 @@ export default function DashboardPage() {
   const isLoading =
     isProfileLoading || (isOwner && isOwnerLoading) || (isStaff && isStaffLoading);
 
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
   const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
   const revenueThisMonth = isOwner

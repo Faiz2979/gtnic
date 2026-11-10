@@ -54,15 +54,6 @@ const formatRupiah = (val: number | string | undefined | null) => {
     }).format(num);
 };
 
-// Salam waktu (Pagi/Siang/Sore/Malam)
-const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 11) return "Selamat pagi";
-    if (hour < 15) return "Selamat siang";
-    if (hour < 18) return "Selamat sore";
-    return "Selamat malam";
-};
-
 // Preset Bank & E-Wallet Populer
 const POPULAR_BANKS = [
     { name: "BCA", type: "BANK", label: "Bank Central Asia" },
@@ -93,7 +84,6 @@ export default function RekeningPage() {
     const { data: profile, isLoading: isProfileLoading } =
         trpc.user.getCurrentProfile.useQuery();
     const isOwner = profile?.role === ROLE.OWNER;
-    const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
     // 2. Data Rekening & Mutasi dari tRPC (Hanya di-fetch jika role adalah Owner)
     const {

@@ -30,7 +30,6 @@ import {
   ShieldCheck,
   TrendingUp,
   UserCheck,
-  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -46,21 +45,12 @@ const formatRupiah = (val: number | string | undefined | null) => {
   }).format(num);
 };
 
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
-};
-
 export default function TransaksiPage() {
   const utils = trpc.useUtils();
 
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
-  const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
   const currentPeriod = dayjs().format("YYYY-MM");
   const [selectedPeriod, setSelectedPeriod] = useState<string>(currentPeriod);
@@ -216,7 +206,6 @@ export default function TransaksiPage() {
   );
   const uniqueStaffCount = new Set(filteredTransactions.map((t) => t.createdById)).size;
 
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
   const selectedProdObj = products.find((p) => p.id === selectedProductId);
 
   const handleExportCSV = () => {

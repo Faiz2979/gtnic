@@ -224,14 +224,14 @@ export default function TagihanPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
               Tagihan & Faktur
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
               <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
             </span>
           </div>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+          <p className="mt-1 text-xs text-slate-500">
             Jadwal piutang pelanggan, pembayaran utang belanja supplier, dan status tempo faktur.
           </p>
         </div>
@@ -239,9 +239,9 @@ export default function TagihanPage() {
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
           <Button
             onClick={() => setIsCreateModalOpen(true)}
-            className="h-9 gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98]"
+            className="h-8.5 gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 px-3.5 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98]"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             Buat Tagihan
           </Button>
 
@@ -253,7 +253,7 @@ export default function TagihanPage() {
               showToast("Memperbarui data tagihan...");
             }}
             title="Refresh Data"
-            className="h-9 w-9 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+            className="h-8.5 w-8.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
           >
             <RefreshCw className="h-3.5 w-3.5" />
           </Button>
@@ -263,18 +263,18 @@ export default function TagihanPage() {
       {/* 4 Finara Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Piutang Pelanggan */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-          <CardContent className="p-5">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Piutang Belum Tertagih
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#2563EB] shadow-xs">
-                <ArrowDownLeft className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-[#2563EB] shadow-2xs">
+                <ArrowDownLeft className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
+            <div className="mt-2.5">
+              <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {isStatsLoading ? "Memuat..." : formatRupiah(stats?.totalReceivablesUnpaid ?? 0)}
               </div>
               <p className="mt-1 text-xs text-slate-500">
@@ -285,40 +285,40 @@ export default function TagihanPage() {
         </Card>
 
         {/* Utang Supplier & Beban */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-          <CardContent className="p-5">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Utang Harus Dibayar
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-red-50 text-red-600 shadow-xs">
-                <ArrowUpRight className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-50 text-red-600 shadow-2xs">
+                <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
+            <div className="mt-2.5">
+              <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {isStatsLoading ? "Memuat..." : formatRupiah(stats?.totalPayablesUnpaid ?? 0)}
               </div>
               <p className="mt-1 text-xs text-slate-500">
-                Belanja modal & beban operasional
+                Belanja modal &amp; beban operasional
               </p>
             </div>
           </CardContent>
         </Card>
 
         {/* Tagihan Jatuh Tempo */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-          <CardContent className="p-5">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Lewat Jatuh Tempo
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 shadow-xs">
-                <AlertCircle className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-50 text-amber-600 shadow-2xs">
+                <AlertCircle className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <div className="text-2xl font-extrabold tracking-tight text-amber-600">
+            <div className="mt-2.5">
+              <div className="text-lg sm:text-xl font-bold tracking-tight text-amber-600">
                 {isStatsLoading ? "Memuat..." : `${stats?.overdueCount ?? 0} Tagihan`}
               </div>
               <p className="mt-1 text-xs text-slate-500">
@@ -329,18 +329,18 @@ export default function TagihanPage() {
         </Card>
 
         {/* Tagihan Lunas */}
-        <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-          <CardContent className="p-5">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <CardContent className="p-4 sm:p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Total Tagihan Lunas
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-xs">
-                <CheckCircle2 className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shadow-2xs">
+                <CheckCircle2 className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
+            <div className="mt-2.5">
+              <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {isStatsLoading ? "Memuat..." : `${stats?.paidThisMonthCount ?? 0} Faktur`}
               </div>
               <p className="mt-1 text-xs text-slate-500">

@@ -157,7 +157,7 @@ export default function PengaturanPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
               Pengaturan
             </h1>
             {isProfileLoading ? (
@@ -173,7 +173,7 @@ export default function PengaturanPage() {
               </span>
             )}
           </div>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+          <p className="mt-1 text-xs text-slate-500">
             Kelola preferensi akun, identitas toko pada invoice, dan keamanan akses Anda.
           </p>
         </div>

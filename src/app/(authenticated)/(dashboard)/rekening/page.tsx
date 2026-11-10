@@ -337,7 +337,7 @@ export default function RekeningPage() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
                 <div>
                     <div className="flex items-center gap-2.5">
-                        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+                        <h1 className="text-xl font-bold tracking-tight text-slate-900">
                             Rekening & Kas
                         </h1>
                         {isOwner ? (
@@ -350,7 +350,7 @@ export default function RekeningPage() {
                             </span>
                         )}
                     </div>
-                    <p className="mt-1 text-xs sm:text-sm text-slate-500">
+                    <p className="mt-1 text-xs text-slate-500">
                         Kelola akun perbankan resmi, e-wallet QRIS, dan saldo kas fisik operasional toko.
                     </p>
                 </div>
@@ -372,7 +372,7 @@ export default function RekeningPage() {
                                     }
                                     setIsAdjustModalOpen(true);
                                 }}
-                                className="h-9 gap-1.5 rounded-xl border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 transition-all"
+                                className="h-8.5 gap-1.5 rounded-xl border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 transition-all"
                             >
                                 <ArrowDownLeft className="h-3.5 w-3.5 text-emerald-600" />
                                 Catat Mutasi
@@ -380,7 +380,7 @@ export default function RekeningPage() {
 
                             <Button
                                 onClick={() => setIsAddModalOpen(true)}
-                                className="h-9 gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98]"
+                                className="h-8.5 gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98]"
                             >
                                 <Plus className="h-3.5 w-3.5" />
                                 Tambah Rekening
@@ -397,7 +397,7 @@ export default function RekeningPage() {
                             showToast("Memperbarui data...");
                         }}
                         title="Refresh Data"
-                        className="h-9 w-9 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                        className="h-8.5 w-8.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
                     >
                         <RefreshCw className="h-3.5 w-3.5" />
                     </Button>
@@ -407,18 +407,18 @@ export default function RekeningPage() {
             {/* 4 Finara Metric Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Total Likuiditas / Saldo Keseluruhan */}
-                <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <CardContent className="p-5">
+                <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                    <CardContent className="p-4 sm:p-5">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                 Total Saldo Keseluruhan
                             </span>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#172554] shadow-xs">
-                                <Wallet className="h-4.5 w-4.5" strokeWidth={2} />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-[#172554] shadow-2xs">
+                                <Wallet className="h-4 w-4" strokeWidth={2} />
                             </div>
                         </div>
-                        <div className="mt-3">
-                            <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
+                        <div className="mt-2.5">
+                            <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                                 {isStatsLoading ? (
                                     <span className="text-slate-300">Memuat...</span>
                                 ) : (
@@ -434,18 +434,18 @@ export default function RekeningPage() {
                 </Card>
 
                 {/* Saldo Bank */}
-                <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <CardContent className="p-5">
+                <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                    <CardContent className="p-4 sm:p-5">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                 Saldo Rekening Bank
                             </span>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-xs">
-                                <Landmark className="h-4.5 w-4.5" strokeWidth={2} />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shadow-2xs">
+                                <Landmark className="h-4 w-4" strokeWidth={2} />
                             </div>
                         </div>
-                        <div className="mt-3">
-                            <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
+                        <div className="mt-2.5">
+                            <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                                 {isStatsLoading ? (
                                     <span className="text-slate-300">Memuat...</span>
                                 ) : (
@@ -460,18 +460,18 @@ export default function RekeningPage() {
                 </Card>
 
                 {/* Kas Tunai Fisik */}
-                <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <CardContent className="p-5">
+                <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                    <CardContent className="p-4 sm:p-5">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                 Kas Fisik di Toko
                             </span>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-xs">
-                                <Banknote className="h-4.5 w-4.5" strokeWidth={2} />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 shadow-2xs">
+                                <Banknote className="h-4 w-4" strokeWidth={2} />
                             </div>
                         </div>
-                        <div className="mt-3">
-                            <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
+                        <div className="mt-2.5">
+                            <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                                 {isStatsLoading ? (
                                     <span className="text-slate-300">Memuat...</span>
                                 ) : (
@@ -486,18 +486,18 @@ export default function RekeningPage() {
                 </Card>
 
                 {/* Saldo E-Wallet / QRIS */}
-                <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                    <CardContent className="p-5">
+                <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                    <CardContent className="p-4 sm:p-5">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                 E-Wallet &amp; QRIS
                             </span>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-xs">
-                                <CreditCard className="h-4.5 w-4.5" strokeWidth={2} />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-2xs">
+                                <CreditCard className="h-4 w-4" strokeWidth={2} />
                             </div>
                         </div>
-                        <div className="mt-3">
-                            <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
+                        <div className="mt-2.5">
+                            <div className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                                 {isStatsLoading ? (
                                     <span className="text-slate-300">Memuat...</span>
                                 ) : (

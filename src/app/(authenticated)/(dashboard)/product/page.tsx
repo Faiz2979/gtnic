@@ -347,14 +347,14 @@ export default function ProductManagementPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
               Produk & Stok
             </h1>
             <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
               <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
             </span>
           </div>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+          <p className="mt-1 text-xs text-slate-500">
             Katalog master barang dagang, ketersediaan stok fisik gudang, dan penetapan harga modal & jual.
           </p>
         </div>
@@ -364,26 +364,26 @@ export default function ProductManagementPage() {
             resetAddForm();
             setIsAddOpen(true);
           }}
-          className="h-9 gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98] self-start sm:self-auto"
+          className="h-8.5 gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 px-3.5 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98] self-start sm:self-auto"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3.5 w-3.5" />
           Tambah Produk
         </Button>
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Total Katalog Produk
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                <Package className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 shadow-2xs">
+                <Package className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <div className="mt-2.5">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {totalProductsCount} Produk
               </h2>
               <p className="mt-1 text-xs text-slate-400">
@@ -393,18 +393,18 @@ export default function ProductManagementPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Total Stok Fisik Tersedia
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                <Boxes className="h-4.5 w-4.5" strokeWidth={2} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shadow-2xs">
+                <Boxes className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <div className="mt-2.5">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
                 {totalCurrentStock} Unit
               </h2>
               <p className="mt-1 text-xs text-slate-400">
@@ -414,20 +414,20 @@ export default function ProductManagementPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
+        <Card className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 Perlu Restock Segera
               </span>
-              <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${
+              <div className={`flex h-8 w-8 items-center justify-center rounded-xl shadow-2xs ${
                 lowStockProductsCount > 0 ? "bg-amber-50 text-amber-600" : "bg-emerald-50 text-emerald-600"
               }`}>
-                <AlertTriangle className="h-4.5 w-4.5" strokeWidth={2} />
+                <AlertTriangle className="h-4 w-4" strokeWidth={2} />
               </div>
             </div>
-            <div className="mt-3">
-              <h2 className={`text-2xl font-bold tracking-tight ${
+            <div className="mt-2.5">
+              <h2 className={`text-lg sm:text-xl font-bold tracking-tight ${
                 lowStockProductsCount > 0 ? "text-amber-600" : "text-emerald-600"
               }`}>
                 {lowStockProductsCount} Produk

@@ -1,6 +1,7 @@
 "use client";
 
 import { trpc } from "@/client/trpc";
+import { AccessDeniedCard } from "@/components/access-denied";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -14,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { uploadToCloudinary } from "@/lib/cloudinary";
-import { AccessDeniedCard } from "@/components/access-denied";
 import { ROLE } from "@/utils/enums/user-role.enum";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -29,7 +29,6 @@ import {
   Plus,
   RefreshCw,
   Search,
-  ShieldAlert,
   ShieldCheck,
   Trash2,
   TrendingUp,
@@ -37,7 +36,6 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useMemo, useState } from "react";
 
 dayjs.locale("id");

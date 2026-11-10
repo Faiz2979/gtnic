@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { BillType, BillStatus, MutationType } from "../../../../lib/generated/prisma";
+import { BillStatus, BillType, MutationType, Prisma } from "../../../../lib/generated/prisma";
 import { CreateBillInput, RecordPaymentInput } from "./bill.dto";
 
 export const billRepository = {
@@ -7,7 +7,7 @@ export const billRepository = {
     type?: "RECEIVABLE" | "PAYABLE" | "ALL";
     status?: string;
   }) {
-    const where: any = {};
+    const where: Prisma.BillWhereInput = {};
 
     if (filters?.type && filters.type !== "ALL") {
       where.type = filters.type as BillType;
@@ -203,4 +203,3 @@ export const billRepository = {
     };
   },
 };
-

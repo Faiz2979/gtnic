@@ -1,6 +1,7 @@
 "use client";
 
 import { trpc } from "@/client/trpc";
+import { AccessDeniedCard } from "@/components/access-denied";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AccessDeniedCard } from "@/components/access-denied";
 import { ROLE } from "@/utils/enums/user-role.enum";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -29,12 +29,10 @@ import {
   Loader2,
   Lock,
   Mail,
-  ShieldAlert,
   ShieldCheck,
   TrendingUp,
   Unlock
 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 
 dayjs.locale("id");

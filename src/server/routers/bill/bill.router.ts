@@ -4,7 +4,6 @@ import { billActions } from "./bill.actions";
 import {
   createBillSchema,
   recordPaymentSchema,
-  updateBillStatusSchema,
 } from "./bill.dto";
 
 export const billRouter = router({

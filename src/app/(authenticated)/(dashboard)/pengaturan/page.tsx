@@ -1,36 +1,32 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
-import { useRouter } from "next/navigation";
-import { trpc } from "@/client/trpc";
-import { ROLE } from "@/utils/enums/user-role.enum";
 import { createClient } from "@/app/lib/supabase/client";
+import { trpc } from "@/client/trpc";
+import { AccessDeniedCard } from "@/components/access-denied";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AccessDeniedCard } from "@/components/access-denied";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 import {
-  Settings2,
-  User,
+  AlertCircle,
+  Bell,
   Building2,
+  CheckCircle2,
+  KeyRound,
+  Loader2,
   Lock,
+  LogOut,
   Mail,
   ShieldCheck,
-  UserCheck,
-  CheckCircle2,
-  AlertCircle,
-  LogOut,
-  KeyRound,
-  Check,
-  Loader2,
-  Smartphone,
-  MapPin,
-  Bell,
   Sparkles,
+  User,
+  UserCheck
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 dayjs.locale("id");
 
@@ -122,8 +118,8 @@ export default function PengaturanPage() {
       setNewPassword("");
       setConfirmPassword("");
       showToast("Kata sandi berhasil diubah! Gunakan sandi baru untuk login berikutnya.");
-    } catch (err: any) {
-      setPasswordError(err.message || "Gagal mengubah kata sandi.");
+    } catch (err: unknown) {
+      setPasswordError((err as Error).message || "Gagal mengubah kata sandi.");
     } finally {
       setPasswordLoading(false);
     }
@@ -137,9 +133,9 @@ export default function PengaturanPage() {
     try {
       await supabase.auth.signOut();
       router.push("/auth/login");
-    } catch (err) {
+    } catch (error) {
       setIsLoggingOut(false);
-      alert("Gagal keluar dari sesi.");
+      alert("Gagal keluar dari sesi."+(error instanceof Error ? ` ${error.message}` : ""));
     }
   };
 

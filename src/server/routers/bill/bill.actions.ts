@@ -1,7 +1,7 @@
-import dayjs from "dayjs";
 import { prisma } from "@/lib/prisma";
-import { billRepository } from "./bill.repository";
+import dayjs from "dayjs";
 import { CreateBillInput, RecordPaymentInput } from "./bill.dto";
+import { billRepository } from "./bill.repository";
 
 export interface BillItemDto {
   name: string;
@@ -104,7 +104,7 @@ export const billActions = {
       paidAmount: Number(b.paidAmount),
       remainingAmount: Number(b.totalAmount) - Number(b.paidAmount),
       dueDate: b.dueDate.toISOString(),
-      items: Array.isArray(b.itemsJson) ? (b.itemsJson as any as BillItemDto[]) : [],
+      items: Array.isArray(b.itemsJson) ? (b.itemsJson as unknown as BillItemDto[]) : [],
       notes: b.notes,
       createdByName: b.createdBy?.fullName || "Owner",
       createdAt: b.createdAt.toISOString(),
@@ -136,7 +136,7 @@ export const billActions = {
       paidAmount: Number(b.paidAmount),
       remainingAmount: Number(b.totalAmount) - Number(b.paidAmount),
       dueDate: b.dueDate.toISOString(),
-      items: Array.isArray(b.itemsJson) ? (b.itemsJson as any as BillItemDto[]) : [],
+      items: Array.isArray(b.itemsJson) ? (b.itemsJson as unknown as BillItemDto[]) : [],
       notes: b.notes,
       createdByName: b.createdBy?.fullName || "Owner",
       createdAt: b.createdAt.toISOString(),

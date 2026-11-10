@@ -1,10 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
 import { trpc } from "@/client/trpc";
-import { ROLE } from "@/utils/enums/user-role.enum";
+import { AccessDeniedCard } from "@/components/access-denied";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -17,32 +14,33 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AccessDeniedCard } from "@/components/access-denied";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 import {
-    Wallet,
-    Landmark,
-    Banknote,
-    CreditCard,
-    Plus,
-    Search,
-    ShieldCheck,
-    UserCheck,
-    Copy,
-    Check,
+    AlertCircle,
     ArrowDownLeft,
     ArrowUpRight,
-    RefreshCw,
-    Edit,
-    Trash2,
-    Sparkles,
-    QrCode,
+    Banknote,
+    Check,
     CheckCircle2,
-    AlertCircle,
-    HelpCircle,
-    Loader2,
+    Copy,
+    CreditCard,
+    Edit,
     History,
-    TrendingUp,
+    Landmark,
+    Loader2,
+    Plus,
+    QrCode,
+    RefreshCw,
+    Search,
+    ShieldCheck,
+    Sparkles,
+    Trash2,
+    UserCheck,
+    Wallet,
 } from "lucide-react";
+import { useMemo, useState } from "react";
 
 dayjs.locale("id");
 
@@ -80,6 +78,13 @@ const POPULAR_BANKS = [
     { name: "OVO", type: "EWALLET", label: "OVO Merchant" },
     { name: "Lainnya", type: "BANK", label: "Bank / Rekening Lainnya" },
 ];
+
+enum FilterType {
+    ALL = "ALL",
+    BANK = "BANK",
+    EWALLET = "EWALLET",
+    CASH = "CASH",
+}
 
 export default function RekeningPage() {
     const utils = trpc.useUtils();
@@ -779,13 +784,13 @@ export default function RekeningPage() {
 
                             <select
                                 value={filterType}
-                                onChange={(e) => setFilterType(e.target.value as any)}
+                                onChange={(e) => setFilterType(e.target.value as FilterType)}
                                 className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs text-slate-700 outline-none"
                             >
-                                <option value="ALL">Semua Tipe</option>
-                                <option value="BANK">Bank</option>
-                                <option value="EWALLET">E-Wallet / QRIS</option>
-                                <option value="CASH">Kas Tunai</option>
+                                <option value={FilterType.ALL}>Semua Tipe</option>
+                                <option value={FilterType.BANK}>Bank</option>
+                                <option value={FilterType.EWALLET}>E-Wallet / QRIS</option>
+                                <option value={FilterType.CASH}>Kas Tunai</option>
                             </select>
                         </div>
                     )}
@@ -1101,7 +1106,7 @@ export default function RekeningPage() {
                                     setAddForm((prev) => ({
                                         ...prev,
                                         bankName: e.target.value,
-                                        type: (selected?.type as any) || "BANK",
+                                        type: (selected?.type as "BANK" | "EWALLET" | "CASH") || "BANK",
                                         name: prev.name || (selected?.name ? `${selected.name} Operasional` : ""),
                                     }));
                                 }}

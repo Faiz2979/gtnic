@@ -1,10 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
 import { trpc } from "@/client/trpc";
-import { ROLE } from "@/utils/enums/user-role.enum";
+import { AccessDeniedCard } from "@/components/access-denied";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -17,32 +14,29 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AccessDeniedCard } from "@/components/access-denied";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 import {
-  ReceiptText,
+  AlertCircle,
   ArrowDownLeft,
   ArrowUpRight,
-  Plus,
-  Search,
-  ShieldCheck,
-  UserCheck,
   Calendar,
-  Clock,
   CheckCircle2,
-  AlertCircle,
-  Phone,
-  Copy,
-  Check,
-  Printer,
-  Trash2,
-  RefreshCw,
-  Wallet,
-  FileText,
-  Send,
-  Loader2,
-  Eye,
   CreditCard,
+  Eye,
+  Loader2,
+  Plus,
+  Printer,
+  ReceiptText,
+  RefreshCw,
+  Search,
+  Send,
+  ShieldCheck,
+  Trash2,
+  UserCheck,
 } from "lucide-react";
+import { useMemo, useState } from "react";
 
 dayjs.locale("id");
 
@@ -1047,7 +1041,7 @@ export default function TagihanPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {previewBill.items.map((item: any, i: number) => (
+                    {previewBill.items.map((item: { name: string; quantity: number; price: number }, i: number) => (
                       <tr key={i}>
                         <td className="py-2 font-medium">{item.name}</td>
                         <td className="py-2 text-center text-slate-500">{item.quantity}</td>

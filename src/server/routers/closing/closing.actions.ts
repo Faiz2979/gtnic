@@ -9,7 +9,7 @@ import { ClosingRepository } from "./closing.repository";
 export const ClosingActions = {
   generateDraft: async (period: string) => {
     let inventories = await ClosingRepository.getActiveInventories(period);
-    
+
     // Jika belum ada inventaris aktif pada periode ini, inisialisasi dari katalog produk yang ada
     if (!inventories.length) {
       const allProducts = await prisma.product.findMany();
@@ -46,8 +46,8 @@ export const ClosingActions = {
       productId: inv.productId,
       productName: inv.product.name,
       systemStock: inv.currentStock,
-      physicalStock: inv.currentStock, 
-      discrepancy: 0, 
+      physicalStock: inv.currentStock,
+      discrepancy: 0,
       notes: null,
     }));
 
@@ -148,13 +148,13 @@ export const ClosingActions = {
       id: string;
       currentStock: number;
     }[] = [];
-    const nextPeriodInventories: { 
-      productId: string; 
-      initialStock: number; 
-      addedStock: number; 
-      currentStock: number; 
-      status: "ACTIVE"; 
-      period: string; 
+    const nextPeriodInventories: {
+      productId: string;
+      initialStock: number;
+      addedStock: number;
+      currentStock: number;
+      status: "ACTIVE";
+      period: string;
     }[] = [];
 
     for (const item of items) {
@@ -163,7 +163,7 @@ export const ClosingActions = {
       if (target) {
         inventoryUpdates.push({
           id: target.id,
-          currentStock: item.physicalStock, 
+          currentStock: item.physicalStock,
         });
       }
 
@@ -201,7 +201,7 @@ export const ClosingActions = {
           data: {
             status: InventoryStatus.CLOSED,
             currentStock: inv.currentStock,
-          },  
+          },
         });
       }
 
@@ -348,7 +348,11 @@ export const ClosingActions = {
 
   getAllClosings: async () => {
     const records = await ClosingRepository.getAllClosings();
-    return records.map((c: any) => ({
+
+    // Menggunakan tipe data hasil inferensi Prisma agar type-safe
+    type ClosingRecord = Awaited<ReturnType<typeof ClosingRepository.getAllClosings>>[number];
+
+    return records.map((c: ClosingRecord) => ({
       id: c.id,
       period: c.period,
       totalRevenue: Number(c.totalRevenue),
@@ -359,11 +363,11 @@ export const ClosingActions = {
       itemsSnapshot: (c.itemsSnapshot as unknown as ClosingItemSnapshot[]) || [],
       closedBy: c.closedBy
         ? {
-            id: c.closedBy.id,
-            fullName: c.closedBy.fullName,
-            email: c.closedBy.email,
-            role: c.closedBy.role,
-          }
+          id: c.closedBy.id,
+          fullName: c.closedBy.fullName,
+          email: c.closedBy.email,
+          role: c.closedBy.role,
+        }
         : null,
     }));
   },

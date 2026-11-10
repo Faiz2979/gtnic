@@ -19,6 +19,7 @@ import "dayjs/locale/id";
 import {
   ArrowDownLeft,
   ArrowLeftRight,
+  CheckCircle2,
   Clock,
   Eye,
   FileSpreadsheet,
@@ -28,18 +29,10 @@ import {
   Search,
   ShieldCheck,
   TrendingUp,
-  Package,
-  Clock,
-  Eye,
-  Loader2,
-  FileSpreadsheet,
-  Wallet,
-  CreditCard,
-  CheckCircle2,
-  UserCheck,
+  UserCheck
 } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 dayjs.locale("id");
 
@@ -105,7 +98,7 @@ export default function TransaksiPage() {
   // Default Rekening ke akun utama / aktif
   useEffect(() => {
     if (!selectedAccountId && accounts.length > 0) {
-      const primary = accounts.find((a) => a.isPrimary && a.isActive) || accounts.find((a) => a.isActive);
+      const primary = accounts.find((a: { isPrimary: boolean; isActive: boolean; }) => a.isPrimary && a.isActive) || accounts.find((a: { isActive: boolean; }) => a.isActive);
       if (primary) setSelectedAccountId(primary.id);
     }
   }, [accounts, selectedAccountId]);
@@ -131,7 +124,7 @@ export default function TransaksiPage() {
 
   const resetCreateForm = () => {
     setSelectedProductId("");
-    const primary = accounts.find((a) => a.isPrimary && a.isActive) || accounts.find((a) => a.isActive);
+    const primary = accounts.find((a: { isPrimary: boolean; isActive: boolean; }) => a.isPrimary && a.isActive) || accounts.find((a: { isActive: boolean; }) => a.isActive);
     setSelectedAccountId(primary ? primary.id : "");
     setTxQuantity(1);
     setTxCostPrice(0);

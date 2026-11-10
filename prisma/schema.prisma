@@ -45,6 +45,8 @@ model Profile {
   transactions  Transaction[]
   closings      MonthlyClosing[]
   notifications Notification[]
+  bankAccounts  BankAccount[]
+
 
   @@map("profiles")
 }
@@ -85,6 +87,7 @@ model Transaction {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   productId    String   @map("product_id") @db.Uuid
   createdById  String   @map("created_by_id") @db.Uuid
+  accountId    String?  @map("account_id") @db.Uuid
   period       String   // Format: "YYYY-MM"
   quantity     Int
   costPrice    Decimal  @map("cost_price") @db.Decimal(12, 2)
@@ -92,8 +95,9 @@ model Transaction {
   totalProfit  Decimal  @map("total_profit") @db.Decimal(12, 2)
   createdAt    DateTime @default(now()) @map("created_at")
 
-  product   Product @relation(fields: [productId], references: [id])
-  createdBy Profile @relation(fields: [createdById], references: [id])
+  product   Product      @relation(fields: [productId], references: [id])
+  createdBy Profile      @relation(fields: [createdById], references: [id])
+  account   BankAccount? @relation(fields: [accountId], references: [id])
 
   @@map("transactions")
 }
@@ -126,4 +130,53 @@ model Notification {
   user Profile @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
+}
+
+enum AccountType {
+  BANK
+  EWALLET
+  CASH
+}
+
+enum MutationType {
+  INCOME
+  EXPENSE
+  TRANSFER
+  ADJUSTMENT
+}
+
+model BankAccount {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  bankName      String          @map("bank_name")
+  accountNumber String          @map("account_number")
+  holderName    String          @map("holder_name")
+  type          AccountType     @default(BANK)
+  balance       Decimal         @default(0) @db.Decimal(14, 2)
+  isActive      Boolean         @default(true) @map("is_active")
+  isPrimary     Boolean         @default(false) @map("is_primary")
+  notes         String?
+  createdById   String?         @map("created_by_id") @db.Uuid
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  createdBy     Profile?        @relation(fields: [createdById], references: [id])
+  mutations     AccountMutation[]
+  transactions  Transaction[]
+
+  @@map("bank_accounts")
+}
+
+model AccountMutation {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId   String       @map("account_id") @db.Uuid
+  type        MutationType
+  amount      Decimal      @db.Decimal(14, 2)
+  description String
+  reference   String?
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  account     BankAccount  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("account_mutations")
 }

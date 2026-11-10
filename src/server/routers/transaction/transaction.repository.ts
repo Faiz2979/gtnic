@@ -19,6 +19,7 @@ export const transactionRepository = {
         return await prisma.transaction.create({
             data: {
                 productId: data.productId,
+                accountId: data.accountId || null,
                 period: data.period,
                 quantity: data.quantity,
                 costPrice: data.costPrice,
@@ -28,6 +29,7 @@ export const transactionRepository = {
             },
             include: {
                 product: true,
+                account: true,
             },
         });
     },
@@ -49,6 +51,7 @@ export const transactionRepository = {
             include: {
                 product: true,
                 createdBy: true,
+                account: true,
             },
             orderBy: { createdAt: "desc" },
         });

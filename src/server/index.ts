@@ -1,3 +1,4 @@
+import { accountRouter } from './routers/account/account.router';
 import { closingRouter } from './routers/closing/closing.router';
 import { dashboardRouter } from './routers/dashboard/dashboard.router';
 import { helloWorldRouter } from './routers/hello-world/hello-world.router';
@@ -11,19 +12,20 @@ import { router } from './trpc';
 export const appRouter = router({
     // TODO: add router procedures here later
     // router:  routerName, // contoh penggunaan router yang sudah didefinisikan di file lain
-    
+
     // api path nya akan menjadi /api/trpc/routerName.procedureName
     // contoh:  api/trpc/helloWorld.hello
-    helloWorld: helloWorldRouter, 
+    helloWorld: helloWorldRouter,
 
-    user: userRouter, 
+    user: userRouter,
     product: productRouter,
     inventory: inventoryRouter,
     transaction: transactionRouter,
+    account: accountRouter,
     closing: closingRouter,
     dashboard: dashboardRouter,
 });
-  
+
 // optional untuk standalone server
 // export const server = createHTTPServer({
 //   router: appRouter,

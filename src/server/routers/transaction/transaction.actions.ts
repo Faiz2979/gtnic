@@ -1,20 +1,34 @@
 // src/server/routers/transaction/transaction.actions.ts
 import { prisma } from "@/lib/prisma";
 import { TRPCError } from "@trpc/server";
-import { Prisma } from "../../../../lib/generated/prisma";
+import { Prisma, MutationType } from "../../../../lib/generated/prisma";
 import { CreateTransactionInput } from "./transaction.dto";
 import { transactionRepository } from "./transaction.repository";
 
 export const transactionAction = {
   async createTransaction(input: CreateTransactionInput, userId: string) {
-    const { productId, period, quantity, costPrice, sellingPrice } = input;
+    const { productId, period, quantity, costPrice, sellingPrice, accountId } = input;
 
     const dCostPrice = new Prisma.Decimal(costPrice);
     const dSellingPrice = new Prisma.Decimal(sellingPrice);
     
     const profitPerUnit = dSellingPrice.minus(dCostPrice);
     const totalProfit = profitPerUnit.times(quantity);
+    const totalRevenue = dSellingPrice.times(quantity);
 
+    // 1. Tentukan rekening tujuan pembayaran jika belum ditentukan
+    let targetAccountId = accountId;
+    if (!targetAccountId) {
+      const defaultAccount = await prisma.bankAccount.findFirst({
+        where: { isActive: true },
+        orderBy: [{ isPrimary: "desc" }, { createdAt: "asc" }],
+      });
+      if (defaultAccount) {
+        targetAccountId = defaultAccount.id;
+      }
+    }
+
+    // 2. Eksekusi transaksi
     return await prisma.$transaction(async () => {
       const inventory = await transactionRepository.findInventory(productId, period);
 
@@ -42,13 +56,37 @@ export const transactionAction = {
 
       // 4. Simpan record transaksi menggunakan repository
       const transaction = await transactionRepository.createTransaction(
-        input,
+        { ...input, accountId: targetAccountId },
         totalProfit,
         userId
       );
 
       // 5. Kurangi stok berjalan pada inventory
       await transactionRepository.decrementStock(inventory.id, quantity);
+
+      // 6. Otomatisasi Saldo Rekening & Pencatatan Mutasi Kas Masuk
+      if (targetAccountId) {
+        // Tambah saldo rekening tujuan
+        await prisma.bankAccount.update({
+          where: { id: targetAccountId },
+          data: {
+            balance: {
+              increment: totalRevenue,
+            },
+          },
+        });
+
+        // Catat mutasi masuk ke rekening
+        await prisma.accountMutation.create({
+          data: {
+            accountId: targetAccountId,
+            type: MutationType.INCOME,
+            amount: totalRevenue,
+            description: `Penjualan Kasir: ${transaction.product.name} (${quantity} unit)`,
+            reference: `TX-${transaction.id.slice(0, 8).toUpperCase()}`,
+          },
+        });
+      }
 
       return transaction;
     });

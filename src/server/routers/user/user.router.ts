@@ -17,7 +17,10 @@ export const userRouter = router({
             role: z.enum(Role).optional(),
         })
     ).mutation(async ({ input }) => {
-        await userActions.createProfile(input);
+        await userActions.createProfile(input.id, {
+            email: input.email,
+            fullName: input.fullName,
+        });
         return { success: true, message: "Pembuatan profil berhasil!" };
     }),
 

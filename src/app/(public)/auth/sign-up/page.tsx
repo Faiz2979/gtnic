@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import { Eye, EyeOff, Mail, Lock, User, LucideIcon } from "lucide-react";
+import bgSignup from "@/_assets/bg_signup.png";
 import logoFinara1 from "@/_assets/logo_finara.png";
 import logoFinara2 from "@/_assets/logo_finara2.png";
-import bgSignup from "@/_assets/bg_signup.png";
+import { Eye, EyeOff, Lock, LucideIcon, Mail, User } from "lucide-react";
+import Image from "next/image";
+import React, { useState } from "react";
 
-// === KOMPONEN UI REUSABLE ===
 interface InputFieldProps {
   label: string;
   icon: LucideIcon;
@@ -53,7 +52,6 @@ const PasswordToggle: React.FC<PasswordToggleProps> = ({ show, onToggle }) => (
   </button>
 );
 
-// === KOMPONEN UTAMA PAGE ===
 export default function Page() {
   const [activeTab, setActiveTab] = useState("masuk");
   const [showPwd, setShowPwd] = useState(false);
@@ -67,7 +65,6 @@ export default function Page() {
   return (
       <div className="grid grid-cols-1 md:grid-cols-2 h-screen font-sans bg-white text-gray-900">
 
-        {/* === BAGIAN KIRI === */}
         <div className="hidden md:flex p-3 lg:p-4 h-full w-full">
           <div className="relative flex flex-col justify-between p-6 lg:p-10 h-full w-full bg-[#f4f7ff] rounded-l overflow-hidden">
             <Image
@@ -104,11 +101,9 @@ export default function Page() {
           </div>
         </div>
 
-        {/* === BAGIAN KANAN === */}
         <div className="relative z-10 bg-white p-4 flex flex-col items-center justify-center w-full h-full">
           <div className="w-full max-w-sm flex flex-col items-center">
 
-            {/* Logo */}
             <Image
               src={logoFinara1}
               alt="Logo Finara"
@@ -117,7 +112,6 @@ export default function Page() {
               className="h-20 w-auto object-contain mb-8"
             />
 
-            {/* Judul & Deskripsi Dinamis Berdasarkan Tab */}
             <div className="text-center mb-5">
               <h1 className="text-2xl text-[#111827] font-bold mb-1.5">
                 {activeTab === "masuk" ? "Selamat Datang di Finara" : "Daftar Akun Baru"}
@@ -129,7 +123,6 @@ export default function Page() {
               </p>
             </div>
 
-            {/* Banner Undangan (Khusus Tab Masuk) */}
             {activeTab === "masuk" && (
               <div className="w-full bg-[#E7F0FF] p-3.5 rounded-lg flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3.5">
@@ -148,7 +141,6 @@ export default function Page() {
               </div>
             )}
 
-            {/* Tab Navigasi */}
             <div className="flex w-full mb-5 border border-gray-300 rounded-lg p-0.5">
               {["masuk", "daftar"].map((tab) => (
                 <button
@@ -165,7 +157,6 @@ export default function Page() {
               ))}
             </div>
 
-            {/* Form */}
             <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
               {activeTab === "daftar" && (
                 <InputField label="Nama Lengkap" icon={User} type="text" placeholder="Masukkan Nama Lengkap" />
@@ -199,7 +190,6 @@ export default function Page() {
               </button>
             </form>
 
-            {/* Footer */}
             <div className="text-center text-xs text-gray-500 mt-6 leading-relaxed">
               Dengan melanjutkan, Anda <span className="text-[#2d63ed] hover:underline cursor-pointer">menyetujui ketentuan</span> penggunaan Finara.
             </div>

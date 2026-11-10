@@ -1,4 +1,3 @@
-// src/app/api/cron/auto-closing/route.ts
 import { ClosingActions } from "@/server/routers/closing/closing.actions";
 import dayjs from "dayjs";
 import { NextResponse } from "next/server";
@@ -14,7 +13,6 @@ export async function POST(request: Request) {
 
         const currentPeriod = dayjs().format("YYYY-MM");
 
-        // MEMANGGIL GENERATE DRAFT (Menyimpan rekapitulasi awal & JSON snapshot ke database)
         const result = await ClosingActions.generateDraft(currentPeriod);
 
         return NextResponse.json({
@@ -23,10 +21,10 @@ export async function POST(request: Request) {
             data: result,
         }, { status: 200 });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error automated closing cron:", error);
         return NextResponse.json(
-            { success: false, error: error.message || "Internal Server Error" },
+            { success: false, error: error instanceof Error ? error.message : "Internal Server Error" },
             { status: 500 }
         );
     }

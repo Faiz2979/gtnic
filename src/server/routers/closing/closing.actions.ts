@@ -1,14 +1,12 @@
-// src/server/routers/closing/closing.actions.ts
+import { sendClosingReportEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 import { CLOSING_STATUS } from "@/utils/enums/closing-status.enum";
 import { ClosingItemSnapshot } from "@/utils/types/item-closing.types";
 import dayjs from "dayjs";
-import { InventoryStatus } from "../../../../lib/generated/prisma";
+import { InventoryStatus, Prisma } from "../../../../lib/generated/prisma";
 import { ClosingRepository } from "./closing.repository";
-import { sendClosingReportEmail } from "@/lib/email";
 
 export const ClosingActions = {
-  // 1. Preview atau Generate Draf Closing (Dipicu otomatis oleh Cron Scheduler atau manual)
   generateDraft: async (period: string) => {
     let inventories = await ClosingRepository.getActiveInventories(period);
     
@@ -44,17 +42,15 @@ export const ClosingActions = {
       totalProfit += Number(trx.totalProfit);
     }
 
-    // Buat snapshot item awal (Stok fisik default disamakan dengan stok sistem)
     const initialItemsSnapshot: ClosingItemSnapshot[] = inventories.map((inv) => ({
       productId: inv.productId,
       productName: inv.product.name,
       systemStock: inv.currentStock,
-      physicalStock: inv.currentStock, // Default awal sama dengan sistem
-      discrepancy: 0,                   // Belum ada selisih
+      physicalStock: inv.currentStock, 
+      discrepancy: 0, 
       notes: null,
     }));
 
-    // Simpan atau update draf ke database dalam bentuk JSONB
     const savedDraft = await ClosingRepository.upsertDraftClosingWithSnapshot({
       period,
       totalRevenue,
@@ -69,7 +65,6 @@ export const ClosingActions = {
     };
   },
 
-  // 2. Aksi Staf: Memperbarui Stok Fisik & Mencatat Selisih (Kurang/Lebih)
   updateStaffStockOpname: async (params: {
     period: string;
     productId: string;
@@ -85,21 +80,16 @@ export const ClosingActions = {
       throw new Error(`Periode ${params.period} sudah ditutup, tidak dapat mengubah opname.`);
     }
 
-    // Ambil array snapshot yang ada di kolom JSONB
     const items = (closingRecord.itemsSnapshot as unknown as ClosingItemSnapshot[]) || [];
 
-    // Cari item produk yang ingin di-update
     const targetItemIndex = items.findIndex((item) => item.productId === params.productId);
     if (targetItemIndex === -1) {
       throw new Error("Produk tidak ditemukan dalam draf closing ini.");
     }
 
-    // Hitung selisih (discrepancy): Stok Fisik - Stok Sistem
-    // Negatif jika kurang (hilang/rusak), Positif jika lebih (kelebihan stok)
     const systemStock = items[targetItemIndex].systemStock;
     const discrepancy = params.physicalStock - systemStock;
 
-    // Update data item tersebut di dalam array
     items[targetItemIndex] = {
       ...items[targetItemIndex],
       physicalStock: params.physicalStock,
@@ -107,11 +97,9 @@ export const ClosingActions = {
       notes: params.notes || null,
     };
 
-    // Simpan kembali array JSONB yang sudah diperbarui ke database
     return await ClosingRepository.updateItemsSnapshot(params.period, items);
   },
 
-  // 3. Eksekusi Final oleh Owner (Carry-over stok riil ke bulan depan & ubah status jadi CLOSED)
   executeClosing: async (period: string, closedById: string): Promise<{ message: string; success: boolean }> => {
     let closingRecord = await ClosingRepository.getByPeriod(period);
     if (!closingRecord) {
@@ -179,7 +167,6 @@ export const ClosingActions = {
         });
       }
 
-      // Carry-over stok fisik ke periode berikutnya
       nextPeriodInventories.push({
         productId: item.productId,
         initialStock: item.physicalStock,
@@ -233,7 +220,7 @@ export const ClosingActions = {
           totalRevenue: finalRevenue,
           totalCapital: finalCapital,
           netProfit: finalProfit,
-          itemsSnapshot: items as any,
+          itemsSnapshot: items as unknown as Prisma.JsonObject,
         },
         create: {
           period,
@@ -243,7 +230,7 @@ export const ClosingActions = {
           totalRevenue: finalRevenue,
           totalCapital: finalCapital,
           netProfit: finalProfit,
-          itemsSnapshot: items as any,
+          itemsSnapshot: items as unknown as Prisma.JsonObject,
         },
       });
 
@@ -310,6 +297,7 @@ export const ClosingActions = {
         const draftResult = await ClosingActions.generateDraft(period);
         closingRecord = draftResult.draft;
       } catch (err) {
+        console.log("Gagal generate draf untuk preview:", err);
         // Abaikan jika inventaris belum aktif
       }
     }
@@ -358,10 +346,9 @@ export const ClosingActions = {
     };
   },
 
-  // 5. Mengambil Seluruh Arsip Riwayat Closing (Dipetakan ke DTO bersih)
   getAllClosings: async () => {
     const records = await ClosingRepository.getAllClosings();
-    return records.map((c) => ({
+    return records.map((c: any) => ({
       id: c.id,
       period: c.period,
       totalRevenue: Number(c.totalRevenue),

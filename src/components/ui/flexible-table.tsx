@@ -23,10 +23,10 @@ interface FlexibleTableProps<T> {
   columns: Column<T>[]
   searchKey?: keyof T
   searchPlaceholder?: string
-  actionButton?: React.ReactNode // <-- Tambahan slot untuk tombol di kanan atas
+  actionButton?: React.ReactNode
 }
 
-export function FlexibleTable<T extends Record<string, any>>({
+export function FlexibleTable<T extends Record<string, unknown>>({
   data,
   columns,
   searchKey,
@@ -46,7 +46,6 @@ export function FlexibleTable<T extends Record<string, any>>({
 
   return (
     <div className="space-y-4">
-      {/* Baris Search & Tombol Aksi Sejajar di Kanan-Kiri */}
       <div className="flex items-center justify-between gap-4">
         {searchKey ? (
           <Input
@@ -56,10 +55,9 @@ export function FlexibleTable<T extends Record<string, any>>({
             className="max-w-sm"
           />
         ) : (
-          <div /> // Spacer jika search tidak dipakai
+          <div /> 
         )}
         
-        {/* Tombol Aksi di Kanan Atas */}
         {actionButton && <div>{actionButton}</div>}
       </div>
 
@@ -82,7 +80,15 @@ export function FlexibleTable<T extends Record<string, any>>({
                     const value = row[col.accessorKey as string]
                     return (
                       <TableCell key={colIndex} className={col.className}>
-                        {col.cell ? col.cell(row) : (value ?? "-")}
+                        {col.cell
+                          ? col.cell(row)
+                          : value == null
+                            ? "-"
+                            : React.isValidElement(value) ||
+                                typeof value === "string" ||
+                                typeof value === "number"
+                              ? value
+                              : String(value)}
                       </TableCell>
                     )
                   })}

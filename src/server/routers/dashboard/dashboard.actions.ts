@@ -83,7 +83,7 @@ export const dashboardActions = {
                           totalRevenue: Number(lastClosing.totalRevenue),
                           totalCapital: Number(lastClosing.totalCapital),
                           netProfit: Number(lastClosing.netProfit),
-                          closedBy: lastClosing.closedBy?.fullName || "Sistem",
+                          closedBy: lastClosing.closedBy?.fullName,
                           closedAt: lastClosing.closedAt,
                       }
                     : null,
@@ -100,7 +100,7 @@ export const dashboardActions = {
     /**
      * Dashboard untuk STAFF — hanya data terbatas (transaksi terbaru, ringkasan bulan ini)
      */
-    async getStaffDashboard(_userId: string) {
+    async getStaffDashboard() {
         try {
             const currentPeriod = getCurrentPeriod();
 

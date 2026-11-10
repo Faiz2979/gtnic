@@ -1,10 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { initTRPC, TRPCError } from "@trpc/server";
-import { cookies } from "next/headers"; // Gunakan cookies dari next/headers jika app router
+import { cookies } from "next/headers";
 
-// 1. Fungsi untuk membuat context dengan membaca cookie Supabase
-export const createTRPCContext = async (opts: { req: Request; resHeaders: Headers }) => {
-    // Buat Supabase server client untuk mengambil sesi user dari cookie request
+export const createTRPCContext = async () => {
     const cookieStore = await cookies();
     
     const supabase = createServerClient(
@@ -59,7 +57,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
     return next({
         ctx: {
             ...ctx,
-            user: ctx.user, // TypeScript sekarang tahu user di sini pasti ada dan tidak null
+            user: ctx.user,
         },
     });
 });

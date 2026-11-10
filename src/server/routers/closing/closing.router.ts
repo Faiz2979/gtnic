@@ -1,4 +1,3 @@
-// src/server/routers/closing/closing.router.ts
 import { protectedProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -6,7 +5,6 @@ import { ClosingActions } from "./closing.actions";
 import { ClosingRepository } from "./closing.repository";
 
 export const closingRouter = router({
-  // 1. Endpoint untuk mengambil data draf closing beserta JSON snapshot item
   getDraftByPeriod: protectedProcedure
     .input(
       z.object({
@@ -18,7 +16,6 @@ export const closingRouter = router({
       return draft;
     }),
 
-  // 2. Endpoint bagi Staff untuk memperbarui opname stok fisik & mencatat selisih (kurang/lebih)
   updatePhysicalStock: protectedProcedure
     .input(
       z.object({
@@ -37,15 +34,14 @@ export const closingRouter = router({
           notes: input.notes,
         });
         return { success: true, data: result };
-      } catch (error: any) {
+      } catch (error: unknown) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: error.message || "Gagal memperbarui stok fisik opname.",
+          message: (error as Error).message || "Gagal memperbarui stok fisik opname.",
         });
       }
     }),
 
-  // 3. Endpoint eksekusi penutupan buku (Final oleh Owner)
   execute: protectedProcedure
     .input(
       z.object({
@@ -64,10 +60,10 @@ export const closingRouter = router({
 
       try {
         return await ClosingActions.executeClosing(input.period, closedById);
-      } catch (error: any) {
+      } catch (error: unknown) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Gagal mengeksekusi closing bulanan.",
+          message: (error as Error).message || "Gagal mengeksekusi closing bulanan.",
         });
       }
     }),
@@ -82,10 +78,10 @@ export const closingRouter = router({
     .query(async ({ input }) => {
       try {
         return await ClosingActions.getPreview(input.period);
-      } catch (error: any) {
+      } catch (error: unknown) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Gagal memuat preview kalkulasi closing.",
+          message: (error as Error).message || "Gagal memuat preview kalkulasi closing.",
         });
       }
     }),
@@ -94,10 +90,10 @@ export const closingRouter = router({
   getAllClosings: protectedProcedure.query(async () => {
     try {
       return await ClosingActions.getAllClosings();
-    } catch (error: any) {
+    } catch (error: unknown) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: error.message || "Gagal memuat arsip riwayat closing.",
+        message: (error as Error).message || "Gagal memuat arsip riwayat closing.",
       });
     }
   }),
@@ -112,10 +108,10 @@ export const closingRouter = router({
     .mutation(async ({ input }) => {
       try {
         return await ClosingActions.reopenClosing(input.period);
-      } catch (error: any) {
+      } catch (error: unknown) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Gagal membuka kembali periode closing.",
+          message: (error as Error).message || "Gagal membuka kembali periode closing.",
         });
       }
     }),

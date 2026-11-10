@@ -14,6 +14,5 @@ export async function GET(request: Request) {
         }
     }
 
-    // Jika gagal atau token tidak valid, kembalikan ke login
     return NextResponse.redirect(`${origin}/auth/login`);
 }

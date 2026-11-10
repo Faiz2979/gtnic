@@ -1,12 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
 import { trpc } from "@/client/trpc";
-import { ROLE } from "@/utils/enums/user-role.enum";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -21,28 +15,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 import { AccessDeniedCard } from "@/components/access-denied";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 import {
-  Package,
-  Plus,
-  Search,
-  Edit3,
-  Trash2,
-  RefreshCw,
-  Boxes,
   AlertTriangle,
+  Boxes,
   CheckCircle2,
   Clock,
+  Edit3,
   Loader2,
+  Package,
+  Plus,
+  RefreshCw,
+  Search,
+  ShieldAlert,
+  ShieldCheck,
+  Trash2,
+  TrendingUp,
   Upload,
   X,
-  ShieldCheck,
-  ShieldAlert,
-  TrendingUp,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 
 dayjs.locale("id");
 
-// Format Rupiah helper
 const formatRupiah = (val: number | string | undefined | null) => {
   const num = typeof val === "string" ? parseFloat(val) : Number(val) || 0;
   return new Intl.NumberFormat("id-ID", {
@@ -55,12 +54,10 @@ const formatRupiah = (val: number | string | undefined | null) => {
 export default function ProductManagementPage() {
   const utils = trpc.useUtils();
 
-  // 1. Cek Role Pengguna (Akses Khusus Owner)
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
 
-  // 2. Fetch Data Produk & Stok
   const {
     data: products = [],
     isLoading: isProductsLoading,
@@ -69,10 +66,8 @@ export default function ProductManagementPage() {
     enabled: isOwner,
   });
 
-  // State Pencarian
   const [searchQuery, setSearchQuery] = useState("");
 
-  // State Dialog Tambah Produk
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [addForm, setAddForm] = useState({
     name: "",
@@ -86,7 +81,6 @@ export default function ProductManagementPage() {
   const [isAdding, setIsAdding] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
 
-  // State Dialog Edit Produk
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<{
     id: string;
@@ -101,7 +95,6 @@ export default function ProductManagementPage() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
-  // State Dialog Modal Restock (Penambahan added_stock)
   const [isRestockOpen, setIsRestockOpen] = useState(false);
   const [restockProduct, setRestockProduct] = useState<{
     id: string;
@@ -114,7 +107,6 @@ export default function ProductManagementPage() {
   const [isRestocking, setIsRestocking] = useState(false);
   const [restockError, setRestockError] = useState<string | null>(null);
 
-  // State Dialog Hapus Produk
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<{
     id: string;
@@ -123,7 +115,6 @@ export default function ProductManagementPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
-  // Mutations
   const createMutation = trpc.product.createProduct.useMutation({
     onSuccess: () => {
       setIsAddOpen(false);
@@ -175,7 +166,6 @@ export default function ProductManagementPage() {
     },
   });
 
-  // Reset Add Form
   const resetAddForm = () => {
     setAddForm({
       name: "",
@@ -189,7 +179,6 @@ export default function ProductManagementPage() {
     setAddError(null);
   };
 
-  // Filter Produk berdasarkan Search Bar
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
     return products.filter((p) =>
@@ -197,7 +186,6 @@ export default function ProductManagementPage() {
     );
   }, [products, searchQuery]);
 
-  // Statistik Ringkasan
   const totalProductsCount = products.length;
   const totalCurrentStock = products.reduce(
     (acc, curr) => acc + (Number(curr.currentStock) || 0),
@@ -209,7 +197,6 @@ export default function ProductManagementPage() {
 
   const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
 
-  // Handler: Submit Tambah Produk
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAddError(null);
@@ -239,7 +226,6 @@ export default function ProductManagementPage() {
     }
   };
 
-  // Handler: Buka Edit Dialog
   const handleOpenEdit = (prod: (typeof products)[0]) => {
     setEditProduct({
       id: prod.id,
@@ -255,7 +241,6 @@ export default function ProductManagementPage() {
     setIsEditOpen(true);
   };
 
-  // Handler: Submit Edit Produk
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editProduct) return;
@@ -287,7 +272,6 @@ export default function ProductManagementPage() {
     }
   };
 
-  // Handler: Buka Modal Restock
   const handleOpenRestock = (prod: (typeof products)[0]) => {
     setRestockProduct({
       id: prod.id,
@@ -301,7 +285,6 @@ export default function ProductManagementPage() {
     setIsRestockOpen(true);
   };
 
-  // Handler: Submit Restock (added_stock)
   const handleRestockSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!restockProduct) return;
@@ -331,7 +314,6 @@ export default function ProductManagementPage() {
     }
   };
 
-  // Handler: Submit Hapus
   const handleDeleteConfirm = async () => {
     if (!productToDelete) return;
     setDeleteError(null);
@@ -349,7 +331,6 @@ export default function ProductManagementPage() {
     }
   };
 
-  // Loading Sesi Profil
   if (isProfileLoading) {
     return (
       <div className="flex min-h-[500px] flex-col items-center justify-center gap-3">
@@ -361,7 +342,6 @@ export default function ProductManagementPage() {
     );
   }
 
-  // Proteksi Hak Akses Khusus OWNER
   if (!isOwner) {
     return <AccessDeniedCard pageName="Manajemen Master Produk & Stok" />;
   }

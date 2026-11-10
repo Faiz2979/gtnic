@@ -29,6 +29,7 @@ import {
   ShieldCheck,
   UserCheck,
   Wallet,
+  TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -42,14 +43,6 @@ const formatRupiah = (val: number | string | undefined | null) => {
     currency: "IDR",
     maximumFractionDigits: 0,
   }).format(num);
-};
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
 };
 
 export default function DashboardPage() {
@@ -152,7 +145,6 @@ export default function DashboardPage() {
   const isLoading =
     isProfileLoading || (isOwner && isOwnerLoading) || (isStaff && isStaffLoading);
 
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
   const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
   const revenueThisMonth = isOwner
@@ -192,47 +184,47 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* ──────────────── TOP HEADER ──────────────── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-              Ringkasan keuangan
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Halo, {userName}
             </h1>
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                 isOwner
-                  ? "bg-[#172554]/10 text-[#172554] border border-[#172554]/20"
-                  : "bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]"
+                  ? "bg-slate-900 text-white"
+                  : "bg-blue-50 text-blue-700 border border-blue-200/60"
               }`}
             >
               {isOwner ? (
                 <>
-                  <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2} />
+                  <ShieldCheck className="h-3 w-3" strokeWidth={2} />
                   Owner
                 </>
               ) : (
                 <>
-                  <UserCheck className="h-3.5 w-3.5" strokeWidth={2} />
+                  <UserCheck className="h-3 w-3" strokeWidth={2} />
                   Staff
                 </>
               )}
             </span>
           </div>
-          <p className="mt-1 text-sm text-[#64748B]" suppressHydrationWarning>
-            {todayFormatted} · {getGreeting()}, {userName}.
+          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+            {isOwner
+              ? "Ringkasan metrik penjualan, perputaran kas, dan aktivitas toko secara real-time."
+              : "Portal kasir operasional toko. Catat pesanan dan pantau rekapitulasi penjualan harian Anda."}
           </p>
         </div>
 
-        {/* Action: Tambah Transaksi Modal */}
         <Dialog open={isTxOpen} onOpenChange={setIsTxOpen}>
           <DialogTrigger asChild>
-            <Button className="h-10 gap-2 rounded-xl bg-[#2563EB] px-4 font-medium text-white shadow-sm transition-all hover:bg-[#1D4ED8] active:scale-[0.98]">
-              <Plus className="h-4 w-4 stroke-[2.5]" />
-              Tambah transaksi
+            <Button className="h-9 gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 px-4 font-medium text-xs text-white shadow-xs transition-all active:scale-[0.98] self-start sm:self-auto">
+              <Plus className="h-4 w-4" />
+              Tambah Transaksi
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[440px] rounded-2xl bg-white border border-[#E2E8F0] p-6 shadow-xl">
+          <DialogContent className="sm:max-w-[440px] rounded-2xl bg-white border border-slate-200 p-6 shadow-xl">
             <form onSubmit={handleCreateTx}>
               <DialogHeader>
                 <DialogTitle className="text-lg font-bold text-[#0F172A]">
@@ -371,80 +363,94 @@ export default function DashboardPage() {
         </Dialog>
       </div>
 
-      {/* ──────────────── TOP 3 METRIC CARDS ──────────────── */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {/* Card 1: Saldo / Total Laba (Owner) atau Total Penjualan (Staff) */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-200/70">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                {isOwner ? "Saldo keuntungan" : "Total Penjualan Saya"}
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                {isOwner ? "Saldo Keuntungan" : "Total Penjualan Saya"}
               </span>
-              <Wallet className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#2563EB] shadow-xs">
+                <Wallet className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
                 {isOwner
                   ? formatRupiah(profitThisMonth)
                   : formatRupiah(revenueThisMonth)}
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                {txCountThisMonth > 0
-                  ? `${txCountThisMonth} transaksi berhasil dicatat`
-                  : "Belum ada transaksi bulan ini"}
-              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>
+                  {txCountThisMonth > 0
+                    ? `${txCountThisMonth} transaksi berhasil dicatat`
+                    : "Belum ada transaksi bulan ini"}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Card 2: Pemasukan bulan ini */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-emerald-200/70">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Pemasukan bulan ini
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Pemasukan Bulan Ini
               </span>
-              <ArrowDownLeft className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-xs">
+                <ArrowDownLeft className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
                 {formatRupiah(revenueThisMonth)}
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                {txCountThisMonth > 0
-                  ? `${txCountThisMonth} transaksi masuk`
-                  : "Belum ada pemasukan bulan ini"}
-              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-blue-500" />
+                <span>
+                  {txCountThisMonth > 0
+                    ? `${txCountThisMonth} kas masuk tercatat`
+                    : "Belum ada pemasukan bulan ini"}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Card 3: Pengeluaran bulan ini (Owner) atau Total Produk (Staff) */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-200/70">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                {isOwner ? "Pengeluaran modal" : "Katalog Produk Aktif"}
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                {isOwner ? "Pengeluaran Modal" : "Katalog Produk Aktif"}
               </span>
-              {isOwner ? (
-                <ArrowUpRight className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
-              ) : (
-                <Package className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
-              )}
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-xs">
+                {isOwner ? (
+                  <ArrowUpRight className="h-4.5 w-4.5" strokeWidth={2} />
+                ) : (
+                  <Package className="h-4.5 w-4.5" strokeWidth={2} />
+                )}
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
                 {isOwner
                   ? formatRupiah(capitalThisMonth)
                   : `${staffData?.totalProducts ?? 0} Produk`}
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                {isOwner
-                  ? capitalThisMonth > 0
-                    ? "Total modal produk terjual"
-                    : "Belum ada pengeluaran modal"
-                  : "Tersedia untuk transaksi kasir"}
-              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                <span>
+                  {isOwner
+                    ? capitalThisMonth > 0
+                      ? "Total modal produk terjual"
+                      : "Belum ada pengeluaran modal"
+                    : "Tersedia untuk transaksi kasir"}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -453,94 +459,109 @@ export default function DashboardPage() {
       {/* ──────────────── MIDDLE ROW: ARUS KAS & PERLU DITINJAU ──────────────── */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         {/* Arus Kas Chart Card (2 Cols) */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)] lg:col-span-2">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-md lg:col-span-2">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-[#0F172A]">
-                Arus kas
-              </h3>
-              <span className="text-xs font-normal text-[#94A3B8]">
-                6 bulan terakhir · rupiah
+              <div>
+                <h3 className="text-base font-bold text-[#0F172A] flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-[#2563EB]" />
+                  Arus Kas Toko
+                </h3>
+                <p className="text-xs text-[#94A3B8] mt-0.5">
+                  Visualisasi perbandingan pemasukan vs pengeluaran modal
+                </p>
+              </div>
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                6 Bulan Terakhir
               </span>
             </div>
 
-            {/* Custom SVG Line Chart */}
-            <div className="relative mt-6 h-48 w-full">
+            {/* Custom SVG Line Chart with Gradient Fill */}
+            <div className="relative mt-6 h-52 w-full">
               <CashFlowChart data={cashFlowData} />
             </div>
 
             {/* Chart Legend / Summary */}
-            <div className="mt-6 flex flex-wrap items-center justify-between border-t border-[#F1F5F9] pt-4 text-xs">
-              <div className="text-xs font-medium text-[#2563EB]">
-                Pemasukan · {formatRupiah(revenueThisMonth)}
+            <div className="mt-5 flex flex-wrap items-center justify-between border-t border-slate-100 pt-4 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#2563EB]" />
+                <span className="font-semibold text-[#0F172A]">
+                  Pemasukan: <span className="text-[#2563EB]">{formatRupiah(revenueThisMonth)}</span>
+                </span>
               </div>
               {isOwner && (
-                <div className="text-xs font-medium text-[#64748B]">
-                  Pengeluaran · {formatRupiah(capitalThisMonth)}
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-slate-400" />
+                  <span className="font-semibold text-[#0F172A]">
+                    Pengeluaran Modal: <span className="text-slate-600">{formatRupiah(capitalThisMonth)}</span>
+                  </span>
                 </div>
               )}
-              <span className="text-xs font-medium text-[#64748B]">
-                {dayjs().format("MMM YYYY")}
+              <span className="text-xs font-medium text-slate-400">
+                Update Real-Time · {dayjs().format("MMM YYYY")}
               </span>
             </div>
           </CardContent>
         </Card>
 
         {/* Perlu Ditinjau Card (1 Col) */}
-        <Card className="flex flex-col justify-between rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="flex flex-col justify-between rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-md">
           <CardContent className="p-0">
-            <h3 className="text-sm font-semibold text-[#0F172A]">
-              Perlu ditinjau
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#0F172A]">
+                Perlu Ditinjau
+              </h3>
+              <Clock className="h-4 w-4 text-slate-400" />
+            </div>
 
-            <div className="mt-6">
+            <div className="mt-5">
               {isOwner ? (
                 lowStockItems.length > 0 ? (
                   <>
-                    <div className="inline-flex items-center gap-1.5 rounded-full bg-[#FFFBEB] px-3 py-1 text-xs font-medium text-[#D97706]">
-                      <Clock className="h-3.5 w-3.5 text-[#D97706]" strokeWidth={2} />
-                      <span>{lowStockItems.length} stok menipis</span>
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200/60 px-3 py-1 text-xs font-semibold text-amber-700">
+                      <Clock className="h-3.5 w-3.5 text-amber-600" strokeWidth={2} />
+                      <span>{lowStockItems.length} Stok Menipis</span>
                     </div>
 
                     <div className="mt-4">
-                      <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                      <h2 className="text-3xl font-extrabold tracking-tight text-[#0F172A]">
                         {lowStockItems.length} Produk
                       </h2>
-                      <p className="mt-1 text-xs text-[#94A3B8]">
-                        Stok di bawah 10 unit, disarankan segera restock.
+                      <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+                        Kuantitas fisik di bawah 10 unit. Disarankan melakukan restock agar kasir tidak kehabisan barang.
                       </p>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-3 py-1 text-xs font-medium text-[#16A34A]">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-[#16A34A]" strokeWidth={2} />
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200/60 px-3 py-1 text-xs font-semibold text-emerald-700">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2} />
                       <span>Semua Stok Aman</span>
                     </div>
 
                     <div className="mt-4">
-                      <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-                        Stok Aman
+                      <h2 className="text-3xl font-extrabold tracking-tight text-[#0F172A]">
+                        Inventaris Aman
                       </h2>
-                      <p className="mt-1 text-xs text-[#94A3B8]">
-                        Tidak ada produk dengan stok menipis saat ini.
+                      <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+                        Seluruh katalog produk memiliki ketersediaan stok fisik yang cukup untuk penjualan.
                       </p>
                     </div>
                   </>
                 )
               ) : (
                 <>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-3 py-1 text-xs font-medium text-[#2563EB]">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200/60 px-3 py-1 text-xs font-semibold text-[#2563EB]">
                     <Package className="h-3.5 w-3.5 text-[#2563EB]" strokeWidth={2} />
-                    <span>Info Operasional</span>
+                    <span>Info Operasional Shift</span>
                   </div>
 
                   <div className="mt-4">
-                    <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                    <h2 className="text-3xl font-extrabold tracking-tight text-[#0F172A]">
                       Siap Melayani
                     </h2>
-                    <p className="mt-1 text-xs text-[#94A3B8]">
-                      Katalog produk siap untuk pencatatan transaksi kasir.
+                    <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+                      Katalog produk siap untuk pencatatan transaksi kasir hari ini.
                     </p>
                   </div>
                 </>
@@ -548,12 +569,12 @@ export default function DashboardPage() {
             </div>
           </CardContent>
 
-          <div className="mt-6 border-t border-[#F1F5F9] pt-4">
+          <div className="mt-6 border-t border-slate-100 pt-4">
             <Link
               href="/product"
-              className="inline-flex items-center gap-1 text-xs font-medium text-[#2563EB] hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2563EB] hover:gap-2 transition-all"
             >
-              {isOwner ? "Lihat stok produk" : "Katalog Produk"}
+              <span>{isOwner ? "Buka Manajemen Stok" : "Lihat Katalog Produk"}</span>
               <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
             </Link>
           </div>
@@ -561,46 +582,51 @@ export default function DashboardPage() {
       </div>
 
       {/* ──────────────── BOTTOM ROW: TRANSAKSI TERBARU ──────────────── */}
-      <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-md">
         <CardContent className="p-0">
-          <div className="flex items-center justify-between pb-4">
-            <h3 className="text-sm font-semibold text-[#0F172A]">
-              Transaksi terbaru
-            </h3>
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div>
+              <h3 className="text-base font-bold text-[#0F172A]">
+                Transaksi Penjualan Terbaru
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Riwayat struk kasir yang baru saja tercatat ke sistem
+              </p>
+            </div>
             <Link
               href="/transaksi"
-              className="inline-flex items-center gap-1 text-xs font-medium text-[#2563EB] hover:underline"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200/80 px-3 py-1.5 text-xs font-semibold text-[#2563EB] hover:bg-blue-50 transition-colors"
             >
-              Lihat semua
+              <span>Lihat Semua Transaksi</span>
               <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
             </Link>
           </div>
 
-          <div className="divide-y divide-[#F1F5F9]">
+          <div className="divide-y divide-slate-100 pt-1">
             {recentTransactions.length > 0 ? (
               recentTransactions.map((tx) => (
                 <div
                   key={tx.id}
-                  className="flex items-center justify-between py-4"
+                  className="flex items-center justify-between py-3.5 px-3 rounded-2xl hover:bg-slate-50/80 transition-colors duration-200 -mx-3"
                 >
                   <div className="space-y-0.5">
-                    <p className="text-sm font-semibold text-[#0F172A]">
+                    <p className="text-sm font-bold text-[#0F172A]">
                       {tx.productName}
                     </p>
-                    <p className="text-xs text-[#94A3B8]">
+                    <p className="text-xs text-slate-400">
                       TRX-{String(tx.id || "").slice(0, 6).toUpperCase()} ·{" "}
                       {dayjs(tx.createdAt).isValid()
-                        ? dayjs(tx.createdAt).format("DD MMM YYYY")
-                        : "Hari ini"} · Oleh {tx.createdByName || "Staff"}
+                        ? dayjs(tx.createdAt).format("DD MMM YYYY, HH:mm")
+                        : "Hari ini"} · Dicatat oleh <span className="font-semibold text-slate-600">{tx.createdByName || "Staff"}</span>
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-5">
-                    <span className="text-sm font-semibold tracking-tight text-[#0F172A]">
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm font-extrabold tracking-tight text-[#0F172A]">
                       +{formatRupiah((Number(tx.sellingPrice) || 0) * (Number(tx.quantity) || 1))}
                     </span>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F0FDF4] px-2.5 py-0.5 text-xs font-medium text-[#16A34A]">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-[#16A34A]" strokeWidth={2} />
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                      <CheckCircle2 className="h-3 w-3 text-emerald-600" strokeWidth={2} />
                       Lunas
                     </span>
                   </div>
@@ -629,9 +655,9 @@ function CashFlowChart({
   data?: { period: string; pemasukan: number; pengeluaran: number }[];
 }) {
   const width = 600;
-  const height = 180;
+  const height = 190;
   const paddingX = 35;
-  const paddingY = 20;
+  const paddingY = 22;
 
   const chartData =
     data && data.length > 0
@@ -668,12 +694,22 @@ function CashFlowChart({
     .map((d, i) => `${getX(i)},${getY(d.pengeluaran)}`)
     .join(" ");
 
+  // Path polygon untuk gradient area fill di bawah kurva pemasukan (gaya referensi)
+  const areaPath = `${pemasukanPoints} ${getX(chartData.length - 1)},${height - paddingY} ${getX(0)},${height - paddingY}`;
+
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
       className="h-full w-full overflow-visible"
       preserveAspectRatio="none"
     >
+      <defs>
+        <linearGradient id="pemasukanGradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2563EB" stopOpacity="0.22" />
+          <stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+
       {/* Grid Lines Horisontal */}
       {[0, 0.5, 1].map((ratio) => {
         const y = height - paddingY - ratio * (height - 2 * paddingY);
@@ -685,14 +721,14 @@ function CashFlowChart({
               y1={y}
               x2={width - paddingX}
               y2={y}
-              stroke="#E2E8F0"
-              strokeWidth="1"
+              stroke="#F1F5F9"
+              strokeWidth="1.5"
             />
             <text
               x={paddingX - 10}
               y={y + 3.5}
               textAnchor="end"
-              className="fill-[#94A3B8] text-[9px] font-sans"
+              className="fill-slate-400 text-[10px] font-sans font-medium"
             >
               {label >= 1_000_000
                 ? `${Math.round(label / 1_000_000)}jt`
@@ -704,10 +740,16 @@ function CashFlowChart({
         );
       })}
 
+      {/* Gradient Area Fill (Gaya gelombang modern) */}
+      <polygon
+        fill="url(#pemasukanGradient)"
+        points={areaPath}
+      />
+
       {/* Garis Pengeluaran (Garis Abu-abu Slate Putus-putus) */}
       <polyline
         fill="none"
-        stroke="#64748B"
+        stroke="#94A3B8"
         strokeWidth="2"
         strokeDasharray="4 4"
         strokeLinecap="round"
@@ -724,6 +766,17 @@ function CashFlowChart({
         strokeLinejoin="round"
         points={pemasukanPoints}
       />
+
+      {/* Titik Data Pemasukan */}
+      {chartData.map((d, i) => (
+        <circle
+          key={`dot-${i}`}
+          cx={getX(i)}
+          cy={getY(d.pemasukan)}
+          r="4"
+          className="fill-white stroke-[#2563EB] stroke-[2.5]"
+        />
+      ))}
     </svg>
   );
 }

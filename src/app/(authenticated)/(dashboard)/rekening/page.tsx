@@ -54,15 +54,6 @@ const formatRupiah = (val: number | string | undefined | null) => {
     }).format(num);
 };
 
-// Salam waktu (Pagi/Siang/Sore/Malam)
-const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 11) return "Selamat pagi";
-    if (hour < 15) return "Selamat siang";
-    if (hour < 18) return "Selamat sore";
-    return "Selamat malam";
-};
-
 // Preset Bank & E-Wallet Populer
 const POPULAR_BANKS = [
     { name: "BCA", type: "BANK", label: "Bank Central Asia" },
@@ -93,7 +84,6 @@ export default function RekeningPage() {
     const { data: profile, isLoading: isProfileLoading } =
         trpc.user.getCurrentProfile.useQuery();
     const isOwner = profile?.role === ROLE.OWNER;
-    const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
     // 2. Data Rekening & Mutasi dari tRPC (Hanya di-fetch jika role adalah Owner)
     const {
@@ -344,37 +334,28 @@ export default function RekeningPage() {
                 </div>
             )}
 
-            {/* Header Finara Design */}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
                 <div>
-                    <div className="flex items-center gap-2 text-xs font-medium text-[#64748B]">
-                        <span>{dayjs().format("dddd, D MMMM YYYY")}</span>
-                        <span>•</span>
-                        <span>{getGreeting()}, {userName}</span>
-                    </div>
-                    <div className="mt-1 flex items-center gap-3">
-                        <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                    <div className="flex items-center gap-2.5">
+                        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
                             Rekening & Kas
                         </h1>
-                        {isProfileLoading ? (
-                            <div className="h-5 w-16 animate-pulse rounded-full bg-slate-200" />
-                        ) : isOwner ? (
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#172554]/20 bg-[#172554]/10 px-3 py-1 text-xs font-semibold text-[#172554] shadow-sm">
-                                <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2} /> Owner
+                        {isOwner ? (
+                            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
+                                <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
                             </span>
                         ) : (
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 shadow-sm">
-                                <UserCheck className="h-3.5 w-3.5" strokeWidth={2} /> Staff
+                            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                                <UserCheck className="h-3 w-3" strokeWidth={2} /> Staff
                             </span>
                         )}
                     </div>
-                    <p className="mt-1 text-sm text-[#64748B]">
-                        Kelola akun bank, e-wallet, dan kas tunai fisik operasional usaha Anda secara transparan.
+                    <p className="mt-1 text-xs sm:text-sm text-slate-500">
+                        Kelola akun perbankan resmi, e-wallet QRIS, dan saldo kas fisik operasional toko.
                     </p>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
                     {isOwner && (
                         <>
                             <Button
@@ -391,17 +372,17 @@ export default function RekeningPage() {
                                     }
                                     setIsAdjustModalOpen(true);
                                 }}
-                                className="rounded-xl border-slate-200 bg-white text-[#0F172A] hover:bg-slate-50 font-medium shadow-sm transition-all text-xs sm:text-sm h-10 px-4"
+                                className="h-9 gap-1.5 rounded-xl border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 transition-all"
                             >
-                                <ArrowDownLeft className="mr-1.5 h-4 w-4 text-emerald-600" />
-                                Catat Mutasi / Kas
+                                <ArrowDownLeft className="h-3.5 w-3.5 text-emerald-600" />
+                                Catat Mutasi
                             </Button>
 
                             <Button
                                 onClick={() => setIsAddModalOpen(true)}
-                                className="rounded-xl bg-[#172554] text-white hover:bg-[#172554]/90 font-medium shadow-sm transition-all text-xs sm:text-sm h-10 px-4"
+                                className="h-9 gap-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98]"
                             >
-                                <Plus className="mr-1.5 h-4 w-4" />
+                                <Plus className="h-3.5 w-3.5" />
                                 Tambah Rekening
                             </Button>
                         </>
@@ -413,12 +394,12 @@ export default function RekeningPage() {
                         onClick={() => {
                             refetchAccounts();
                             refetchMutations();
-                            showToast("Memperbarui data rekening...");
+                            showToast("Memperbarui data...");
                         }}
                         title="Refresh Data"
-                        className="h-10 w-10 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+                        className="h-9 w-9 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
                     >
-                        <RefreshCw className="h-4 w-4" />
+                        <RefreshCw className="h-3.5 w-3.5" />
                     </Button>
                 </div>
             </div>
@@ -426,25 +407,25 @@ export default function RekeningPage() {
             {/* 4 Finara Metric Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Total Likuiditas / Saldo Keseluruhan */}
-                <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
+                <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <CardContent className="p-5">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-medium text-[#64748B]">
+                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Total Saldo Keseluruhan
                             </span>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#172554]/10 text-[#172554]">
-                                <Wallet className="h-5 w-5" />
+                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#172554] shadow-xs">
+                                <Wallet className="h-4.5 w-4.5" strokeWidth={2} />
                             </div>
                         </div>
                         <div className="mt-3">
-                            <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                            <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
                                 {isStatsLoading ? (
                                     <span className="text-slate-300">Memuat...</span>
                                 ) : (
                                     formatRupiah(stats?.totalBalance ?? 0)
                                 )}
                             </div>
-                            <p className="mt-1 text-xs text-[#64748B] flex items-center gap-1">
+                            <p className="mt-1 text-xs text-slate-500 flex items-center gap-1">
                                 <CheckCircle2 className="h-3 w-3 text-emerald-600" />
                                 Akumulasi seluruh rekening aktif
                             </p>
@@ -453,25 +434,25 @@ export default function RekeningPage() {
                 </Card>
 
                 {/* Saldo Bank */}
-                <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
+                <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <CardContent className="p-5">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-medium text-[#64748B]">
+                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Saldo Rekening Bank
                             </span>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                                <Landmark className="h-5 w-5" />
+                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-xs">
+                                <Landmark className="h-4.5 w-4.5" strokeWidth={2} />
                             </div>
                         </div>
                         <div className="mt-3">
-                            <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                            <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
                                 {isStatsLoading ? (
                                     <span className="text-slate-300">Memuat...</span>
                                 ) : (
                                     formatRupiah(stats?.totalBankBalance ?? 0)
                                 )}
                             </div>
-                            <p className="mt-1 text-xs text-[#64748B]">
+                            <p className="mt-1 text-xs text-slate-500">
                                 Tersimpan di perbankan resmi
                             </p>
                         </div>
@@ -479,52 +460,52 @@ export default function RekeningPage() {
                 </Card>
 
                 {/* Kas Tunai Fisik */}
-                <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
+                <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <CardContent className="p-5">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-medium text-[#64748B]">
+                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                 Kas Fisik di Toko
                             </span>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                                <Banknote className="h-5 w-5" />
+                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-xs">
+                                <Banknote className="h-4.5 w-4.5" strokeWidth={2} />
                             </div>
                         </div>
                         <div className="mt-3">
-                            <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                            <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
                                 {isStatsLoading ? (
                                     <span className="text-slate-300">Memuat...</span>
                                 ) : (
                                     formatRupiah(stats?.totalCashBalance ?? 0)
                                 )}
                             </div>
-                            <p className="mt-1 text-xs text-[#64748B]">
-                                Uang tunai siap pakai di laci kasir
+                            <p className="mt-1 text-xs text-slate-500">
+                                Laci kasir & kas kecil operasional
                             </p>
                         </div>
                     </CardContent>
                 </Card>
 
-                {/* QRIS / E-Wallet & Total Akun */}
-                <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
+                {/* Saldo E-Wallet / QRIS */}
+                <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                     <CardContent className="p-5">
                         <div className="flex items-center justify-between">
-                            <span className="text-xs font-medium text-[#64748B]">
-                                E-Wallet & QRIS
+                            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                E-Wallet &amp; QRIS
                             </span>
-                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                                <CreditCard className="h-5 w-5" />
+                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-xs">
+                                <CreditCard className="h-4.5 w-4.5" strokeWidth={2} />
                             </div>
                         </div>
                         <div className="mt-3">
-                            <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                            <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
                                 {isStatsLoading ? (
                                     <span className="text-slate-300">Memuat...</span>
                                 ) : (
                                     formatRupiah(stats?.totalEwalletBalance ?? 0)
                                 )}
                             </div>
-                            <p className="mt-1 text-xs text-[#64748B]">
-                                {stats?.activeAccountsCount ?? accounts.length} akun aktif terdaftar
+                            <p className="mt-1 text-xs text-slate-500">
+                                Saldo dompet digital toko
                             </p>
                         </div>
                     </CardContent>

@@ -193,8 +193,6 @@ export default function ProductManagementPage() {
     (p) => (Number(p.currentStock) || 0) < 10
   ).length;
 
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
-
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAddError(null);
@@ -346,100 +344,97 @@ export default function ProductManagementPage() {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* ──────────────── TOP HEADER (IDENTIK DENGAN DASHBOARD) ──────────────── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-              Manajemen Produk &amp; Stok
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Produk & Stok
             </h1>
-            {/* Badge Owner Identik dengan Dashboard (dengan Icon ShieldCheck) */}
-            <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-[#172554]/10 text-[#172554] border border-[#172554]/20">
-              <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2} />
-              Owner
+            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
+              <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
             </span>
           </div>
-          <p className="mt-1 text-sm text-[#64748B]" suppressHydrationWarning>
-            {todayFormatted} · Kelola katalog produk, harga modal, harga jual, dan stok barang.
+          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+            Katalog master barang dagang, ketersediaan stok fisik gudang, dan penetapan harga modal & jual.
           </p>
         </div>
 
-        {/* Action: Tambah Produk Button */}
         <Button
           onClick={() => {
             resetAddForm();
             setIsAddOpen(true);
           }}
-          className="h-10 gap-2 rounded-xl bg-[#2563EB] px-4 font-medium text-white shadow-sm transition-all hover:bg-[#1D4ED8] active:scale-[0.98]"
+          className="h-9 gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98] self-start sm:self-auto"
         >
-          <Plus className="h-4 w-4 stroke-[2.5]" />
+          <Plus className="h-4 w-4" />
           Tambah Produk
         </Button>
       </div>
 
-      {/* ──────────────── 3 METRIC SUMMARY CARDS (PERSIS DENGAN KARTU DASHBOARD) ──────────────── */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        {/* Card 1: Total Katalog Produk */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Total katalog produk
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Total Katalog Produk
               </span>
-              <Package className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                <Package className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                 {totalProductsCount} Produk
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                Terdaftar aktif di sistem
+              <p className="mt-1 text-xs text-slate-400">
+                Terdaftar aktif dan siap dijual
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Card 2: Total Stok Fisik Tersedia */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Total stok fisik tersedia
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Total Stok Fisik Tersedia
               </span>
-              <Boxes className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <Boxes className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                 {totalCurrentStock} Unit
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                Stok siap untuk transaksi penjualan
+              <p className="mt-1 text-xs text-slate-400">
+                Akumulasi persediaan siap transaksi
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Card 3: Perlu Restock Segera */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Perlu restock segera
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Perlu Restock Segera
               </span>
-              <AlertTriangle
-                className={`h-4.5 w-4.5 ${
-                  lowStockProductsCount > 0 ? "text-[#D97706]" : "text-[#2563EB]"
-                }`}
-                strokeWidth={1.8}
-              />
+              <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${
+                lowStockProductsCount > 0 ? "bg-amber-50 text-amber-600" : "bg-emerald-50 text-emerald-600"
+              }`}>
+                <AlertTriangle className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className={`text-2xl font-bold tracking-tight ${
+                lowStockProductsCount > 0 ? "text-amber-600" : "text-emerald-600"
+              }`}>
                 {lowStockProductsCount} Produk
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
+              <p className="mt-1 text-xs text-slate-400">
                 {lowStockProductsCount > 0
-                  ? "Stok di bawah 10 unit, segera restock"
+                  ? "Stok di bawah 10 unit, segera pesan ulang"
                   : "Semua stok produk dalam kondisi aman"}
               </p>
             </div>
@@ -448,7 +443,7 @@ export default function ProductManagementPage() {
       </div>
 
       {/* ──────────────── MAIN PRODUCT TABLE CARD ──────────────── */}
-      <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-md">
         <CardContent className="p-0">
           {/* Header Baris Dalam Kartu */}
           <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between border-b border-[#F1F5F9]">

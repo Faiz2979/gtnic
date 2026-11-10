@@ -1,10 +1,20 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import logoFinaraIcon from "@/_assets/logo_finara.png";
+import { trpc } from "@/client/trpc";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import { useSidebar } from "./sidebar-context";
 import {
     ArrowLeftRight,
-    BookOpenCheck,
+    Building2,
     CalendarCheck2,
     ChartNoAxesCombined,
+    ChevronLeft,
+    ChevronRight,
     LayoutDashboard,
     Package,
     ReceiptText,
@@ -12,11 +22,6 @@ import {
     Users,
     Wallet,
 } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
-import { trpc } from "@/client/trpc";
-import { ROLE } from "@/utils/enums/user-role.enum";
 
 interface SidebarProps {
     children: React.ReactNode;
@@ -41,38 +46,26 @@ const navigation: NavItem[] = [
     { name: "Laporan", href: "/laporan", icon: ChartNoAxesCombined, ownerOnly: true },
 ];
 
-export function Sidebar({
-    children,
-    activePage,
-}: SidebarProps) {
+export function Sidebar({ children, activePage }: SidebarProps) {
     const pathname = usePathname();
-    const [businessName, setBusinessName] = React.useState("PT Nusantara Digital");
+    const { isCollapsed, toggleCollapse } = useSidebar();
+    const [businessName, setBusinessName] = useState("PT Nusantara Digital");
 
-    // Ambil data profil untuk proteksi menu berdasarkan Role (Owner vs Staff)
     const { data: profile } = trpc.user.getCurrentProfile.useQuery();
     const isOwner = profile?.role === ROLE.OWNER;
 
-    // Filter menu: Staf hanya melihat menu umum, menu ownerOnly disembunyikan
     const visibleNavItems = navigation.filter((item) => {
-        if (item.ownerOnly) {
-            return isOwner;
-        }
+        if (item.ownerOnly) return isOwner;
         return true;
     });
 
-    React.useEffect(() => {
-        // Ambil nama usaha tersimpan dari localStorage saat pertama kali load
+    useEffect(() => {
         const saved = localStorage.getItem("finara_business_name");
-        if (saved) {
-            setBusinessName(saved);
-        }
+        if (saved) setBusinessName(saved);
 
-        // Tangkap event perubahan nama usaha secara real-time dari Pengaturan
         const handleUpdate = () => {
             const updated = localStorage.getItem("finara_business_name");
-            if (updated) {
-                setBusinessName(updated);
-            }
+            if (updated) setBusinessName(updated);
         };
 
         window.addEventListener("business_profile_updated", handleUpdate);
@@ -83,61 +76,87 @@ export function Sidebar({
         };
     }, []);
 
+    const isSettingsActive = activePage
+        ? activePage === "Pengaturan"
+        : pathname.startsWith("/pengaturan");
+
     return (
-        <div className="flex min-h-screen bg-[#F8FAFC]">
-
-            {/* Sidebar Sticky */}
-            <aside className="
-                sticky top-0
-                flex h-screen w-[250px] shrink-0
-                flex-col justify-between
-                bg-[#172554]
-                px-5 py-6
-                text-white
-                overflow-y-auto
-                z-30
-            ">
-                <div>
-                    {/* Header Logo */}
-                    <div className="mb-7 flex items-center gap-3">
-                        <BookOpenCheck
-                            size={27}
-                            strokeWidth={1.8}
-                            className="text-white shrink-0"
-                        />
-
-                        <h1 className="text-xl font-semibold tracking-tight text-white">
-                            smart ledger
-                        </h1>
-                    </div>
-
-                    {/* Workspace Pill */}
-                    <div className="
-                        mb-7 rounded-xl
-                        bg-white/10
-                        px-3.5 py-3
-                    ">
-                        <div className="flex items-center justify-between mb-1">
-                            <p className="text-xs text-white/70">
-                                Ruang kerja
-                            </p>
-                            {profile?.role && (
-                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
-                                    isOwner 
-                                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" 
-                                        : "bg-blue-400/20 text-blue-200 border border-blue-400/30"
-                                }`}>
-                                    {isOwner ? "Owner" : "Staff"}
-                                </span>
+        <div className="flex min-h-screen bg-[#F4F6F9]">
+            <aside
+                className={`sticky top-0 flex h-screen shrink-0 flex-col justify-between bg-[#0F1E36] text-white z-30 transition-all duration-300 ease-in-out ${
+                    isCollapsed ? "w-[76px] p-3" : "w-[250px] p-4"
+                }`}
+            >
+                <div className="overflow-y-auto no-scrollbar">
+                    <div className="mb-4">
+                        <Link
+                            href="/dashboard"
+                            className={`flex items-center rounded-2xl bg-white/[0.06] border border-white/10 transition-all duration-200 hover:bg-white/[0.1] ${
+                                isCollapsed ? "p-2 justify-center" : "px-3 py-2.5 gap-3"
+                            }`}
+                        >
+                            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white p-1 shadow-xs shrink-0">
+                                <Image
+                                    src={logoFinaraIcon}
+                                    alt="Finara"
+                                    width={28}
+                                    height={28}
+                                    className="object-contain"
+                                    priority
+                                />
+                            </div>
+                            {!isCollapsed && (
+                                <div className="min-w-0 flex-1">
+                                    <div className="text-sm font-bold tracking-tight text-white leading-tight">
+                                        Finara
+                                    </div>
+                                    <div className="text-[10px] font-medium text-blue-300/80 tracking-wider uppercase">
+                                        Smart Ledger
+                                    </div>
+                                </div>
                             )}
-                        </div>
-
-                        <p className="text-sm font-medium text-white truncate" title={businessName}>
-                            {businessName}
-                        </p>
+                        </Link>
                     </div>
 
-                    <nav className="flex flex-col gap-2">
+                    {isCollapsed ? (
+                        <div
+                            className="mb-4 flex justify-center"
+                            title={`${businessName} (${isOwner ? "Owner" : "Staff"})`}
+                        >
+                            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-white/[0.04] border border-white/10 text-white/70">
+                                <Building2 size={16} />
+                                <span
+                                    className={`absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full ring-2 ring-[#0F1E36] ${
+                                        isOwner ? "bg-emerald-400" : "bg-blue-400"
+                                    }`}
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="mb-4 rounded-xl bg-white/[0.04] border border-white/10 px-3.5 py-2.5">
+                            <div className="flex items-center justify-between mb-1">
+                                <span className="text-[10px] font-medium text-white/50 uppercase tracking-wider">
+                                    Ruang Kerja
+                                </span>
+                                {profile?.role && (
+                                    <span
+                                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                                            isOwner
+                                                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                                                : "bg-blue-400/20 text-blue-200 border border-blue-400/30"
+                                        }`}
+                                    >
+                                        {isOwner ? "Owner" : "Staff"}
+                                    </span>
+                                )}
+                            </div>
+                            <p className="text-xs font-semibold text-white/90 truncate" title={businessName}>
+                                {businessName}
+                            </p>
+                        </div>
+                    )}
+
+                    <nav className="flex flex-col gap-1">
                         {visibleNavItems.map((item) => {
                             const Icon = item.icon;
                             const isActive = activePage
@@ -149,71 +168,105 @@ export function Sidebar({
                                 <Link
                                     key={item.name}
                                     href={item.href}
-                                    className={`
-                                        flex items-center gap-3
-                                        rounded-xl px-3.5 py-3
-                                        text-sm font-medium transition-colors
-                                        ${
-                                            isActive
-                                                ? "bg-[#2563EB] text-white shadow-sm"
-                                                : "text-white/70 hover:bg-white/10 hover:text-white"
-                                        }
-                                    `}
+                                    title={isCollapsed ? item.name : undefined}
+                                    className={`group relative flex items-center rounded-xl transition-all duration-150 ${
+                                        isCollapsed ? "justify-center h-10 w-full" : "gap-3 px-3 py-2 text-xs font-medium"
+                                    } ${
+                                        isActive
+                                            ? "bg-blue-600 text-white font-semibold shadow-xs"
+                                            : "text-slate-300 hover:bg-white/[0.07] hover:text-white"
+                                    }`}
                                 >
-                                    <Icon size={19} strokeWidth={1.9} />
-                                    <span>{item.name}</span>
+                                    <div
+                                        className={`flex h-7 w-7 items-center justify-center rounded-lg shrink-0 transition-colors ${
+                                            isActive ? "bg-white/20 text-white" : "text-slate-400 group-hover:text-white"
+                                        }`}
+                                    >
+                                        <Icon size={16} strokeWidth={isActive ? 2.2 : 1.9} />
+                                    </div>
+
+                                    {!isCollapsed && <span className="truncate">{item.name}</span>}
+
+                                    {isCollapsed && (
+                                        <div className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 z-50 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-lg border border-slate-800 transition-opacity group-hover:opacity-100 whitespace-nowrap">
+                                            {item.name}
+                                        </div>
+                                    )}
                                 </Link>
                             );
                         })}
                     </nav>
                 </div>
 
-                {/* Bottom Section */}
-                <div className="pt-6">
-                    {/* Settings */}
-                    {(() => {
-                        const isSettingsActive = activePage
-                            ? activePage === "Pengaturan"
-                            : pathname.startsWith("/pengaturan");
+                <div className="pt-3 border-t border-white/10">
+                    <Link
+                        href="/pengaturan"
+                        title={isCollapsed ? "Pengaturan" : undefined}
+                        className={`group relative flex items-center rounded-xl transition-all duration-150 ${
+                            isCollapsed ? "justify-center h-10 w-full" : "gap-3 px-3 py-2 text-xs font-medium"
+                        } ${
+                            isSettingsActive
+                                ? "bg-blue-600 text-white font-semibold shadow-xs"
+                                : "text-slate-300 hover:bg-white/[0.07] hover:text-white"
+                        }`}
+                    >
+                        <div
+                            className={`flex h-7 w-7 items-center justify-center rounded-lg shrink-0 transition-colors ${
+                                isSettingsActive ? "bg-white/20 text-white" : "text-slate-400 group-hover:text-white"
+                            }`}
+                        >
+                            <Settings2 size={16} strokeWidth={isSettingsActive ? 2.2 : 1.9} />
+                        </div>
+                        {!isCollapsed && <span className="truncate">Pengaturan</span>}
 
-                        return (
-                            <Link
-                                href="/pengaturan"
-                                className={`
-                                    flex items-center gap-3
-                                    rounded-xl px-3.5 py-3
-                                    text-sm font-medium transition-colors
-                                    ${
-                                        isSettingsActive
-                                            ? "bg-[#2563EB] text-white shadow-sm"
-                                            : "text-white/70 hover:bg-white/10 hover:text-white"
-                                    }
-                                `}
-                            >
-                                <Settings2 size={19} strokeWidth={1.9} />
-                                <span>Pengaturan</span>
-                            </Link>
-                        );
-                    })()}
+                        {isCollapsed && (
+                            <div className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 -translate-y-1/2 z-50 rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-lg border border-slate-800 transition-opacity group-hover:opacity-100 whitespace-nowrap">
+                                Pengaturan
+                            </div>
+                        )}
+                    </Link>
 
-                    {/* Footer Annotations */}
-                    <div className="
-                        mt-6 border-t
-                        border-white/15
-                        pt-4 text-[11px] leading-5
-                        text-white/40
-                    ">
-                        <p>SIDEBAR · 250px</p>
-                        <p>Light Mode · shell navy</p>
+                    <div className="mt-2 pt-2 border-t border-white/5">
+                        <Link
+                            href="/pengaturan"
+                            title={isCollapsed ? `${profile?.fullName || "Profil"} (${isOwner ? "Owner" : "Staff"})` : undefined}
+                            className={`flex items-center rounded-lg transition-colors hover:bg-white/5 ${
+                                isCollapsed ? "justify-center p-1" : "gap-2.5 px-2 py-1.5"
+                            }`}
+                        >
+                            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white font-semibold text-xs shrink-0">
+                                {profile?.fullName ? profile.fullName.charAt(0).toUpperCase() : "U"}
+                            </div>
+                            {!isCollapsed && (
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-xs font-medium text-white truncate">
+                                        {profile?.fullName || "Pengguna"}
+                                    </p>
+                                    <p className="text-[10px] text-white/50 truncate">
+                                        {isOwner ? "Owner" : "Staff"}
+                                    </p>
+                                </div>
+                            )}
+                        </Link>
                     </div>
+
+                    <button
+                        type="button"
+                        onClick={toggleCollapse}
+                        aria-label={isCollapsed ? "Perluas Sidebar" : "Perkecil Sidebar"}
+                        className={`mt-2 flex items-center rounded-lg bg-white/[0.04] text-slate-400 hover:bg-white/[0.08] hover:text-white transition-colors border border-white/5 ${
+                            isCollapsed ? "h-9 w-full justify-center" : "h-8 w-full px-2.5 justify-between text-xs font-medium"
+                        }`}
+                    >
+                        {!isCollapsed && <span>Ciutkan</span>}
+                        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+                    </button>
                 </div>
             </aside>
 
-            {/* Main Content Area */}
-            <div className="min-w-0 flex-1 bg-[#F8FAFC]">
+            <div className="min-w-0 flex-1 bg-[#F4F6F9]">
                 {children}
             </div>
-
         </div>
     );
 }

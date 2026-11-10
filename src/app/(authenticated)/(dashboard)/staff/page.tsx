@@ -34,23 +34,12 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
-dayjs.locale("id");
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
-};
-
 export default function StaffManagementPage() {
   const utils = trpc.useUtils();
 
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
-  const userName = profile?.fullName?.split(" ")[0] || "Owner";
 
   const {
     data: profiles = [],
@@ -134,8 +123,6 @@ export default function StaffManagementPage() {
     0
   );
 
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
-
   if (isProfileLoading) {
     return (
       <div className="flex min-h-[500px] flex-col items-center justify-center gap-3">
@@ -153,93 +140,92 @@ export default function StaffManagementPage() {
 
   return (
     <div className="space-y-6 font-sans">
-      {/* ──────────────── TOP HEADER (IDENTIK DENGAN DASHBOARD, PRODUK & TRANSAKSI) ──────────────── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               Manajemen Staf
             </h1>
-            <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-[#172554]/10 text-[#172554] border border-[#172554]/20">
-              <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2} />
-              Owner
+            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
+              <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
             </span>
           </div>
-          <p className="mt-1 text-sm text-[#64748B]" suppressHydrationWarning>
-            {todayFormatted} · {getGreeting()}, {userName}. Kelola daftar staf aktif dan undang karyawan baru ke sistem.
+          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+            Daftar karyawan aktif, rekap kontribusi transaksi kasir, dan undangan staf baru.
           </p>
         </div>
 
-        {/* Action: Invite Staff Button */}
         <Button
           onClick={() => {
             resetInviteModal();
             setIsInviteOpen(true);
           }}
-          className="h-10 gap-2 rounded-xl bg-[#2563EB] px-4 font-medium text-white shadow-sm transition-all hover:bg-[#1D4ED8] active:scale-[0.98]"
+          className="h-9 gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98] self-start sm:self-auto"
         >
-          <UserPlus className="h-4 w-4 stroke-[2.5]" />
-          Invite Staff
+          <UserPlus className="h-4 w-4" />
+          Undang Staf Baru
         </Button>
       </div>
 
-      {/* ──────────────── 3 METRIC SUMMARY CARDS (PERSIS DENGAN KARTU DASHBOARD) ──────────────── */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        {/* Card 1: Total Staf Terdaftar */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Total staf aktif
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Total Staf Kasir
               </span>
-              <Users className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                <Users className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                 {totalStaffCount} Karyawan
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                Memiliki hak akses operasional kasir
+              <p className="mt-1 text-xs text-slate-400">
+                Akses operasional kasir & faktur
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Card 2: Pengelola Utama (Owner) */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Pengelola utama (Owner)
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Pengelola Utama
               </span>
-              <ShieldCheck className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <ShieldCheck className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                 {totalOwnerCount} Pengelola
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                Akses penuh finansial, stok, dan staf
+              <p className="mt-1 text-xs text-slate-400">
+                Akses penuh finansial & closing
               </p>
             </div>
           </CardContent>
         </Card>
 
-        {/* Card 3: Total Kontribusi Transaksi Tim */}
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-xs transition-all hover:shadow-md">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Total kontribusi entri
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Total Kontribusi
               </span>
-              <UserCheck className="h-4.5 w-4.5 text-[#16A34A]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                <UserCheck className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                 {totalTransactionsRecorded} Transaksi
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                Dicatat oleh seluruh anggota tim
+              <p className="mt-1 text-xs text-slate-400">
+                Dicatat oleh tim kasir
               </p>
             </div>
           </CardContent>
@@ -247,26 +233,26 @@ export default function StaffManagementPage() {
       </div>
 
       {/* ──────────────── MAIN STAFF TABLE CARD ──────────────── */}
-      <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 overflow-hidden transition-all duration-300">
         <CardContent className="p-0">
           {/* Header Baris Dalam Kartu */}
-          <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between border-b border-[#F1F5F9]">
+          <div className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100">
             <div>
-              <h3 className="text-sm font-semibold text-[#0F172A]">
-                Daftar staf &amp; pengguna terdaftar
+              <h3 className="text-base font-bold text-[#0F172A]">
+                Daftar Staf &amp; Pengguna Terdaftar
               </h3>
               <p className="text-xs text-[#64748B] mt-0.5">
-                Daftar seluruh karyawan yang memiliki akses ke sistem pembukuan.
+                Daftar seluruh karyawan yang memiliki akun pada sistem pembukuan Finara.
               </p>
             </div>
 
             {/* Filter & Search Bar */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2.5">
               {/* Dropdown Filter Role */}
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="h-9 rounded-xl border border-[#E2E8F0] bg-white px-3 text-xs text-[#0F172A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+                className="h-10 rounded-2xl border border-slate-200/80 bg-white px-3.5 text-xs font-semibold text-[#0F172A] shadow-sm shadow-slate-900/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
               >
                 <option value="ALL">Semua Peran</option>
                 <option value="STAFF">Staff Kasir</option>
@@ -274,18 +260,17 @@ export default function StaffManagementPage() {
               </select>
 
               {/* Input Pencarian Minimalis */}
-              <div className="relative w-full sm:w-60">
+              <div className="relative w-full sm:w-64">
                 <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                   size={15}
-                  strokeWidth={1.8}
                 />
                 <Input
                   type="text"
                   placeholder="Cari nama atau email staf..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-9 w-full rounded-xl border-[#E2E8F0] bg-white pl-9 text-xs text-[#0F172A] placeholder:text-[#94A3B8] focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+                  className="h-10 pl-9.5 rounded-2xl border-slate-200/80 text-xs shadow-sm shadow-slate-900/5 focus-visible:ring-2 focus-visible:ring-[#2563EB]"
                 />
               </div>
             </div>

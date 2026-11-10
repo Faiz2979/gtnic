@@ -34,7 +34,6 @@ import {
   Send,
   ShieldCheck,
   Trash2,
-  UserCheck,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -50,23 +49,12 @@ const formatRupiah = (val: number | string | undefined | null) => {
   }).format(num);
 };
 
-// Salam waktu
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
-};
-
 export default function TagihanPage() {
   const utils = trpc.useUtils();
 
-  // 1. Data Profil Pengguna Aktif
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
-  const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
   // 2. Data Rekening Bank & Kas (untuk tujuan pelunasan)
   const { data: accounts = [] } = trpc.account.getAllAccounts.useQuery(undefined, {
@@ -233,43 +221,28 @@ export default function TagihanPage() {
         </div>
       )}
 
-      {/* Header Finara Design */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
-          <div className="flex items-center gap-2 text-xs font-medium text-[#64748B]">
-            <span>{dayjs().format("dddd, D MMMM YYYY")}</span>
-            <span>•</span>
-            <span>{getGreeting()}, {userName}</span>
-          </div>
-          <div className="mt-1 flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               Tagihan & Faktur
             </h1>
-            {isProfileLoading ? (
-              <div className="h-5 w-16 animate-pulse rounded-full bg-slate-200" />
-            ) : isOwner ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#172554]/20 bg-[#172554]/10 px-3 py-1 text-xs font-semibold text-[#172554] shadow-sm">
-                <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2} /> Owner
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 shadow-sm">
-                <UserCheck className="h-3.5 w-3.5" strokeWidth={2} /> Staff
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
+              <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
+            </span>
           </div>
-          <p className="mt-1 text-sm text-[#64748B]">
-            Kelola piutang pelanggan, tagihan utang supplier, dan jadwal jatuh tempo pembayaran secara terorganisir.
+          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+            Jadwal piutang pelanggan, pembayaran utang belanja supplier, dan status tempo faktur.
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
           <Button
             onClick={() => setIsCreateModalOpen(true)}
-            className="rounded-xl bg-[#172554] text-white hover:bg-[#172554]/90 font-medium shadow-sm transition-all text-xs sm:text-sm h-10 px-4"
+            className="h-9 gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98]"
           >
-            <Plus className="mr-1.5 h-4 w-4" />
-            Buat Tagihan Baru
+            <Plus className="h-4 w-4" />
+            Buat Tagihan
           </Button>
 
           <Button
@@ -280,9 +253,9 @@ export default function TagihanPage() {
               showToast("Memperbarui data tagihan...");
             }}
             title="Refresh Data"
-            className="h-10 w-10 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+            className="h-9 w-9 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
@@ -290,21 +263,21 @@ export default function TagihanPage() {
       {/* 4 Finara Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Piutang Pelanggan */}
-        <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#64748B]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Piutang Belum Tertagih
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                <ArrowDownLeft className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#2563EB] shadow-xs">
+                <ArrowDownLeft className="h-4.5 w-4.5" strokeWidth={2} />
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
                 {isStatsLoading ? "Memuat..." : formatRupiah(stats?.totalReceivablesUnpaid ?? 0)}
               </div>
-              <p className="mt-1 text-xs text-[#64748B]">
+              <p className="mt-1 text-xs text-slate-500">
                 Tagihan ke pelanggan yang belum lunas
               </p>
             </div>
@@ -312,21 +285,21 @@ export default function TagihanPage() {
         </Card>
 
         {/* Utang Supplier & Beban */}
-        <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#64748B]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Utang Harus Dibayar
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-50 text-red-600">
-                <ArrowUpRight className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-red-50 text-red-600 shadow-xs">
+                <ArrowUpRight className="h-4.5 w-4.5" strokeWidth={2} />
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
                 {isStatsLoading ? "Memuat..." : formatRupiah(stats?.totalPayablesUnpaid ?? 0)}
               </div>
-              <p className="mt-1 text-xs text-[#64748B]">
+              <p className="mt-1 text-xs text-slate-500">
                 Belanja modal & beban operasional
               </p>
             </div>
@@ -334,21 +307,21 @@ export default function TagihanPage() {
         </Card>
 
         {/* Tagihan Jatuh Tempo */}
-        <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#64748B]">
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Lewat Jatuh Tempo
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-                <AlertCircle className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-amber-50 text-amber-600 shadow-xs">
+                <AlertCircle className="h-4.5 w-4.5" strokeWidth={2} />
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight text-amber-600">
+              <div className="text-2xl font-extrabold tracking-tight text-amber-600">
                 {isStatsLoading ? "Memuat..." : `${stats?.overdueCount ?? 0} Tagihan`}
               </div>
-              <p className="mt-1 text-xs text-[#64748B]">
+              <p className="mt-1 text-xs text-slate-500">
                 Memerlukan tindak lanjut penagihan
               </p>
             </div>
@@ -356,22 +329,22 @@ export default function TagihanPage() {
         </Card>
 
         {/* Tagihan Lunas */}
-        <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
           <CardContent className="p-5">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#64748B]">
-                Tagihan Selesai (Lunas)
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Total Tagihan Lunas
               </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                <CheckCircle2 className="h-5 w-5" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-xs">
+                <CheckCircle2 className="h-4.5 w-4.5" strokeWidth={2} />
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
-                {isStatsLoading ? "Memuat..." : `${stats?.paidThisMonthCount ?? 0} Tagihan`}
+              <div className="text-2xl font-extrabold tracking-tight text-[#0F172A]">
+                {isStatsLoading ? "Memuat..." : `${stats?.paidThisMonthCount ?? 0} Faktur`}
               </div>
-              <p className="mt-1 text-xs text-[#64748B]">
-                Terselesaikan dan tercatat di kas
+              <p className="mt-1 text-xs text-slate-500">
+                Riwayat pembayaran sukses tercatat
               </p>
             </div>
           </CardContent>
@@ -386,11 +359,10 @@ export default function TagihanPage() {
             <button
               type="button"
               onClick={() => setActiveTab("ALL")}
-              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "ALL"
-                  ? "border-[#172554] text-[#172554]"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${activeTab === "ALL"
+                ? "border-[#172554] text-[#172554]"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
             >
               <ReceiptText className="h-4 w-4" />
               Semua ({bills.length})
@@ -398,11 +370,10 @@ export default function TagihanPage() {
             <button
               type="button"
               onClick={() => setActiveTab("RECEIVABLE")}
-              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "RECEIVABLE"
-                  ? "border-[#2563EB] text-[#2563EB]"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${activeTab === "RECEIVABLE"
+                ? "border-[#2563EB] text-[#2563EB]"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
             >
               <ArrowDownLeft className="h-4 w-4 text-blue-600" />
               Piutang Pelanggan ({bills.filter((b) => b.type === "RECEIVABLE").length})
@@ -410,11 +381,10 @@ export default function TagihanPage() {
             <button
               type="button"
               onClick={() => setActiveTab("PAYABLE")}
-              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
-                activeTab === "PAYABLE"
-                  ? "border-red-600 text-red-600"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+              className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${activeTab === "PAYABLE"
+                ? "border-red-600 text-red-600"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
             >
               <ArrowUpRight className="h-4 w-4 text-red-600" />
               Utang Supplier & Beban ({bills.filter((b) => b.type === "PAYABLE").length})
@@ -489,11 +459,10 @@ export default function TagihanPage() {
                           {bill.invoiceNumber}
                         </div>
                         <span
-                          className={`mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                            isReceivable
-                              ? "bg-blue-50 text-blue-700 border border-blue-200"
-                              : "bg-purple-50 text-purple-700 border border-purple-200"
-                          }`}
+                          className={`mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold ${isReceivable
+                            ? "bg-blue-50 text-blue-700 border border-blue-200"
+                            : "bg-purple-50 text-purple-700 border border-purple-200"
+                            }`}
                         >
                           {isReceivable ? <ArrowDownLeft className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
                           {isReceivable ? "Piutang Pelanggan" : "Utang Supplier"}
@@ -547,23 +516,22 @@ export default function TagihanPage() {
                       {/* Status */}
                       <td className="px-6 py-4 text-center">
                         <span
-                          className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
-                            bill.status === "PAID"
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                              : bill.status === "PARTIAL"
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${bill.status === "PAID"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : bill.status === "PARTIAL"
                               ? "bg-blue-50 text-blue-700 border border-blue-200"
                               : isOverdue
-                              ? "bg-red-50 text-red-700 border border-red-200"
-                              : "bg-amber-50 text-amber-700 border border-amber-200"
-                          }`}
+                                ? "bg-red-50 text-red-700 border border-red-200"
+                                : "bg-amber-50 text-amber-700 border border-amber-200"
+                            }`}
                         >
                           {bill.status === "PAID"
                             ? "Lunas"
                             : bill.status === "PARTIAL"
-                            ? "Sebagian"
-                            : isOverdue
-                            ? "Jatuh Tempo"
-                            : "Belum Bayar"}
+                              ? "Sebagian"
+                              : isOverdue
+                                ? "Jatuh Tempo"
+                                : "Belum Bayar"}
                         </span>
                       </td>
 
@@ -661,11 +629,10 @@ export default function TagihanPage() {
               <button
                 type="button"
                 onClick={() => setCreateForm({ ...createForm, type: "RECEIVABLE" })}
-                className={`rounded-xl border p-3 text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-                  createForm.type === "RECEIVABLE"
-                    ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-500/20"
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                }`}
+                className={`rounded-xl border p-3 text-xs font-semibold flex items-center justify-center gap-2 transition-all ${createForm.type === "RECEIVABLE"
+                  ? "border-blue-500 bg-blue-50 text-blue-700 ring-2 ring-blue-500/20"
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
               >
                 <ArrowDownLeft className="h-4 w-4 text-blue-600" />
                 Piutang Pelanggan
@@ -674,11 +641,10 @@ export default function TagihanPage() {
               <button
                 type="button"
                 onClick={() => setCreateForm({ ...createForm, type: "PAYABLE" })}
-                className={`rounded-xl border p-3 text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
-                  createForm.type === "PAYABLE"
-                    ? "border-purple-500 bg-purple-50 text-purple-700 ring-2 ring-purple-500/20"
-                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-                }`}
+                className={`rounded-xl border p-3 text-xs font-semibold flex items-center justify-center gap-2 transition-all ${createForm.type === "PAYABLE"
+                  ? "border-purple-500 bg-purple-50 text-purple-700 ring-2 ring-purple-500/20"
+                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
               >
                 <ArrowUpRight className="h-4 w-4 text-purple-600" />
                 Utang Supplier & Beban
@@ -1003,11 +969,10 @@ export default function TagihanPage() {
                 </div>
                 <div className="text-right">
                   <span
-                    className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      previewBill.status === "PAID"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-amber-100 text-amber-800"
-                    }`}
+                    className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold ${previewBill.status === "PAID"
+                      ? "bg-emerald-100 text-emerald-800"
+                      : "bg-amber-100 text-amber-800"
+                      }`}
                   >
                     {previewBill.status === "PAID" ? "LUNAS (PAID)" : "BELUM LUNAS"}
                   </span>

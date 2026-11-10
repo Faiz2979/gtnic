@@ -29,7 +29,7 @@ import {
   Search,
   ShieldCheck,
   TrendingUp,
-  UserCheck
+  UserCheck,
 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -45,21 +45,12 @@ const formatRupiah = (val: number | string | undefined | null) => {
   }).format(num);
 };
 
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Selamat pagi";
-  if (hour < 15) return "Selamat siang";
-  if (hour < 18) return "Selamat sore";
-  return "Selamat malam";
-};
-
 export default function TransaksiPage() {
   const utils = trpc.useUtils();
 
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
-  const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
   const currentPeriod = dayjs().format("YYYY-MM");
   const [selectedPeriod, setSelectedPeriod] = useState<string>(currentPeriod);
@@ -215,7 +206,6 @@ export default function TransaksiPage() {
   );
   const uniqueStaffCount = new Set(filteredTransactions.map((t) => t.createdById)).size;
 
-  const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
   const selectedProdObj = products.find((p) => p.id === selectedProductId);
 
   const handleExportCSV = () => {
@@ -276,45 +266,45 @@ export default function TransaksiPage() {
 
   return (
     <div className="space-y-6 font-sans">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-              Buku besar
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Transaksi & Kasir
             </h1>
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                 isOwner
-                  ? "bg-[#172554]/10 text-[#172554] border border-[#172554]/20"
-                  : "bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]"
+                  ? "bg-slate-900 text-white"
+                  : "bg-blue-50 text-blue-700 border border-blue-200/60"
               }`}
             >
               {isOwner ? (
                 <>
-                  <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2} />
+                  <ShieldCheck className="h-3 w-3" strokeWidth={2} />
                   Owner
                 </>
               ) : (
                 <>
-                  <UserCheck className="h-3.5 w-3.5" strokeWidth={2} />
+                  <UserCheck className="h-3 w-3" strokeWidth={2} />
                   Staff
                 </>
               )}
             </span>
           </div>
-          <p className="mt-1 text-sm text-[#64748B]" suppressHydrationWarning>
-            {todayFormatted} · {getGreeting()}, {userName}. Rekam jejak seluruh transaksi harian yang masuk.
+          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+            Catatan mutasi penjualan barang, pengeluaran kas toko, dan audit transaksi staf.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
           <Button
             variant="outline"
             onClick={handleExportCSV}
             disabled={filteredTransactions.length === 0}
-            className="h-10 gap-2 rounded-xl border border-[#E2E8F0] bg-white px-3.5 text-xs font-medium text-[#0F172A] shadow-sm hover:bg-[#F8FAFC]"
+            className="h-9 gap-2 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-all"
           >
-            <FileSpreadsheet className="h-4 w-4 text-[#16A34A]" />
+            <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
             Ekspor CSV
           </Button>
 
@@ -323,94 +313,109 @@ export default function TransaksiPage() {
               resetCreateForm();
               setIsCreateOpen(true);
             }}
-            className="h-10 gap-2 rounded-xl bg-[#2563EB] px-4 font-medium text-white shadow-sm transition-all hover:bg-[#1D4ED8] active:scale-[0.98]"
+            className="h-9 gap-2 rounded-xl bg-slate-900 hover:bg-slate-800 px-4 text-xs font-medium text-white shadow-xs transition-all active:scale-[0.98]"
           >
-            <Plus className="h-4 w-4 stroke-[2.5]" />
-            Tambah transaksi
+            <Plus className="h-4 w-4" />
+            Tambah Transaksi
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-blue-200/70">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Total transaksi masuk
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Total Transaksi Masuk
               </span>
-              <ArrowLeftRight className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-blue-50 text-[#2563EB] shadow-xs">
+                <ArrowLeftRight className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
                 {totalTxCount} Transaksi
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                {totalQuantitySold > 0
-                  ? `${totalQuantitySold} unit produk berhasil terjual`
-                  : "Belum ada transaksi pada periode ini"}
-              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-blue-500" />
+                <span>
+                  {totalQuantitySold > 0
+                    ? `${totalQuantitySold} unit produk berhasil terjual`
+                    : "Belum ada transaksi pada periode ini"}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-emerald-200/70">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                Pemasukan transaksi
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Pemasukan Transaksi
               </span>
-              <ArrowDownLeft className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-xs">
+                <ArrowDownLeft className="h-4.5 w-4.5" strokeWidth={2} />
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
                 {formatRupiah(totalRevenue)}
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                {totalTxCount > 0
-                  ? `Akumulasi omzet kotor dari ${totalTxCount} transaksi`
-                  : "Belum ada pemasukan transaksi"}
-              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span>
+                  {totalTxCount > 0
+                    ? `Akumulasi omzet dari ${totalTxCount} transaksi`
+                    : "Belum ada pemasukan transaksi"}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-indigo-200/70">
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-normal text-[#64748B]">
-                {isOwner ? "Total keuntungan bersih" : "Staf operator aktif"}
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                {isOwner ? "Total Keuntungan Bersih" : "Staf Operator Aktif"}
               </span>
-              {isOwner ? (
-                <TrendingUp className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
-              ) : (
-                <UserCheck className="h-4.5 w-4.5 text-[#2563EB]" strokeWidth={1.8} />
-              )}
+              <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-xs">
+                {isOwner ? (
+                  <TrendingUp className="h-4.5 w-4.5" strokeWidth={2} />
+                ) : (
+                  <UserCheck className="h-4.5 w-4.5" strokeWidth={2} />
+                )}
+              </div>
             </div>
             <div className="mt-3">
-              <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
                 {isOwner ? formatRupiah(totalProfit) : `${uniqueStaffCount} Operator`}
               </h2>
-              <p className="mt-1 text-xs text-[#94A3B8]">
-                {isOwner
-                  ? totalRevenue > 0
-                    ? `Margin laba ${((totalProfit / totalRevenue) * 100).toFixed(1)}% dari total omzet`
-                    : "Belum ada laba berjalan"
-                  : "Audit pencatatan harian kasir"}
-              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-500">
+                <span className="inline-flex h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                <span>
+                  {isOwner
+                    ? totalRevenue > 0
+                      ? `Margin laba ${((totalProfit / totalRevenue) * 100).toFixed(1)}% dari total omzet`
+                      : "Belum ada laba berjalan"
+                    : "Audit pencatatan harian kasir"}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+      <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-md">
         <CardContent className="p-0">
-          <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between border-b border-[#F1F5F9]">
+          <div className="flex flex-col gap-3 pb-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100">
             <div>
-              <h3 className="text-sm font-semibold text-[#0F172A]">
-                Aktivitas pencatatan transaksi
+              <h3 className="text-base font-bold text-[#0F172A]">
+                Aktivitas Pencatatan Transaksi
               </h3>
-              <p className="text-xs text-[#64748B] mt-0.5">
-                Audit trail seluruh entri transaksi yang dilakukan oleh staf secara transparan.
+              <p className="text-xs text-slate-400 mt-0.5">
+                Audit trail seluruh entri penjualan yang tercatat ke sistem oleh kasir & admin.
               </p>
             </div>
 

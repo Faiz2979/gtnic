@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -79,16 +79,26 @@ export default function DashboardPage() {
     enabled: isStaff,
   });
 
-  // 3. Data produk untuk modal "+ Tambah transaksi"
+  // 3. Data produk & rekening untuk modal "+ Tambah transaksi"
   const { data: productList } = trpc.product.getAllProducts.useQuery();
+  const { data: accountList = [] } = trpc.account.getAllAccounts.useQuery();
 
   // State Dialog Tambah Transaksi
   const [isTxOpen, setIsTxOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [selectedAccountId, setSelectedAccountId] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
   const [costPrice, setCostPrice] = useState<number>(0);
   const [sellingPrice, setSellingPrice] = useState<number>(0);
   const [txError, setTxError] = useState<string | null>(null);
+
+  // Set default rekening
+  useEffect(() => {
+    if (!selectedAccountId && accountList.length > 0) {
+      const primary = accountList.find((a) => a.isPrimary && a.isActive) || accountList.find((a) => a.isActive);
+      if (primary) setSelectedAccountId(primary.id);
+    }
+  }, [accountList, selectedAccountId]);
 
   const createTxMutation = trpc.transaction.create.useMutation({
     onSuccess: () => {
@@ -96,6 +106,9 @@ export default function DashboardPage() {
       resetTxForm();
       utils.dashboard.getOwnerDashboard.invalidate();
       utils.dashboard.getStaffDashboard.invalidate();
+      utils.account.getAllAccounts.invalidate();
+      utils.account.getStats.invalidate();
+      utils.account.getRecentMutations.invalidate();
     },
     onError: (err) => {
       setTxError(err.message);
@@ -104,6 +117,8 @@ export default function DashboardPage() {
 
   const resetTxForm = () => {
     setSelectedProductId("");
+    const primary = accountList.find((a) => a.isPrimary && a.isActive) || accountList.find((a) => a.isActive);
+    setSelectedAccountId(primary ? primary.id : "");
     setQuantity(1);
     setCostPrice(0);
     setSellingPrice(0);
@@ -131,6 +146,7 @@ export default function DashboardPage() {
     const currentPeriod = dayjs().format("YYYY-MM");
     createTxMutation.mutate({
       productId: selectedProductId,
+      accountId: selectedAccountId || undefined,
       period: currentPeriod,
       quantity: Number(quantity) || 1,
       costPrice: Number(costPrice) || 0,
@@ -292,6 +308,34 @@ export default function DashboardPage() {
                       className="rounded-xl border-[#E2E8F0] bg-white text-[#0F172A] focus-visible:ring-2 focus-visible:ring-[#2563EB]"
                     />
                   </div>
+                </div>
+
+                {/* Metode Pembayaran / Masuk ke Rekening */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="dashboard-account" className="text-xs font-semibold text-[#0F172A]">
+                      Metode Pembayaran (Rekening Masuk)
+                    </Label>
+                    <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" /> Saldo Otomatis Bertambah
+                    </span>
+                  </div>
+                  <select
+                    id="dashboard-account"
+                    value={selectedAccountId}
+                    onChange={(e) => setSelectedAccountId(e.target.value)}
+                    className="flex h-10 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-xs text-[#0F172A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+                  >
+                    {accountList.filter((a) => a.isActive).map((acc) => (
+                      <option key={acc.id} value={acc.id}>
+                        {acc.type === "CASH"
+                          ? `💵 ${acc.name} (${acc.bankName})`
+                          : acc.type === "EWALLET"
+                          ? `📱 ${acc.name} (${acc.bankName})`
+                          : `🏦 ${acc.bankName} - ${acc.name}`} — Saldo: {formatRupiah(acc.balance)}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] p-3.5 text-xs text-[#64748B] space-y-1.5">

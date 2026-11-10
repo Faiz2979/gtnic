@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
@@ -31,6 +31,9 @@ import {
   Eye,
   Loader2,
   FileSpreadsheet,
+  Wallet,
+  CreditCard,
+  CheckCircle2,
 } from "lucide-react";
 
 dayjs.locale("id");
@@ -88,6 +91,7 @@ export default function TransaksiPage() {
 
   // 5. Query Daftar Produk (untuk Modal Tambah Transaksi)
   const { data: products = [] } = trpc.product.getAllProducts.useQuery();
+  const { data: accounts = [] } = trpc.account.getAllAccounts.useQuery();
 
   // State Modal Detail Audit
   const [selectedTxDetail, setSelectedTxDetail] = useState<(typeof transactions)[0] | null>(null);
@@ -96,10 +100,19 @@ export default function TransaksiPage() {
   // State Modal Tambah Transaksi
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [selectedAccountId, setSelectedAccountId] = useState<string>("");
   const [txQuantity, setTxQuantity] = useState<number>(1);
   const [txCostPrice, setTxCostPrice] = useState<number>(0);
   const [txSellingPrice, setTxSellingPrice] = useState<number>(0);
   const [createTxError, setCreateTxError] = useState<string | null>(null);
+
+  // Default Rekening ke akun utama / aktif
+  useEffect(() => {
+    if (!selectedAccountId && accounts.length > 0) {
+      const primary = accounts.find((a) => a.isPrimary && a.isActive) || accounts.find((a) => a.isActive);
+      if (primary) setSelectedAccountId(primary.id);
+    }
+  }, [accounts, selectedAccountId]);
 
   // Mutation Tambah Transaksi
   const createTxMutation = trpc.transaction.create.useMutation({
@@ -111,6 +124,9 @@ export default function TransaksiPage() {
       utils.dashboard.getOwnerDashboard.invalidate();
       utils.dashboard.getStaffDashboard.invalidate();
       utils.product.getAllProducts.invalidate();
+      utils.account.getAllAccounts.invalidate();
+      utils.account.getStats.invalidate();
+      utils.account.getRecentMutations.invalidate();
     },
     onError: (err) => {
       setCreateTxError(err.message);
@@ -119,6 +135,8 @@ export default function TransaksiPage() {
 
   const resetCreateForm = () => {
     setSelectedProductId("");
+    const primary = accounts.find((a) => a.isPrimary && a.isActive) || accounts.find((a) => a.isActive);
+    setSelectedAccountId(primary ? primary.id : "");
     setTxQuantity(1);
     setTxCostPrice(0);
     setTxSellingPrice(0);
@@ -159,6 +177,7 @@ export default function TransaksiPage() {
 
     createTxMutation.mutate({
       productId: selectedProductId,
+      accountId: selectedAccountId || undefined,
       period: currentPeriod,
       quantity: Number(txQuantity),
       costPrice: Number(txCostPrice) || 0,
@@ -620,11 +639,23 @@ export default function TransaksiPage() {
                           {formatRupiah(Number(tx.sellingPrice))}
                         </td>
 
-                        {/* Total Nilai Transaksi */}
+                        {/* Total Nilai Transaksi & Rekening */}
                         <td className="py-3.5 px-3 text-right whitespace-nowrap">
-                          <span className="font-semibold text-[#0F172A]">
-                            {formatRupiah(txTotal)}
-                          </span>
+                          <div className="flex flex-col items-end">
+                            <span className="font-semibold text-[#0F172A]">
+                              {formatRupiah(txTotal)}
+                            </span>
+                            {tx.account ? (
+                              <span className="mt-0.5 inline-flex items-center gap-1 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-700">
+                                <span>{tx.account.type === "CASH" ? "💵" : tx.account.type === "EWALLET" ? "📱" : "🏦"}</span>
+                                <span>{tx.account.bankName}</span>
+                              </span>
+                            ) : (
+                              <span className="mt-0.5 inline-flex items-center gap-1 rounded bg-slate-50 px-1.5 py-0.5 text-[10px] text-slate-400">
+                                💵 Kas Toko
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {/* Margin Laba (Khusus Owner) */}
@@ -727,6 +758,19 @@ export default function TransaksiPage() {
                   <span className="text-[#64748B]">Kuantitas:</span>
                   <span className="font-semibold text-[#0F172A]">
                     {selectedTxDetail.quantity} Unit
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
+                  <span className="text-[#64748B]">Metode Pembayaran:</span>
+                  <span className="font-semibold text-[#0F172A] flex items-center gap-1.5">
+                    {selectedTxDetail.account ? (
+                      <>
+                        <span>{selectedTxDetail.account.type === "CASH" ? "💵" : selectedTxDetail.account.type === "EWALLET" ? "📱" : "🏦"}</span>
+                        <span>{selectedTxDetail.account.bankName} ({selectedTxDetail.account.name})</span>
+                      </>
+                    ) : (
+                      "Kas Toko (Default)"
+                    )}
                   </span>
                 </div>
               </div>
@@ -850,6 +894,37 @@ export default function TransaksiPage() {
                     className="rounded-xl border-[#E2E8F0] bg-white text-[#0F172A] focus-visible:ring-2 focus-visible:ring-[#2563EB]"
                   />
                 </div>
+              </div>
+
+              {/* Metode Pembayaran / Masuk ke Rekening */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="tx-account" className="text-xs font-semibold text-[#0F172A]">
+                    Metode Pembayaran (Rekening Masuk)
+                  </Label>
+                  <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+                    <CheckCircle2 className="h-3 w-3" /> Saldo Otomatis Bertambah
+                  </span>
+                </div>
+                <select
+                  id="tx-account"
+                  value={selectedAccountId}
+                  onChange={(e) => setSelectedAccountId(e.target.value)}
+                  className="flex h-10 w-full rounded-xl border border-[#E2E8F0] bg-white px-3 py-2 text-xs text-[#0F172A] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
+                >
+                  {accounts.filter((a) => a.isActive).map((acc) => (
+                    <option key={acc.id} value={acc.id}>
+                      {acc.type === "CASH"
+                        ? `💵 ${acc.name} (${acc.bankName})`
+                        : acc.type === "EWALLET"
+                        ? `📱 ${acc.name} (${acc.bankName})`
+                        : `🏦 ${acc.bankName} - ${acc.name}`} — Saldo: {formatRupiah(acc.balance)}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-[#64748B]">
+                  Hasil penjualan sebesar {formatRupiah(txQuantity * txSellingPrice)} akan langsung masuk ke rekening di atas.
+                </p>
               </div>
 
               {/* Box Preview Total */}

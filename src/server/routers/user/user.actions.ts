@@ -77,4 +77,16 @@ export const userActions = {
             });
         }
     },
+
+    async updateProfile(userId: string, fullName: string) {
+        try {
+            return await userRepository.updateProfile(userId, fullName);
+        } catch (error) {
+            throw new TRPCError({
+                code: "INTERNAL_SERVER_ERROR",
+                message: "Gagal memperbarui profil pengguna.",
+                cause: error,
+            });
+        }
+    },
 };

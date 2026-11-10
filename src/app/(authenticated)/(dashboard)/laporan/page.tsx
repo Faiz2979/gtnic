@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { trpc } from "@/client/trpc";
 import { ROLE } from "@/utils/enums/user-role.enum";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AccessDeniedCard } from "@/components/access-denied";
 import {
   TrendingUp,
   Package,
@@ -27,6 +28,7 @@ import {
   CheckCircle2,
   FileText,
   Clock,
+  Loader2,
 } from "lucide-react";
 
 dayjs.locale("id");
@@ -61,6 +63,12 @@ export default function LaporanPage() {
   const currentMonth = dayjs().format("YYYY-MM");
   const [selectedPeriod, setSelectedPeriod] = useState<string>(currentMonth);
   const [activeTab, setActiveTab] = useState<"pnl" | "cashflow" | "products" | "staff">("pnl");
+  const [businessName, setBusinessName] = useState("PT GTNIC KREATIF INDONESIA");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("finara_business_name");
+    if (saved) setBusinessName(saved);
+  }, []);
 
   // 3. Query Laporan Komprehensif
   const {
@@ -69,6 +77,8 @@ export default function LaporanPage() {
     refetch: refetchReport,
   } = trpc.report.getComprehensiveReport.useQuery({
     period: selectedPeriod,
+  }, {
+    enabled: isOwner,
   });
 
   const summary = report?.summary;
@@ -119,6 +129,20 @@ export default function LaporanPage() {
     link.click();
     document.body.removeChild(link);
   };
+
+  // Proteksi Hak Akses Khusus OWNER
+  if (isProfileLoading) {
+    return (
+      <div className="flex min-h-[450px] flex-col items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#2563EB]" />
+        <p className="mt-3 text-xs text-slate-500">Memverifikasi hak akses...</p>
+      </div>
+    );
+  }
+
+  if (!isOwner) {
+    return <AccessDeniedCard pageName="Laporan & Analisis Bisnis" />;
+  }
 
   return (
     <div className="space-y-6">
@@ -210,7 +234,7 @@ export default function LaporanPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
-              PT GTNIC KREATIF INDONESIA
+              {businessName}
             </h1>
             <p className="text-xs text-slate-600">
               Laporan Keuangan & Rekapitulasi Bisnis — Periode: {selectedPeriod}
@@ -722,7 +746,7 @@ export default function LaporanPage() {
             <p>Disetujui oleh,</p>
             <div className="h-16" />
             <p className="font-bold underline">Pemilik Usaha (Owner)</p>
-            <p className="text-slate-500">PT GTNIC KREATIF INDONESIA</p>
+            <p className="text-slate-500">{businessName}</p>
           </div>
         </div>
       </div>

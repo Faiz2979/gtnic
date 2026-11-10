@@ -15,21 +15,30 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { trpc } from "@/client/trpc";
+import { ROLE } from "@/utils/enums/user-role.enum";
 
 interface SidebarProps {
     children: React.ReactNode;
     activePage?: string;
 }
 
-const navigation = [
+interface NavItem {
+    name: string;
+    href: string;
+    icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
+    ownerOnly?: boolean;
+}
+
+const navigation: NavItem[] = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Produk & Stok", href: "/product", icon: Package },
+    { name: "Produk & Stok", href: "/product", icon: Package, ownerOnly: true },
     { name: "Transaksi", href: "/transaksi", icon: ArrowLeftRight },
-    { name: "Manajemen Staf", href: "/staff", icon: Users },
-    { name: "Closing Bulanan", href: "/closing", icon: CalendarCheck2 },
-    { name: "Rekening", href: "/rekening", icon: Wallet },
-    { name: "Tagihan", href: "/tagihan", icon: ReceiptText },
-    { name: "Laporan", href: "/laporan", icon: ChartNoAxesCombined },
+    { name: "Manajemen Staf", href: "/staff", icon: Users, ownerOnly: true },
+    { name: "Closing Bulanan", href: "/closing", icon: CalendarCheck2, ownerOnly: true },
+    { name: "Rekening", href: "/rekening", icon: Wallet, ownerOnly: true },
+    { name: "Tagihan", href: "/tagihan", icon: ReceiptText, ownerOnly: true },
+    { name: "Laporan", href: "/laporan", icon: ChartNoAxesCombined, ownerOnly: true },
 ];
 
 export function Sidebar({
@@ -37,6 +46,42 @@ export function Sidebar({
     activePage,
 }: SidebarProps) {
     const pathname = usePathname();
+    const [businessName, setBusinessName] = React.useState("PT Nusantara Digital");
+
+    // Ambil data profil untuk proteksi menu berdasarkan Role (Owner vs Staff)
+    const { data: profile } = trpc.user.getCurrentProfile.useQuery();
+    const isOwner = profile?.role === ROLE.OWNER;
+
+    // Filter menu: Staf hanya melihat menu umum, menu ownerOnly disembunyikan
+    const visibleNavItems = navigation.filter((item) => {
+        if (item.ownerOnly) {
+            return isOwner;
+        }
+        return true;
+    });
+
+    React.useEffect(() => {
+        // Ambil nama usaha tersimpan dari localStorage saat pertama kali load
+        const saved = localStorage.getItem("finara_business_name");
+        if (saved) {
+            setBusinessName(saved);
+        }
+
+        // Tangkap event perubahan nama usaha secara real-time dari Pengaturan
+        const handleUpdate = () => {
+            const updated = localStorage.getItem("finara_business_name");
+            if (updated) {
+                setBusinessName(updated);
+            }
+        };
+
+        window.addEventListener("business_profile_updated", handleUpdate);
+        window.addEventListener("storage", handleUpdate);
+        return () => {
+            window.removeEventListener("business_profile_updated", handleUpdate);
+            window.removeEventListener("storage", handleUpdate);
+        };
+    }, []);
 
     return (
         <div className="flex min-h-screen bg-[#F8FAFC]">
@@ -72,17 +117,28 @@ export function Sidebar({
                         bg-white/10
                         px-3.5 py-3
                     ">
-                        <p className="mb-1 text-xs text-white/70">
-                            Ruang kerja
-                        </p>
+                        <div className="flex items-center justify-between mb-1">
+                            <p className="text-xs text-white/70">
+                                Ruang kerja
+                            </p>
+                            {profile?.role && (
+                                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                                    isOwner 
+                                        ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" 
+                                        : "bg-blue-400/20 text-blue-200 border border-blue-400/30"
+                                }`}>
+                                    {isOwner ? "Owner" : "Staff"}
+                                </span>
+                            )}
+                        </div>
 
-                        <p className="text-sm font-medium text-white truncate">
-                            PT Nusantara Digital
+                        <p className="text-sm font-medium text-white truncate" title={businessName}>
+                            {businessName}
                         </p>
                     </div>
 
                     <nav className="flex flex-col gap-2">
-                        {navigation.map((item) => {
+                        {visibleNavItems.map((item) => {
                             const Icon = item.icon;
                             const isActive = activePage
                                 ? activePage === item.name

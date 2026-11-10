@@ -42,4 +42,15 @@ export const userRouter = router({
     getCurrentProfile: protectedProcedure.query(async ({ ctx }) => {
         return await userActions.getCurrentProfile(ctx.user.id);
     }),
+
+    updateProfile: protectedProcedure
+        .input(
+            z.object({
+                fullName: z.string().min(1, "Nama lengkap wajib diisi"),
+            })
+        )
+        .mutation(async ({ input, ctx }) => {
+            const updated = await userActions.updateProfile(ctx.user.id, input.fullName);
+            return { success: true, profile: updated };
+        }),
 });

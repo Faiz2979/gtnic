@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AccessDeniedCard } from "@/components/access-denied";
 import {
     Wallet,
     Landmark,
@@ -38,6 +39,7 @@ import {
     CheckCircle2,
     AlertCircle,
     HelpCircle,
+    Loader2,
     History,
     TrendingUp,
 } from "lucide-react";
@@ -88,21 +90,21 @@ export default function RekeningPage() {
     const isOwner = profile?.role === ROLE.OWNER;
     const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
-    // 2. Data Rekening & Mutasi dari tRPC
+    // 2. Data Rekening & Mutasi dari tRPC (Hanya di-fetch jika role adalah Owner)
     const {
         data: accounts = [],
         isLoading: isAccountsLoading,
         refetch: refetchAccounts,
-    } = trpc.account.getAllAccounts.useQuery();
+    } = trpc.account.getAllAccounts.useQuery(undefined, { enabled: isOwner });
 
     const { data: stats, isLoading: isStatsLoading } =
-        trpc.account.getStats.useQuery();
+        trpc.account.getStats.useQuery(undefined, { enabled: isOwner });
 
     const {
         data: recentMutations = [],
         isLoading: isMutationsLoading,
         refetch: refetchMutations,
-    } = trpc.account.getRecentMutations.useQuery({ limit: 30 });
+    } = trpc.account.getRecentMutations.useQuery({ limit: 30 }, { enabled: isOwner });
 
     // 3. State Tabs & Search/Filter
     const [activeTab, setActiveTab] = useState<"accounts" | "mutations">("accounts");
@@ -312,6 +314,20 @@ export default function RekeningPage() {
             tag: bankName.toUpperCase(),
         };
     };
+
+    // Proteksi Akses Khusus OWNER
+    if (isProfileLoading) {
+        return (
+            <div className="flex min-h-[450px] flex-col items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-[#2563EB]" />
+                <p className="mt-3 text-xs text-slate-500">Memverifikasi hak akses...</p>
+            </div>
+        );
+    }
+
+    if (!isOwner) {
+        return <AccessDeniedCard pageName="Buku Rekening & Kas Bisnis" />;
+    }
 
     return (
         <div className="space-y-6">

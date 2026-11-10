@@ -36,5 +36,12 @@ export const userRepository = {
         return await prisma.profile.findUnique({
             where: { id },
         });
-    }
+    },
+
+    async updateProfile(id: string, fullName: string) {
+        return await prisma.profile.update({
+            where: { id },
+            data: { fullName },
+        });
+    },
 };

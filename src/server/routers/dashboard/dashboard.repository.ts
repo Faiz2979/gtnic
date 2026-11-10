@@ -2,9 +2,7 @@
 import { prisma } from "@/lib/prisma";
 
 export const dashboardRepository = {
-    /**
-     * Ambil ringkasan transaksi untuk bulan tertentu (total pemasukan, pengeluaran/modal, profit)
-     */
+
     async getMonthSummary(period: string) {
         const transactions = await prisma.transaction.findMany({
             where: { period },

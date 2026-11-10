@@ -1,4 +1,3 @@
-// src/app/(authenticated)/(dashboard)/dashboard/_components/SummaryCards.tsx
 "use client";
 
 import { Card } from "@/components/ui/card";
@@ -111,7 +110,6 @@ export function SummaryCards({
         );
     }
 
-    // STAFF view — lebih sederhana
     return (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Total penjualan */}

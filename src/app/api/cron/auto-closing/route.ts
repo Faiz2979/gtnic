@@ -1,4 +1,3 @@
-// src/app/api/cron/auto-closing/route.ts
 import { ClosingActions } from "@/server/routers/closing/closing.actions";
 import dayjs from "dayjs";
 import { NextResponse } from "next/server";
@@ -14,7 +13,6 @@ export async function POST(request: Request) {
 
         const currentPeriod = dayjs().format("YYYY-MM");
 
-        // MEMANGGIL GENERATE DRAFT (Menyimpan rekapitulasi awal & JSON snapshot ke database)
         const result = await ClosingActions.generateDraft(currentPeriod);
 
         return NextResponse.json({

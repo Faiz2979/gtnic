@@ -1,4 +1,3 @@
-// src/app/onboarding/page.tsx
 "use client";
 
 import { createClient } from "@/app/lib/supabase/client";
@@ -24,12 +23,11 @@ export default function OnboardingPage() {
         },
     });
 
-    // Ambil id dan email dari session Supabase yang aktif saat ini
     useEffect(() => {
         const fetchUser = async () => {
             const { data: { user }, error } = await supabase.auth.getUser();
             if (error || !user || !user.email) {
-                router.push("/auth/update-password"); // Lempar balik jika sesi tidak ada
+                router.push("/auth/update-password");
                 return;
             }
 
@@ -47,12 +45,10 @@ export default function OnboardingPage() {
         e.preventDefault();
         if (!userData) return;
 
-        // Kirim data sesuai dengan struktur IRegisterUser
         onboardingMutation.mutate({
             id: userData.id,
             email: userData.email,
             fullName,
-            // Jika backend Anda menerima tambahan field seperti phone, bisa disertakan di sini
         });
     };
 
@@ -75,7 +71,6 @@ export default function OnboardingPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Menampilkan email (readonly) sebagai info akun */}
                     <div className="space-y-2">
                         <Label>Email</Label>
                         <Input

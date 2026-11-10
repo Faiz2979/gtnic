@@ -1,4 +1,3 @@
-// src/app/auth/update-password/page.tsx
 "use client";
 
 import { createClient } from "@/app/lib/supabase/client";
@@ -13,16 +12,14 @@ export default function UpdatePasswordPage() {
 
     useEffect(() => {
         const handleTokenExchange = async () => {
-            // 1. Ambil hash dari URL (contoh: #access_token=xyz&refresh_token=abc&type=invite)
             const hash = window.location.hash;
             
             if (hash && hash.includes("access_token")) {
-                const params = new URLSearchParams(hash.substring(1)); // buang tanda pagar '#'
+                const params = new URLSearchParams(hash.substring(1)); 
                 const accessToken = params.get("access_token");
                 const refreshToken = params.get("refresh_token");
 
                 if (accessToken && refreshToken) {
-                    // 2. Paksa set session menggunakan token dari email
                     const { error: sessionError } = await supabase.auth.setSession({
                         access_token: accessToken,
                         refresh_token: refreshToken,
@@ -31,13 +28,12 @@ export default function UpdatePasswordPage() {
                     if (sessionError) {
                         setError("Token undangan tidak valid atau kedaluwarsa.");
                     } else {
-                        setIsReady(true); // Sesi berhasil dipasang, form boleh dibuka
+                        setIsReady(true); 
                     }
                     return;
                 }
             }
 
-            // 3. Kalau tidak ada di hash, cek apakah sudah ada sesi aktif sebelumnya
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 setIsReady(true);
@@ -61,7 +57,6 @@ export default function UpdatePasswordPage() {
 
             if (error) throw error;
 
-            // Berhasil! Bersihkan URL hash lalu lanjut ke onboarding
             window.location.href = "/onboarding";
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "Gagal memperbarui password");

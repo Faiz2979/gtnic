@@ -1,11 +1,9 @@
-// src/server/routers/closing/closing.repository.ts
 import { prisma } from "@/lib/prisma";
 import { CLOSING_STATUS } from "@/utils/enums/closing-status.enum";
 import { ClosingItemSnapshot } from "@/utils/types/item-closing.types";
 import { InventoryStatus, Prisma } from "../../../../lib/generated/prisma";
 
 export const ClosingRepository = {
-  // Mengambil inventaris aktif pada periode tertentu (misal: "2026-10")
   getActiveInventories: async (period: string) => {
     return await prisma.monthlyInventory.findMany({
       where: { period, status: InventoryStatus.ACTIVE },
@@ -13,14 +11,12 @@ export const ClosingRepository = {
     });
   },
 
-  // Mengambil transaksi berdasarkan field period langsung di tabel transactions
   getTransactionsByPeriod: async (period: string) => {
     return await prisma.transaction.findMany({
       where: { period },
     });
   },
 
-  // Eksekusi transaksi Prisma secara atomik untuk proses closing
   executeClosingTransaction: async (params: {
     currentPeriod: string;
     nextPeriod: string;
@@ -49,7 +45,6 @@ export const ClosingRepository = {
     } = params;
 
     return await prisma.$transaction(async (tx) => {
-      // 1. Ubah status inventaris periode lama menjadi CLOSED & pastikan sisa stok final tersimpan
       for (const inv of inventoryUpdates) {
         await tx.monthlyInventory.update({
           where: { id: inv.id },
@@ -60,7 +55,6 @@ export const ClosingRepository = {
         });
       }
 
-      // 2. Simpan rekapitulasi ke tabel monthly_closings beserta ID Owner yang menutup buku
       const closingRecord = await tx.monthlyClosing.create({
         data: {
           period: currentPeriod,
@@ -71,7 +65,6 @@ export const ClosingRepository = {
         },
       });
 
-      // 3. Generate carry-over stok awal untuk periode berikutnya
       await tx.monthlyInventory.createMany({
         data: nextPeriodInventories,
         skipDuplicates: true,
@@ -108,14 +101,12 @@ export const ClosingRepository = {
     });
   },
 
-  // Mengambil data draf closing berdasarkan periode
   getByPeriod: async (period: string) => {
     return await prisma.monthlyClosing.findUnique({
       where: { period },
     });
   },
 
-  // Memperbarui snapshot item (misal saat staf mengubah stok fisik / mencatat selisih)
   updateItemsSnapshot: async (period: string, newItems: ClosingItemSnapshot[]) => {
     return await prisma.monthlyClosing.update({
       where: { period },

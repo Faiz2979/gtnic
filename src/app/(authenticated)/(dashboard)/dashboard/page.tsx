@@ -1,11 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
 import { trpc } from "@/client/trpc";
-import { ROLE } from "@/utils/enums/user-role.enum";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -19,23 +14,27 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 import {
-  Wallet,
   ArrowDownLeft,
+  ArrowRight,
   ArrowUpRight,
-  Plus,
-  Clock,
   CheckCircle2,
+  Clock,
   Loader2,
   Package,
+  Plus,
   ShieldCheck,
   UserCheck,
-  ArrowRight,
+  Wallet,
 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 dayjs.locale("id");
 
-// Format Rupiah helper
 const formatRupiah = (val: number | string | undefined | null) => {
   const num = typeof val === "string" ? parseFloat(val) : Number(val) || 0;
   return new Intl.NumberFormat("id-ID", {
@@ -45,7 +44,6 @@ const formatRupiah = (val: number | string | undefined | null) => {
   }).format(num);
 };
 
-// Salam waktu (Pagi/Siang/Sore/Malam)
 const getGreeting = () => {
   const hour = new Date().getHours();
   if (hour < 11) return "Selamat pagi";
@@ -57,14 +55,12 @@ const getGreeting = () => {
 export default function DashboardPage() {
   const utils = trpc.useUtils();
 
-  // 1. Ambil profile user aktif (Role Owner / Staff)
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
 
   const isOwner = profile?.role === ROLE.OWNER;
   const isStaff = profile?.role === ROLE.STAFF;
 
-  // 2. Fetch data murni sesuai role dari database
   const {
     data: ownerData,
     isLoading: isOwnerLoading,
@@ -79,10 +75,8 @@ export default function DashboardPage() {
     enabled: isStaff,
   });
 
-  // 3. Data produk untuk modal "+ Tambah transaksi"
   const { data: productList } = trpc.product.getAllProducts.useQuery();
 
-  // State Dialog Tambah Transaksi
   const [isTxOpen, setIsTxOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -141,11 +135,9 @@ export default function DashboardPage() {
   const isLoading =
     isProfileLoading || (isOwner && isOwnerLoading) || (isStaff && isStaffLoading);
 
-  // Tanggal & Hari ini
   const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
   const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
-  // Data MURNI dari database (0 jika belum ada transaksi)
   const revenueThisMonth = isOwner
     ? (ownerData?.monthSummary?.totalRevenue ?? 0)
     : (staffData?.monthSummary?.totalRevenue ?? 0);
@@ -162,15 +154,12 @@ export default function DashboardPage() {
     ? (ownerData?.monthSummary?.transactionCount ?? 0)
     : (staffData?.monthSummary?.transactionCount ?? 0);
 
-  // Recent transactions list riil
   const recentTransactions = isOwner
     ? ownerData?.recentTransactions ?? []
     : staffData?.recentTransactions ?? [];
 
-  // Low stock items riil
   const lowStockItems = ownerData?.lowStockItems ?? [];
 
-  // Cash flow chart data riil 6 bulan
   const cashFlowData = ownerData?.cashFlow ?? [];
 
   if (isLoading) {
@@ -589,7 +578,6 @@ export default function DashboardPage() {
   );
 }
 
-// ──────────────── KOMPONEN LINE CHART SVG MINIMALIS ────────────────
 function CashFlowChart({
   data,
 }: {
@@ -600,7 +588,6 @@ function CashFlowChart({
   const paddingX = 35;
   const paddingY = 20;
 
-  // Jika data belum ada dari backend, buatkan 6 titik bulan terakhir dengan nilai 0
   const chartData =
     data && data.length > 0
       ? data

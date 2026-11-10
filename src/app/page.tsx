@@ -7,12 +7,9 @@ export default function HomePage() {
     const router = useRouter();
 
     useEffect(() => {
-        // Cek apakah URL dari email invite membawa hash access_token
         if (window.location.hash.includes("access_token")) {
-            // Pindahkan user ke halaman update password beserta hash-nya
             router.replace(`/auth/update-password${window.location.hash}`);
         }
-        // useLoading(true);
     }, [router]);
 
     return (

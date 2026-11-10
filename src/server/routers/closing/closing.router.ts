@@ -1,4 +1,3 @@
-// src/server/routers/closing/router.ts
 import { protectedProcedure, router } from "@/server/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -6,7 +5,6 @@ import { ClosingActions } from "./closing.actions";
 import { ClosingRepository } from "./closing.repository";
 
 export const closingRouter = router({
-  // 1. Endpoint untuk mengambil data draf closing beserta JSON snapshot item
   getDraftByPeriod: protectedProcedure
     .input(
       z.object({
@@ -18,7 +16,6 @@ export const closingRouter = router({
       return draft;
     }),
 
-  // 2. Endpoint bagi Staff untuk memperbarui opname stok fisik & mencatat selisih (kurang/lebih)
   updatePhysicalStock: protectedProcedure
     .input(
       z.object({
@@ -45,7 +42,6 @@ export const closingRouter = router({
       }
     }),
 
-  // 3. Endpoint eksekusi penutupan buku (Final oleh Owner)
   execute: protectedProcedure
     .input(
       z.object({

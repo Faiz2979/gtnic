@@ -37,7 +37,6 @@ import { useMemo, useState } from "react";
 
 dayjs.locale("id");
 
-// Salam waktu
 const getGreeting = () => {
   const hour = new Date().getHours();
   if (hour < 11) return "Selamat pagi";
@@ -49,13 +48,11 @@ const getGreeting = () => {
 export default function StaffManagementPage() {
   const utils = trpc.useUtils();
 
-  // 1. Data Profil User Aktif & Proteksi Role
   const { data: profile, isLoading: isProfileLoading } =
     trpc.user.getCurrentProfile.useQuery();
   const isOwner = profile?.role === ROLE.OWNER;
   const userName = profile?.fullName?.split(" ")[0] || "Owner";
 
-  // 2. Query Daftar Pengguna / Staf
   const {
     data: profiles = [],
     isLoading: isProfilesLoading,
@@ -64,7 +61,6 @@ export default function StaffManagementPage() {
     enabled: isOwner,
   });
 
-  // State Dialog Invite Staff
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteSuccessMsg, setInviteSuccessMsg] = useState<string | null>(null);
@@ -72,11 +68,9 @@ export default function StaffManagementPage() {
   const [isCopied, setIsCopied] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
 
-  // State Filter & Pencarian
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("ALL");
 
-  // Mutation Invite Employee
   const inviteMutation = trpc.user.inviteEmployee.useMutation({
     onSuccess: (data) => {
       setInviteSuccessMsg(`Tautan undangan berhasil dibuat untuk ${inviteEmail}!`);
@@ -121,7 +115,6 @@ export default function StaffManagementPage() {
     setIsCopied(false);
   };
 
-  // Filter Profil
   const filteredProfiles = useMemo(() => {
     return profiles.filter((p) => {
       if (roleFilter !== "ALL" && p.role !== roleFilter) {
@@ -135,7 +128,6 @@ export default function StaffManagementPage() {
     });
   }, [profiles, roleFilter, searchQuery]);
 
-  // Statistik Ringkasan
   const totalStaffCount = profiles.filter((p) => p.role === ROLE.STAFF).length;
   const totalOwnerCount = profiles.filter((p) => p.role === ROLE.OWNER).length;
   const totalTransactionsRecorded = profiles.reduce(
@@ -145,7 +137,6 @@ export default function StaffManagementPage() {
 
   const todayFormatted = dayjs().format("dddd, D MMMM YYYY");
 
-  // Loading Sesi Profil
   if (isProfileLoading) {
     return (
       <div className="flex min-h-[500px] flex-col items-center justify-center gap-3">
@@ -157,7 +148,6 @@ export default function StaffManagementPage() {
     );
   }
 
-  // Proteksi Hak Akses Khusus OWNER
   if (!isOwner) {
     return (
       <div className="flex min-h-[500px] flex-col items-center justify-center px-4">

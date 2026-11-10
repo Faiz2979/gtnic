@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AccessDeniedCard } from "@/components/access-denied";
 import {
   Users,
   UserPlus,
@@ -161,31 +162,7 @@ export default function StaffManagementPage() {
 
   // Proteksi Hak Akses Khusus OWNER
   if (!isOwner) {
-    return (
-      <div className="flex min-h-[500px] flex-col items-center justify-center px-4">
-        <Card className="max-w-md rounded-2xl border border-[#E2E8F0] bg-white p-8 text-center shadow-sm">
-          <CardContent className="p-0">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FEF2F2] text-[#DC2626]">
-              <ShieldAlert className="h-7 w-7" strokeWidth={1.8} />
-            </div>
-            <h2 className="mt-5 text-xl font-bold tracking-tight text-[#0F172A]">
-              Akses Dibatasi
-            </h2>
-            <p className="mt-2 text-sm text-[#64748B]">
-              Halaman <strong>Manajemen Staf</strong> hanya dapat diakses oleh pengguna
-              dengan peran <strong>Owner</strong>.
-            </p>
-            <div className="mt-6">
-              <Link href="/dashboard">
-                <Button className="h-10 w-full rounded-xl bg-[#2563EB] font-medium text-white shadow-sm hover:bg-[#1D4ED8]">
-                  Kembali ke Dashboard
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <AccessDeniedCard pageName="Manajemen Staf & Hak Akses" />;
   }
 
   return (

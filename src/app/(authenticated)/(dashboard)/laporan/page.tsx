@@ -7,6 +7,7 @@ import { trpc } from "@/client/trpc";
 import { ROLE } from "@/utils/enums/user-role.enum";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { AccessDeniedCard } from "@/components/access-denied";
 import {
   TrendingUp,
   Package,
@@ -27,6 +28,7 @@ import {
   CheckCircle2,
   FileText,
   Clock,
+  Loader2,
 } from "lucide-react";
 
 dayjs.locale("id");
@@ -75,6 +77,8 @@ export default function LaporanPage() {
     refetch: refetchReport,
   } = trpc.report.getComprehensiveReport.useQuery({
     period: selectedPeriod,
+  }, {
+    enabled: isOwner,
   });
 
   const summary = report?.summary;
@@ -125,6 +129,20 @@ export default function LaporanPage() {
     link.click();
     document.body.removeChild(link);
   };
+
+  // Proteksi Hak Akses Khusus OWNER
+  if (isProfileLoading) {
+    return (
+      <div className="flex min-h-[450px] flex-col items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#2563EB]" />
+        <p className="mt-3 text-xs text-slate-500">Memverifikasi hak akses...</p>
+      </div>
+    );
+  }
+
+  if (!isOwner) {
+    return <AccessDeniedCard pageName="Laporan & Analisis Bisnis" />;
+  }
 
   return (
     <div className="space-y-6">

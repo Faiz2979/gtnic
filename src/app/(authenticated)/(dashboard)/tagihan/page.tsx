@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AccessDeniedCard } from "@/components/access-denied";
 import {
   ReceiptText,
   ArrowDownLeft,
@@ -38,6 +39,7 @@ import {
   Wallet,
   FileText,
   Send,
+  Loader2,
   Eye,
   CreditCard,
 } from "lucide-react";
@@ -73,16 +75,22 @@ export default function TagihanPage() {
   const userName = profile?.fullName?.split(" ")[0] || "Pengguna";
 
   // 2. Data Rekening Bank & Kas (untuk tujuan pelunasan)
-  const { data: accounts = [] } = trpc.account.getAllAccounts.useQuery();
+  const { data: accounts = [] } = trpc.account.getAllAccounts.useQuery(undefined, {
+    enabled: isOwner,
+  });
 
   // 3. Query Tagihan & Statistik
   const {
     data: bills = [],
     isLoading: isBillsLoading,
     refetch: refetchBills,
-  } = trpc.bill.getAllBills.useQuery();
+  } = trpc.bill.getAllBills.useQuery(undefined, {
+    enabled: isOwner,
+  });
 
-  const { data: stats, isLoading: isStatsLoading } = trpc.bill.getStats.useQuery();
+  const { data: stats, isLoading: isStatsLoading } = trpc.bill.getStats.useQuery(undefined, {
+    enabled: isOwner,
+  });
 
   // 4. State Filter & Search
   const [activeTab, setActiveTab] = useState<"ALL" | "RECEIVABLE" | "PAYABLE">("ALL");
@@ -206,6 +214,20 @@ export default function TagihanPage() {
     navigator.clipboard.writeText(message);
     showToast("Format pesan tagihan WhatsApp berhasil disalin!");
   };
+
+  // Proteksi Hak Akses Khusus OWNER
+  if (isProfileLoading) {
+    return (
+      <div className="flex min-h-[450px] flex-col items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-[#2563EB]" />
+        <p className="mt-3 text-xs text-slate-500">Memverifikasi hak akses...</p>
+      </div>
+    );
+  }
+
+  if (!isOwner) {
+    return <AccessDeniedCard pageName="Tagihan & Faktur Usaha" />;
+  }
 
   return (
     <div className="space-y-6">

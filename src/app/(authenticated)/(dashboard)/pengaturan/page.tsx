@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AccessDeniedCard } from "@/components/access-denied";
 import {
   Settings2,
   User,
@@ -248,18 +249,20 @@ export default function PengaturanPage() {
             <span>Profil Pengguna</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("business")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold transition-all text-left ${
-              activeTab === "business"
-                ? "bg-[#172554] text-white shadow-sm"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
-            }`}
-          >
-            <Building2 className="h-4 w-4" />
-            <span>Identitas Usaha / Toko</span>
-          </button>
+          {isOwner && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("business")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold transition-all text-left ${
+                activeTab === "business"
+                  ? "bg-[#172554] text-white shadow-sm"
+                  : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
+              }`}
+            >
+              <Building2 className="h-4 w-4" />
+              <span>Identitas Usaha / Toko</span>
+            </button>
+          )}
 
           <button
             type="button"
@@ -274,18 +277,20 @@ export default function PengaturanPage() {
             <span>Keamanan & Password</span>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab("system")}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold transition-all text-left ${
-              activeTab === "system"
-                ? "bg-[#172554] text-white shadow-sm"
-                : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
-            }`}
-          >
-            <Bell className="h-4 w-4" />
-            <span>Sistem & Notifikasi</span>
-          </button>
+          {isOwner && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("system")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold transition-all text-left ${
+                activeTab === "system"
+                  ? "bg-[#172554] text-white shadow-sm"
+                  : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80"
+              }`}
+            >
+              <Bell className="h-4 w-4" />
+              <span>Sistem & Notifikasi</span>
+            </button>
+          )}
         </div>
 
         {/* Content Section */}
@@ -374,7 +379,9 @@ export default function PengaturanPage() {
           )}
 
           {/* Tab 2: Informasi Usaha */}
-          {activeTab === "business" && (
+          {activeTab === "business" && (!isOwner ? (
+            <AccessDeniedCard pageName="Identitas Usaha / Toko" />
+          ) : (
             <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm p-6">
               <div className="border-b border-slate-100 pb-4 mb-5">
                 <h2 className="text-base font-bold text-[#0F172A] flex items-center gap-2">
@@ -443,7 +450,7 @@ export default function PengaturanPage() {
                 </div>
               </form>
             </Card>
-          )}
+          ))}
 
           {/* Tab 3: Keamanan & Kata Sandi */}
           {activeTab === "security" && (
@@ -519,7 +526,9 @@ export default function PengaturanPage() {
           )}
 
           {/* Tab 4: Sistem & Notifikasi */}
-          {activeTab === "system" && (
+          {activeTab === "system" && (!isOwner ? (
+            <AccessDeniedCard pageName="Sistem & Notifikasi" />
+          ) : (
             <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm p-6 space-y-6">
               <div className="border-b border-slate-100 pb-4">
                 <h2 className="text-base font-bold text-[#0F172A] flex items-center gap-2">
@@ -592,7 +601,7 @@ export default function PengaturanPage() {
                 </div>
               </div>
             </Card>
-          )}
+          ))}
         </div>
       </div>
     </div>

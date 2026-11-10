@@ -5,6 +5,7 @@ import { dashboardRouter } from './routers/dashboard/dashboard.router';
 import { helloWorldRouter } from './routers/hello-world/hello-world.router';
 import { inventoryRouter } from './routers/inventory/inventory.router';
 import { productRouter } from './routers/product/product.router';
+import { reportRouter } from './routers/report/report.router';
 import { transactionRouter } from './routers/transaction/transaction.router';
 import { userRouter } from './routers/user/user.router';
 import { router } from './trpc';
@@ -26,6 +27,7 @@ export const appRouter = router({
     bill: billRouter,
     closing: closingRouter,
     dashboard: dashboardRouter,
+    report: reportRouter,
 });
 
 // optional untuk standalone server

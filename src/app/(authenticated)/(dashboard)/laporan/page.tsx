@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/id";
 import { trpc } from "@/client/trpc";
@@ -61,6 +61,12 @@ export default function LaporanPage() {
   const currentMonth = dayjs().format("YYYY-MM");
   const [selectedPeriod, setSelectedPeriod] = useState<string>(currentMonth);
   const [activeTab, setActiveTab] = useState<"pnl" | "cashflow" | "products" | "staff">("pnl");
+  const [businessName, setBusinessName] = useState("PT GTNIC KREATIF INDONESIA");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("finara_business_name");
+    if (saved) setBusinessName(saved);
+  }, []);
 
   // 3. Query Laporan Komprehensif
   const {
@@ -210,7 +216,7 @@ export default function LaporanPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold uppercase tracking-tight text-slate-900">
-              PT GTNIC KREATIF INDONESIA
+              {businessName}
             </h1>
             <p className="text-xs text-slate-600">
               Laporan Keuangan & Rekapitulasi Bisnis — Periode: {selectedPeriod}
@@ -722,7 +728,7 @@ export default function LaporanPage() {
             <p>Disetujui oleh,</p>
             <div className="h-16" />
             <p className="font-bold underline">Pemilik Usaha (Owner)</p>
-            <p className="text-slate-500">PT GTNIC KREATIF INDONESIA</p>
+            <p className="text-slate-500">{businessName}</p>
           </div>
         </div>
       </div>

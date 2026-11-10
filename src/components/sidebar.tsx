@@ -37,6 +37,30 @@ export function Sidebar({
     activePage,
 }: SidebarProps) {
     const pathname = usePathname();
+    const [businessName, setBusinessName] = React.useState("PT Nusantara Digital");
+
+    React.useEffect(() => {
+        // Ambil nama usaha tersimpan dari localStorage saat pertama kali load
+        const saved = localStorage.getItem("finara_business_name");
+        if (saved) {
+            setBusinessName(saved);
+        }
+
+        // Tangkap event perubahan nama usaha secara real-time dari Pengaturan
+        const handleUpdate = () => {
+            const updated = localStorage.getItem("finara_business_name");
+            if (updated) {
+                setBusinessName(updated);
+            }
+        };
+
+        window.addEventListener("business_profile_updated", handleUpdate);
+        window.addEventListener("storage", handleUpdate);
+        return () => {
+            window.removeEventListener("business_profile_updated", handleUpdate);
+            window.removeEventListener("storage", handleUpdate);
+        };
+    }, []);
 
     return (
         <div className="flex min-h-screen bg-[#F8FAFC]">
@@ -76,8 +100,8 @@ export function Sidebar({
                             Ruang kerja
                         </p>
 
-                        <p className="text-sm font-medium text-white truncate">
-                            PT Nusantara Digital
+                        <p className="text-sm font-medium text-white truncate" title={businessName}>
+                            {businessName}
                         </p>
                     </div>
 

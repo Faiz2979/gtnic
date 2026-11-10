@@ -1,23 +1,42 @@
+
 "use client";
 
+import { createClient } from "@/app/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function HomePage() {
-    const router = useRouter();
+  const router = useRouter();
 
-    useEffect(() => {
-        if (window.location.hash.includes("access_token")) {
-            router.replace(`/auth/update-password${window.location.hash}`);
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (window.location.hash.includes("access_token")) {
+        router.replace(
+          `/auth/update-password${window.location.hash}`
+        );
+        return;
+      }
+
+      const supabase = createClient();
+
+      try {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (error) throw error;
+
+        if (session) {
+          router.replace("/dashboard");
         }
-    }, [router]);
+      } catch (error) {
+        console.error("Failed to check authentication:", error);
+      }
+    };
 
-    return (
-        <div className="flex min-h-screen items-center justify-center">
-            <div className="text-center">
-                <h1 className="text-4xl font-bold mb-4">Welcome to the Home Page</h1>
-                <p className="text-lg text-gray-600">This is the main content of the home page.</p>
-            </div>
-        </div>
-    );
+    checkAuth();
+  }, [router]);
+
+  return <></>;
 }

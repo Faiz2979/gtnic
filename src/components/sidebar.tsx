@@ -3,6 +3,7 @@
 import {
     ArrowLeftRight,
     BookOpenCheck,
+    CalendarCheck2,
     ChartNoAxesCombined,
     LayoutDashboard,
     Package,
@@ -25,6 +26,7 @@ const navigation = [
     { name: "Produk & Stok", href: "/product", icon: Package },
     { name: "Transaksi", href: "/transaksi", icon: ArrowLeftRight },
     { name: "Manajemen Staf", href: "/staff", icon: Users },
+    { name: "Closing Bulanan", href: "/closing", icon: CalendarCheck2 },
     { name: "Rekening", href: "/rekening", icon: Wallet },
     { name: "Tagihan", href: "/tagihan", icon: ReceiptText },
     { name: "Laporan", href: "/laporan", icon: ChartNoAxesCombined },

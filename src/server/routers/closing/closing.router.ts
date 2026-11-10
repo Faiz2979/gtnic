@@ -67,4 +67,52 @@ export const closingRouter = router({
         });
       }
     }),
+
+  // 4. Endpoint preview kalkulasi closing (omzet, modal, net profit, carry-over, dsb)
+  getPreview: protectedProcedure
+    .input(
+      z.object({
+        period: z.string().regex(/^\d{4}-\d{2}$/, "Format periode harus YYYY-MM"),
+      })
+    )
+    .query(async ({ input }) => {
+      try {
+        return await ClosingActions.getPreview(input.period);
+      } catch (error: any) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error.message || "Gagal memuat preview kalkulasi closing.",
+        });
+      }
+    }),
+
+  // 5. Endpoint arsip riwayat closing
+  getAllClosings: protectedProcedure.query(async () => {
+    try {
+      return await ClosingActions.getAllClosings();
+    } catch (error: any) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: error.message || "Gagal memuat arsip riwayat closing.",
+      });
+    }
+  }),
+
+  // 6. Endpoint membuka kembali periode closing (Reopen)
+  reopen: protectedProcedure
+    .input(
+      z.object({
+        period: z.string().regex(/^\d{4}-\d{2}$/, "Format periode harus YYYY-MM"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      try {
+        return await ClosingActions.reopenClosing(input.period);
+      } catch (error: any) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error.message || "Gagal membuka kembali periode closing.",
+        });
+      }
+    }),
 });

@@ -1,3 +1,4 @@
+import { emailConstants } from "@/utils/const/email";
 import { Resend } from "resend";
 
 const resendApiKey = process.env.RESEND_API_KEY;
@@ -40,7 +41,7 @@ export async function sendClosingReportEmail(params: ClosingEmailParams) {
     }).format(params.netProfit);
 
     const { data, error } = await resend.emails.send({
-      from: "Smart Ledger <no-reply@woylah.akufaiz.my.id>",
+      from: emailConstants.FROM_ADDRESS,
       to: [params.to],
       subject: `[LAPORAN RESMI] Rekapitulasi Closing Periode ${params.period}`,
       html: `

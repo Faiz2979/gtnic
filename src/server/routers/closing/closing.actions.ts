@@ -297,6 +297,7 @@ export const ClosingActions = {
         const draftResult = await ClosingActions.generateDraft(period);
         closingRecord = draftResult.draft;
       } catch (err) {
+        console.log("Gagal generate draf untuk preview:", err);
         // Abaikan jika inventaris belum aktif
       }
     }
@@ -345,7 +346,6 @@ export const ClosingActions = {
     };
   },
 
-  // 5. Mengambil Seluruh Arsip Riwayat Closing (Dipetakan ke DTO bersih)
   getAllClosings: async () => {
     const records = await ClosingRepository.getAllClosings();
     return records.map((c: any) => ({

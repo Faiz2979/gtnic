@@ -1,11 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Link from "next/link";
-import dayjs from "dayjs";
-import "dayjs/locale/id";
 import { trpc } from "@/client/trpc";
-import { ROLE } from "@/utils/enums/user-role.enum";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -18,27 +13,28 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ROLE } from "@/utils/enums/user-role.enum";
+import dayjs from "dayjs";
+import "dayjs/locale/id";
 import {
+  AlertTriangle,
+  Archive,
+  Boxes,
   CalendarCheck2,
+  CheckCircle2,
+  Clock,
+  Eye,
+  FileText,
+  Loader2,
+  Lock,
+  Mail,
+  ShieldAlert,
   ShieldCheck,
   TrendingUp,
-  DollarSign,
-  ArrowRight,
-  Clock,
-  CheckCircle2,
-  AlertTriangle,
-  Lock,
-  Unlock,
-  Mail,
-  FileText,
-  Boxes,
-  Loader2,
-  ShieldAlert,
-  Archive,
-  Eye,
-  RefreshCw,
-  Sparkles,
+  Unlock
 } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 dayjs.locale("id");
 
@@ -62,13 +58,13 @@ const getGreeting = () => {
 };
 
 interface ClosingRecordItem {
-  id: string;
-  period: string;
+  id?: string;
+  period?: string;
   totalRevenue: number;
   totalCapital: number;
   netProfit: number;
   status: string;
-  closedAt: string | null;
+  closedAt?: string | null;
   itemsSnapshot: Array<{ productName?: string; physicalStock?: number; systemStock?: number }>;
   closedBy?: {
     id: string;
@@ -76,6 +72,12 @@ interface ClosingRecordItem {
     email: string;
     role: string;
   } | null;
+}
+
+interface itemSnapshot {
+  productName?: string;
+  physicalStock?: number;
+  systemStock?: number;
 }
 
 export default function ClosingPage() {
@@ -137,7 +139,7 @@ export default function ClosingPage() {
 
   // Mutation Membuka Kembali Periode Closing (Reopen)
   const reopenMutation = trpc.closing.reopen.useMutation({
-    onSuccess: (res) => {
+    onSuccess: () => {
       utils.closing.getAllClosings.invalidate();
       utils.closing.getPreview.invalidate();
       utils.dashboard.getOwnerDashboard.invalidate();
@@ -766,7 +768,7 @@ export default function ClosingPage() {
                   Snapshot Stok Produk Terkunci
                 </p>
                 <div className="max-h-40 overflow-y-auto divide-y divide-[#F1F5F9] text-xs">
-                  {itemsSnapshotList.map((item: any, idx: number) => (
+                  {itemsSnapshotList.map((item: itemSnapshot, idx: number) => (
                     <div key={idx} className="flex items-center justify-between py-1.5">
                       <span className="font-medium text-[#0F172A]">
                         {item.productName}

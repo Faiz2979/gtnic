@@ -21,6 +21,7 @@ import {
   Printer,
   RefreshCw,
   ShieldCheck,
+  Sparkles,
   TrendingUp,
   UserCheck,
   Users,
@@ -98,24 +99,16 @@ export default function LaporanPage() {
 
     csvContent += "RINGKASAN EKSEKUTIF\n";
     csvContent += `Total Omzet Penjualan,${summary?.totalRevenue || 0}\n`;
-    csvContent += `Beban Pokok Penjualan (HPP),${summary?.totalCost || 0}\n`;
+    csvContent += `Total HPP (Modal Barang),${summary?.totalCost || 0}\n`;
     csvContent += `Laba Kotor,${summary?.grossProfit || 0}\n`;
     csvContent += `Beban Operasional,${summary?.operatingExpenses || 0}\n`;
     csvContent += `Laba Bersih Akhir,${summary?.netProfit || 0}\n`;
-    csvContent += `Margin Keuntungan (%),${summary?.profitMargin || 0}%\n`;
-    csvContent += `Total Transaksi,${summary?.totalTransactions || 0}\n\n`;
+    csvContent += `Margin Keuntungan,${summary?.profitMargin || 0}%\n\n`;
 
-    csvContent += "PERFORMA PRODUK TERJUAL\n";
-    csvContent += "Nama Produk,Kuantitas Terjual,Total Omzet,Total Laba,Sisa Stok Fisik\n";
+    csvContent += "PERFORMA PRODUK TERLARIS\n";
+    csvContent += "Nama Produk,Unit Terjual,Total Omzet,Kontribusi Laba,Sisa Stok\n";
     products.forEach((p) => {
       csvContent += `"${p.productName}",${p.unitsSold},${p.revenue},${p.profit},${p.currentStock}\n`;
-    });
-    csvContent += "\n";
-
-    csvContent += "KONTRIBUSI STAF KASIR\n";
-    csvContent += "Nama Staf,Peran,Jumlah Transaksi,Total Omzet,Kontribusi (%)\n";
-    staff.forEach((s) => {
-      csvContent += `"${s.staffName}",${s.role},${s.transactionCount},${s.totalSales},${s.contributionPercent}%\n`;
     });
 
     const encodedUri = encodeURI(csvContent);
@@ -143,44 +136,28 @@ export default function LaporanPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header Finara Design */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between print:hidden">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/70 pb-5 print:hidden">
         <div>
-          <div className="flex items-center gap-2 text-xs font-medium text-[#64748B]">
-            <span>{dayjs().format("dddd, D MMMM YYYY")}</span>
-            <span>•</span>
-            <span>{getGreeting()}, {userName}</span>
-          </div>
-          <div className="mt-1 flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-              Laporan & Analisis Bisnis
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Laporan Keuangan
             </h1>
-            {isProfileLoading ? (
-              <div className="h-5 w-16 animate-pulse rounded-full bg-slate-200" />
-            ) : isOwner ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#172554]/20 bg-[#172554]/10 px-3 py-1 text-xs font-semibold text-[#172554] shadow-sm">
-                <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2} /> Owner
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 shadow-sm">
-                <UserCheck className="h-3.5 w-3.5" strokeWidth={2} /> Staff
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold bg-slate-900 text-white">
+              <ShieldCheck className="h-3 w-3" strokeWidth={2} /> Owner
+            </span>
           </div>
-          <p className="mt-1 text-sm text-[#64748B]">
-            Pusat laporan performa keuangan resmi, neraca laba rugi, arus kas, dan analisis produk terlaris.
+          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+            Rekapitulasi laba rugi, arus kas liquid, dan analisis peringkat penjualan produk.
           </p>
         </div>
 
-        {/* Filter Periode & Action Buttons */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          {/* Dropdown Periode */}
-          <div className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm">
-            <Calendar className="h-4 w-4 text-slate-400" />
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs">
+            <Calendar className="h-3.5 w-3.5 text-slate-400" />
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="bg-transparent font-medium text-slate-700 outline-none"
+              className="bg-transparent font-medium text-slate-700 outline-none cursor-pointer"
             >
               {availablePeriods.map((p) => (
                 <option key={p} value={p}>
@@ -191,37 +168,34 @@ export default function LaporanPage() {
             </select>
           </div>
 
-          {/* Cetak PDF */}
           <Button
             variant="outline"
             onClick={handlePrint}
-            className="rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium shadow-sm h-10 px-3.5"
+            className="h-8.5 rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium px-3 transition-all"
             title="Cetak Laporan Resmi"
           >
-            <Printer className="mr-1.5 h-4 w-4 text-slate-600" />
+            <Printer className="mr-1.5 h-3.5 w-3.5 text-slate-500" />
             Cetak PDF
           </Button>
 
-          {/* Ekspor CSV */}
           <Button
             variant="outline"
             onClick={handleExportCSV}
-            className="rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium shadow-sm h-10 px-3.5"
+            className="h-8.5 rounded-xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium px-3 transition-all"
             title="Ekspor ke File CSV"
           >
-            <FileSpreadsheet className="mr-1.5 h-4 w-4 text-emerald-600" />
+            <FileSpreadsheet className="mr-1.5 h-3.5 w-3.5 text-emerald-600" />
             Ekspor CSV
           </Button>
 
-          {/* Refresh */}
           <Button
             variant="ghost"
             size="icon"
             onClick={() => refetchReport()}
             title="Refresh Data"
-            className="h-10 w-10 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+            className="h-8.5 w-8.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
@@ -234,7 +208,7 @@ export default function LaporanPage() {
               {businessName}
             </h1>
             <p className="text-xs text-slate-600">
-              Laporan Keuangan & Rekapitulasi Bisnis — Periode: {selectedPeriod}
+              Laporan Keuangan &amp; Rekapitulasi Bisnis — Periode: {selectedPeriod}
             </p>
           </div>
           <div className="text-right text-xs text-slate-500">
@@ -247,131 +221,123 @@ export default function LaporanPage() {
       {/* 4 Finara Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Omzet */}
-        <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#64748B]">
-                Total Pendapatan (Omzet)
-              </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                <TrendingUp className="h-5 w-5" />
-              </div>
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+              Total Omzet Penjualan
+            </span>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-sm">
+              <TrendingUp className="h-5 w-5" />
             </div>
-            <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
-                {isReportLoading ? "Memuat..." : formatRupiah(summary?.totalRevenue ?? 0)}
-              </div>
-              <p className="mt-1 text-xs text-[#64748B]">
-                Dari {summary?.totalTransactions ?? 0} transaksi tercatat
-              </p>
+          </div>
+          <div className="mt-4">
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
+              {isReportLoading ? "Memuat..." : formatRupiah(summary?.totalRevenue ?? 0)}
             </div>
-          </CardContent>
+            <p className="mt-1.5 text-xs text-[#64748B]">
+              Dari {summary?.totalTransactions ?? 0} transaksi tercatat
+            </p>
+          </div>
         </Card>
 
         {/* Beban Pokok Penjualan (HPP) */}
-        <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#64748B]">
-                Beban Pokok Penjualan (HPP)
-              </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-700">
-                <Package className="h-5 w-5" />
-              </div>
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+              Beban Pokok Penjualan (HPP)
+            </span>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-100 text-slate-700 shadow-sm">
+              <Package className="h-5 w-5" />
             </div>
-            <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight text-[#0F172A]">
-                {isReportLoading ? "Memuat..." : formatRupiah(summary?.totalCost ?? 0)}
-              </div>
-              <p className="mt-1 text-xs text-[#64748B]">
-                Total modal barang terjual
-              </p>
+          </div>
+          <div className="mt-4">
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A]">
+              {isReportLoading ? "Memuat..." : formatRupiah(summary?.totalCost ?? 0)}
             </div>
-          </CardContent>
+            <p className="mt-1.5 text-xs text-[#64748B]">
+              Total modal dasar barang terjual
+            </p>
+          </div>
         </Card>
 
         {/* Laba Bersih Usaha */}
-        <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#64748B]">
-                Laba Bersih Usaha
-              </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                <Wallet className="h-5 w-5" />
-              </div>
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+              Laba Bersih Usaha
+            </span>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 shadow-sm">
+              <Wallet className="h-5 w-5" />
             </div>
-            <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight text-emerald-600">
-                {isReportLoading ? "Memuat..." : formatRupiah(summary?.netProfit ?? 0)}
-              </div>
-              <p className="mt-1 text-xs text-[#64748B]">
-                Setelah modal & beban operasional
-              </p>
+          </div>
+          <div className="mt-4">
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-emerald-600">
+              {isReportLoading ? "Memuat..." : formatRupiah(summary?.netProfit ?? 0)}
             </div>
-          </CardContent>
+            <p className="mt-1.5 text-xs text-[#64748B]">
+              Setelah modal &amp; beban operasional
+            </p>
+          </div>
         </Card>
 
         {/* Profit Margin */}
-        <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-[#64748B]">
-                Margin Keuntungan
-              </span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                <Percent className="h-5 w-5" />
-              </div>
+        <Card className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+              Margin Keuntungan
+            </span>
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 shadow-sm">
+              <Percent className="h-5 w-5" />
             </div>
-            <div className="mt-3">
-              <div className="text-2xl font-bold tracking-tight text-indigo-600">
-                {isReportLoading ? "Memuat..." : `${summary?.profitMargin ?? 0}%`}
-              </div>
-              <p className="mt-1 text-xs text-[#64748B]">
-                Rasio efisiensi laba bersih
-              </p>
+          </div>
+          <div className="mt-4">
+            <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-indigo-600">
+              {isReportLoading ? "Memuat..." : `${summary?.profitMargin ?? 0}%`}
             </div>
-          </CardContent>
+            <p className="mt-1.5 text-xs text-[#64748B]">
+              Rasio efisiensi perputaran laba
+            </p>
+          </div>
         </Card>
       </div>
 
       {/* Tabs & Table Section */}
-      <Card className="rounded-2xl border-slate-200/80 bg-white shadow-sm overflow-hidden">
+      <Card className="rounded-3xl border border-slate-200/80 bg-white shadow-sm shadow-slate-900/5 overflow-hidden transition-all duration-300">
         {/* Navigation Tabs Header */}
-        <div className="border-b border-slate-100 px-6 pt-4 flex gap-3 print:hidden">
+        <div className="border-b border-slate-100 p-4 sm:px-6 flex flex-wrap gap-2 print:hidden bg-slate-50/40">
           <button
             type="button"
             onClick={() => setActiveTab("pnl")}
-            className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200 ${
               activeTab === "pnl"
-                ? "border-[#172554] text-[#172554]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "bg-[#172554] text-white shadow-md shadow-[#172554]/20"
+                : "bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200/80"
             }`}
           >
             <FileText className="h-4 w-4" />
-            Laba Rugi (P&L)
+            Laba Rugi (P&amp;L)
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("cashflow")}
-            className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200 ${
               activeTab === "cashflow"
-                ? "border-[#172554] text-[#172554]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "bg-[#172554] text-white shadow-md shadow-[#172554]/20"
+                : "bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200/80"
             }`}
           >
             <Banknote className="h-4 w-4" />
-            Arus Kas & Rekening
+            Arus Kas &amp; Rekening
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab("products")}
-            className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200 ${
               activeTab === "products"
-                ? "border-[#172554] text-[#172554]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "bg-[#172554] text-white shadow-md shadow-[#172554]/20"
+                : "bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200/80"
             }`}
           >
             <Award className="h-4 w-4" />
@@ -381,10 +347,10 @@ export default function LaporanPage() {
           <button
             type="button"
             onClick={() => setActiveTab("staff")}
-            className={`pb-3.5 px-3 text-sm font-semibold border-b-2 transition-all flex items-center gap-2 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold transition-all duration-200 ${
               activeTab === "staff"
-                ? "border-[#172554] text-[#172554]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "bg-[#172554] text-white shadow-md shadow-[#172554]/20"
+                : "bg-white text-slate-600 hover:bg-slate-100/80 border border-slate-200/80"
             }`}
           >
             <Users className="h-4 w-4" />
@@ -394,7 +360,7 @@ export default function LaporanPage() {
 
         {/* Tab 1: Laporan Laba Rugi (P&L Statement) */}
         {(activeTab === "pnl" || typeof window === "undefined") && (
-          <div className="p-6 space-y-6">
+          <div className="p-6 sm:p-7 space-y-6">
             <div>
               <h2 className="text-base font-bold text-[#0F172A]">
                 Laporan Laba Rugi Komprehensif
@@ -437,7 +403,7 @@ export default function LaporanPage() {
                 <span className="font-bold text-red-600">({formatRupiah(summary?.operatingExpenses ?? 0)})</span>
               </div>
               <div className="p-4 pl-8 flex items-center justify-between text-xs text-slate-600">
-                <span>Pengeluaran Operasional & Kas Toko</span>
+                <span>Pengeluaran Operasional &amp; Kas Toko</span>
                 <span className="font-medium text-slate-800">{formatRupiah(summary?.operatingExpenses ?? 0)}</span>
               </div>
 
@@ -449,7 +415,7 @@ export default function LaporanPage() {
                     Margin Keuntungan Bersih: {summary?.profitMargin ?? 0}%
                   </div>
                 </div>
-                <div className="text-xl text-emerald-400">
+                <div className="text-xl sm:text-2xl text-emerald-400">
                   {formatRupiah(summary?.netProfit ?? 0)}
                 </div>
               </div>
@@ -459,10 +425,10 @@ export default function LaporanPage() {
 
         {/* Tab 2: Arus Kas & Posisi Rekening */}
         {activeTab === "cashflow" && (
-          <div className="p-6 space-y-6">
+          <div className="p-6 sm:p-7 space-y-6">
             <div>
               <h2 className="text-base font-bold text-[#0F172A]">
-                Laporan Arus Kas & Saldo Likuid
+                Laporan Arus Kas &amp; Saldo Likuid
               </h2>
               <p className="text-xs text-slate-500">
                 Rekapitulasi pergerakan uang tunai fisik dan transfer bank pada periode {selectedPeriod}.
@@ -471,7 +437,7 @@ export default function LaporanPage() {
 
             {/* Ringkasan Arus Kas */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4">
+              <div className="rounded-2xl border border-emerald-200/80 bg-emerald-50/40 p-5">
                 <div className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5">
                   <ArrowDownLeft className="h-4 w-4 text-emerald-600" />
                   Arus Kas Masuk (Inflow)
@@ -479,10 +445,10 @@ export default function LaporanPage() {
                 <div className="text-xl font-bold text-emerald-700 mt-2">
                   +{formatRupiah(cashFlow?.cashInflow ?? 0)}
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1">Penjualan kasir & mutasi masuk</p>
+                <p className="text-[11px] text-slate-500 mt-1">Penjualan kasir &amp; mutasi masuk</p>
               </div>
 
-              <div className="rounded-xl border border-red-200 bg-red-50/50 p-4">
+              <div className="rounded-2xl border border-red-200/80 bg-red-50/40 p-5">
                 <div className="text-xs font-semibold text-red-800 flex items-center gap-1.5">
                   <ArrowUpRight className="h-4 w-4 text-red-600" />
                   Arus Kas Keluar (Outflow)
@@ -490,10 +456,10 @@ export default function LaporanPage() {
                 <div className="text-xl font-bold text-red-700 mt-2">
                   -{formatRupiah(cashFlow?.cashOutflow ?? 0)}
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1">Beban operasional & tarik tunai</p>
+                <p className="text-[11px] text-slate-500 mt-1">Beban operasional &amp; tarik kas</p>
               </div>
 
-              <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4">
+              <div className="rounded-2xl border border-blue-200/80 bg-blue-50/40 p-5">
                 <div className="text-xs font-semibold text-blue-800 flex items-center gap-1.5">
                   <Wallet className="h-4 w-4 text-blue-600" />
                   Net Cash Flow (Surplus/Defisit)
@@ -501,25 +467,25 @@ export default function LaporanPage() {
                 <div className="text-xl font-bold text-blue-700 mt-2">
                   {formatRupiah(cashFlow?.netCashFlow ?? 0)}
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1">Selisih arus kas periode ini</p>
+                <p className="text-[11px] text-slate-500 mt-1">Selisih arus kas berjalan</p>
               </div>
             </div>
 
             {/* Posisi Saldo Rekening Saat Ini */}
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
-                Posisi Saldo Berjalan Rekening & Kas
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
+                Posisi Saldo Berjalan Rekening &amp; Kas
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {cashFlow?.accounts.map((acc) => (
-                  <div key={acc.id} className="rounded-xl border border-slate-200 p-3 bg-white">
+                  <div key={acc.id} className="rounded-2xl border border-slate-200/80 p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-slate-500">{acc.name}</span>
-                      <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                      <span className="text-xs font-semibold text-slate-600">{acc.name}</span>
+                      <span className="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
                         {acc.bankName}
                       </span>
                     </div>
-                    <div className="text-base font-bold text-[#0F172A] mt-1.5">
+                    <div className="text-lg font-extrabold text-[#0F172A] mt-2">
                       {formatRupiah(acc.balance)}
                     </div>
                   </div>
@@ -529,38 +495,38 @@ export default function LaporanPage() {
 
             {/* Riwayat Mutasi Terkini */}
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
                 Mutasi Kas Terakhir
               </h3>
-              <div className="rounded-xl border border-slate-200 overflow-hidden">
+              <div className="rounded-2xl border border-slate-200/80 overflow-hidden">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                  <thead className="bg-slate-50/75 text-slate-500 font-semibold border-b border-slate-200/80">
                     <tr>
-                      <th className="py-2.5 px-4">Tanggal</th>
-                      <th className="py-2.5 px-4">Rekening</th>
-                      <th className="py-2.5 px-4">Keterangan</th>
-                      <th className="py-2.5 px-4 text-right">Nominal</th>
+                      <th className="py-3 px-4">Tanggal</th>
+                      <th className="py-3 px-4">Rekening</th>
+                      <th className="py-3 px-4">Keterangan</th>
+                      <th className="py-3 px-4 text-right">Nominal</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {cashFlow?.recentCashMovements.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="py-6 text-center text-slate-400">
+                        <td colSpan={4} className="py-8 text-center text-slate-400">
                           Belum ada catatan mutasi kas pada periode ini.
                         </td>
                       </tr>
                     ) : (
                       cashFlow?.recentCashMovements.map((m) => (
-                        <tr key={m.id} className="hover:bg-slate-50/50">
-                          <td className="py-2.5 px-4 text-slate-500 whitespace-nowrap">
+                        <tr key={m.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="py-3 px-4 text-slate-500 whitespace-nowrap">
                             {dayjs(m.date).format("DD MMM YYYY, HH:mm")}
                           </td>
-                          <td className="py-2.5 px-4 font-medium text-slate-800">
+                          <td className="py-3 px-4 font-semibold text-slate-800">
                             {m.accountName}
                           </td>
-                          <td className="py-2.5 px-4 text-slate-600">{m.description}</td>
+                          <td className="py-3 px-4 text-slate-600">{m.description}</td>
                           <td
-                            className={`py-2.5 px-4 text-right font-bold ${
+                            className={`py-3 px-4 text-right font-bold ${
                               m.type === "INCOME" ? "text-emerald-600" : "text-red-600"
                             }`}
                           >
@@ -583,18 +549,18 @@ export default function LaporanPage() {
             <table className="w-full text-left text-sm text-[#0F172A]">
               <thead className="bg-slate-50/75 text-[11px] uppercase tracking-wider text-[#64748B] font-semibold border-b border-slate-100">
                 <tr>
-                  <th className="px-6 py-3.5 text-center w-16">Peringkat</th>
-                  <th className="px-6 py-3.5">Nama Produk</th>
-                  <th className="px-6 py-3.5 text-center">Unit Terjual</th>
-                  <th className="px-6 py-3.5 text-right">Total Omzet</th>
-                  <th className="px-6 py-3.5 text-right">Kontribusi Laba</th>
-                  <th className="px-6 py-3.5 text-center">Sisa Stok Fisik</th>
+                  <th className="px-6 py-4 text-center w-20">Peringkat</th>
+                  <th className="px-6 py-4">Nama Produk</th>
+                  <th className="px-6 py-4 text-center">Unit Terjual</th>
+                  <th className="px-6 py-4 text-right">Total Omzet</th>
+                  <th className="px-6 py-4 text-right">Kontribusi Laba</th>
+                  <th className="px-6 py-4 text-center">Sisa Stok Fisik</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {products.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-10 text-center text-slate-400 text-xs">
+                    <td colSpan={6} className="px-6 py-12 text-center text-slate-400 text-xs">
                       Belum ada penjualan produk pada periode ini.
                     </td>
                   </tr>
@@ -603,9 +569,9 @@ export default function LaporanPage() {
                     <tr key={p.productId} className="hover:bg-slate-50/60 transition-colors">
                       <td className="px-6 py-4 text-center">
                         <span
-                          className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
+                          className={`inline-flex h-7 w-7 items-center justify-center rounded-xl text-xs font-bold ${
                             idx === 0
-                              ? "bg-amber-100 text-amber-800"
+                              ? "bg-amber-100 text-amber-800 shadow-sm"
                               : idx === 1
                               ? "bg-slate-200 text-slate-700"
                               : idx === 2
@@ -618,13 +584,13 @@ export default function LaporanPage() {
                       </td>
 
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-xs text-[#0F172A]">
+                        <div className="font-bold text-xs text-[#0F172A]">
                           {p.productName}
                         </div>
                       </td>
 
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+                        <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 border border-blue-200/50">
                           {p.unitsSold} unit
                         </span>
                       </td>
@@ -639,7 +605,7 @@ export default function LaporanPage() {
 
                       <td className="px-6 py-4 text-center">
                         <span
-                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                             p.currentStock > 10
                               ? "bg-slate-100 text-slate-700"
                               : p.currentStock > 0
@@ -664,17 +630,17 @@ export default function LaporanPage() {
             <table className="w-full text-left text-sm text-[#0F172A]">
               <thead className="bg-slate-50/75 text-[11px] uppercase tracking-wider text-[#64748B] font-semibold border-b border-slate-100">
                 <tr>
-                  <th className="px-6 py-3.5">Nama Staf</th>
-                  <th className="px-6 py-3.5">Peran (Role)</th>
-                  <th className="px-6 py-3.5 text-center">Jumlah Transaksi</th>
-                  <th className="px-6 py-3.5 text-right">Total Penjualan</th>
-                  <th className="px-6 py-3.5 text-center">Kontribusi Omzet</th>
+                  <th className="px-6 py-4">Nama Staf</th>
+                  <th className="px-6 py-4">Peran (Role)</th>
+                  <th className="px-6 py-4 text-center">Jumlah Transaksi</th>
+                  <th className="px-6 py-4 text-right">Total Penjualan</th>
+                  <th className="px-6 py-4 text-center">Kontribusi Omzet</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {staff.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="px-6 py-10 text-center text-slate-400 text-xs">
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400 text-xs">
                       Belum ada kontribusi staf tercatat.
                     </td>
                   </tr>
@@ -682,7 +648,7 @@ export default function LaporanPage() {
                   staff.map((s) => (
                     <tr key={s.staffId} className="hover:bg-slate-50/60 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-xs text-[#0F172A]">
+                        <div className="font-bold text-xs text-[#0F172A]">
                           {s.staffName}
                         </div>
                         <div className="text-[11px] text-slate-400">{s.email}</div>
@@ -690,21 +656,21 @@ export default function LaporanPage() {
 
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                             s.role === "OWNER"
-                              ? "bg-[#172554]/10 text-[#172554]"
-                              : "bg-blue-50 text-blue-700"
+                              ? "bg-[#172554]/10 text-[#172554] border border-[#172554]/20"
+                              : "bg-blue-50 text-blue-700 border border-blue-200/50"
                           }`}
                         >
                           {s.role}
                         </span>
                       </td>
 
-                      <td className="px-6 py-4 text-center font-medium text-xs text-slate-700">
+                      <td className="px-6 py-4 text-center font-semibold text-xs text-slate-700">
                         {s.transactionCount} transaksi
                       </td>
 
-                      <td className="px-6 py-4 text-right font-bold text-xs text-[#0F172A]">
+                      <td className="px-6 py-4 text-right font-extrabold text-xs text-[#0F172A]">
                         {formatRupiah(s.totalSales)}
                       </td>
 
@@ -712,11 +678,11 @@ export default function LaporanPage() {
                         <div className="flex items-center justify-center gap-2">
                           <div className="w-16 bg-slate-100 h-2 rounded-full overflow-hidden">
                             <div
-                              className="bg-[#2563EB] h-full rounded-full"
+                              className="bg-[#2563EB] h-full rounded-full transition-all"
                               style={{ width: `${Math.min(100, s.contributionPercent)}%` }}
                             />
                           </div>
-                          <span className="text-xs font-semibold text-slate-700">
+                          <span className="text-xs font-bold text-slate-700">
                             {s.contributionPercent}%
                           </span>
                         </div>
@@ -750,4 +716,3 @@ export default function LaporanPage() {
     </div>
   );
 }
-

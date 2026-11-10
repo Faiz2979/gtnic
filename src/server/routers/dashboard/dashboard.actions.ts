@@ -83,7 +83,7 @@ export const dashboardActions = {
                           totalRevenue: Number(lastClosing.totalRevenue),
                           totalCapital: Number(lastClosing.totalCapital),
                           netProfit: Number(lastClosing.netProfit),
-                          closedBy: lastClosing.closedBy.fullName,
+                          closedBy: lastClosing.closedBy?.fullName || "Sistem",
                           closedAt: lastClosing.closedAt,
                       }
                     : null,

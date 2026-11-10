@@ -116,6 +116,23 @@ export const ClosingRepository = {
     });
   },
 
+  // Mengambil seluruh riwayat closing untuk arsip/laporan
+  getAllClosings: async () => {
+    return await prisma.monthlyClosing.findMany({
+      orderBy: { period: "desc" },
+      include: {
+        closedBy: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+  },
+
   // Memperbarui snapshot item (misal saat staf mengubah stok fisik / mencatat selisih)
   updateItemsSnapshot: async (period: string, newItems: ClosingItemSnapshot[]) => {
     return await prisma.monthlyClosing.update({

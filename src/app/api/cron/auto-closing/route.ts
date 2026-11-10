@@ -23,10 +23,10 @@ export async function POST(request: Request) {
             data: result,
         }, { status: 200 });
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Error automated closing cron:", error);
         return NextResponse.json(
-            { success: false, error: error.message || "Internal Server Error" },
+            { success: false, error: error instanceof Error ? error.message : "Internal Server Error" },
             { status: 500 }
         );
     }

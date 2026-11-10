@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { CLOSING_STATUS } from "@/utils/enums/closing-status.enum";
 import { ClosingItemSnapshot } from "@/utils/types/item-closing.types";
 import dayjs from "dayjs";
-import { InventoryStatus } from "../../../../lib/generated/prisma";
+import { InventoryStatus, Prisma } from "../../../../lib/generated/prisma";
 import { ClosingRepository } from "./closing.repository";
 
 export const ClosingActions = {
@@ -168,7 +168,7 @@ export const ClosingActions = {
           totalRevenue: closingRecord.totalRevenue,
           totalCapital: closingRecord.totalCapital,
           netProfit: closingRecord.netProfit,
-          itemsSnapshot: items as any,
+          itemsSnapshot: items as unknown as Prisma.JsonObject,
         },
       });
 

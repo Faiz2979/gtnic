@@ -1,4 +1,3 @@
-// src/app/_components/AuthGuard.tsx
 "use client";
 
 import { trpc } from "@/client/trpc";
@@ -10,18 +9,14 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
 
-    if (pathname.startsWith("/api") || pathname.startsWith("/trpc")) {
-        return <>{children}</>;
-    }
-    
-    const isAuthPage = pathname.startsWith("/auth") || pathname === "/";
+    const isApiRoute = pathname.startsWith("/api") || pathname.startsWith("/trpc");
+    const isAuthPage = isApiRoute || pathname.startsWith("/auth") || pathname === "/";
 
     const { data: profile, isLoading, isFetched, error } = trpc.user.getCurrentProfile.useQuery(undefined, {
         enabled: !isAuthPage,
         retry: false,
     });
 
-    // --- CETAK STATUS DI SINI AGAR KELIATAN DI CONSOLE ---
     console.log("AuthGuard Status -> pathname:", pathname, "isLoading:", isLoading, "isFetched:", isFetched, "profile:", profile, "error:", error);
 
     useEffect(() => {
@@ -44,6 +39,10 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
             return;
         }
     }, [profile, isLoading, isFetched, pathname, router, isAuthPage]);
+
+    if (isApiRoute) {
+        return <>{children}</>;
+    }
 
     if (!isAuthPage && (isLoading || !isFetched)) {
         return (

@@ -37,10 +37,10 @@ export const closingRouter = router({
           notes: input.notes,
         });
         return { success: true, data: result };
-      } catch (error: any) {
+      } catch (error: unknown) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: error.message || "Gagal memperbarui stok fisik opname.",
+          message: (error as Error).message || "Gagal memperbarui stok fisik opname.",
         });
       }
     }),
@@ -64,10 +64,10 @@ export const closingRouter = router({
 
       try {
         return await ClosingActions.executeClosing(input.period, closedById);
-      } catch (error: any) {
+      } catch (error: unknown) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Gagal mengeksekusi closing bulanan.",
+          message: (error as Error).message || "Gagal mengeksekusi closing bulanan.",
         });
       }
     }),

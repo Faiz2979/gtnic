@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 
 export default function OnboardingPage() {
     const [fullName, setFullName] = useState("");
-    const [phone, setPhone] = useState("");
     const [userData, setUserData] = useState<{ id: string; email: string } | null>(null);
     const [loadingSession, setLoadingSession] = useState(true);
     const router = useRouter();

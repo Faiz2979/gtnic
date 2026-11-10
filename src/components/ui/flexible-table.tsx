@@ -26,7 +26,7 @@ interface FlexibleTableProps<T> {
   actionButton?: React.ReactNode // <-- Tambahan slot untuk tombol di kanan atas
 }
 
-export function FlexibleTable<T extends Record<string, any>>({
+export function FlexibleTable<T extends Record<string, unknown>>({
   data,
   columns,
   searchKey,
@@ -82,7 +82,15 @@ export function FlexibleTable<T extends Record<string, any>>({
                     const value = row[col.accessorKey as string]
                     return (
                       <TableCell key={colIndex} className={col.className}>
-                        {col.cell ? col.cell(row) : (value ?? "-")}
+                        {col.cell
+                          ? col.cell(row)
+                          : value == null
+                            ? "-"
+                            : React.isValidElement(value) ||
+                                typeof value === "string" ||
+                                typeof value === "number"
+                              ? value
+                              : String(value)}
                       </TableCell>
                     )
                   })}

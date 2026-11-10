@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { CLOSING_STATUS } from "@/utils/enums/closing-status.enum";
 import { ClosingItemSnapshot } from "@/utils/types/item-closing.types";
-import { InventoryStatus } from "../../../../lib/generated/prisma";
+import { InventoryStatus, Prisma } from "../../../../lib/generated/prisma";
 
 export const ClosingRepository = {
   // Mengambil inventaris aktif pada periode tertentu (misal: "2026-10")
@@ -40,7 +40,6 @@ export const ClosingRepository = {
   }) => {
     const {
       currentPeriod,
-      nextPeriod,
       totalRevenue,
       totalCapital,
       netProfit,
@@ -96,7 +95,7 @@ export const ClosingRepository = {
         totalCapital: data.totalCapital,
         netProfit: data.netProfit,
         status: CLOSING_STATUS.DRAFT,
-        itemsSnapshot: data.items as any, // Prisma menerima objek JSON ke kolom Json
+        itemsSnapshot: data.items as unknown as Prisma.JsonObject, // Prisma menerima objek JSON ke kolom Json
       },
       create: {
         period: data.period,
@@ -104,7 +103,7 @@ export const ClosingRepository = {
         totalCapital: data.totalCapital,
         netProfit: data.netProfit,
         status: CLOSING_STATUS.DRAFT,
-        itemsSnapshot: data.items as any,
+        itemsSnapshot: data.items as unknown as Prisma.JsonObject,
       },
     });
   },
@@ -121,7 +120,7 @@ export const ClosingRepository = {
     return await prisma.monthlyClosing.update({
       where: { period },
       data: {
-        itemsSnapshot: newItems as any,
+        itemsSnapshot: newItems as unknown as Prisma.JsonObject, 
       },
     });
   },

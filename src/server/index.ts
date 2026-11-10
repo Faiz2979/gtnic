@@ -1,4 +1,5 @@
 import { accountRouter } from './routers/account/account.router';
+import { billRouter } from './routers/bill/bill.router';
 import { closingRouter } from './routers/closing/closing.router';
 import { dashboardRouter } from './routers/dashboard/dashboard.router';
 import { helloWorldRouter } from './routers/hello-world/hello-world.router';
@@ -22,6 +23,7 @@ export const appRouter = router({
     inventory: inventoryRouter,
     transaction: transactionRouter,
     account: accountRouter,
+    bill: billRouter,
     closing: closingRouter,
     dashboard: dashboardRouter,
 });

@@ -14,7 +14,8 @@ const globalForPrisma = globalThis as unknown as {
 const getPrismaClient = () => {
   if (
     globalForPrisma.prisma &&
-    typeof (globalForPrisma.prisma as any).bankAccount !== "undefined"
+    typeof (globalForPrisma.prisma as any).bankAccount !== "undefined" &&
+    typeof (globalForPrisma.prisma as any).bill !== "undefined"
   ) {
     return globalForPrisma.prisma;
   }
